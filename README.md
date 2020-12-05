@@ -34,7 +34,7 @@ C:\parentFolder\ProjectFolder\>
 
 ```
 
-- Install all dependencies required (for `server` & `client` folder as stated in _package.json_)
+- Install all dependencies required (for `server` & `client` folder as stated in `package.json`)
   - `server` folder
     - devDependencies:-
       - concurrently

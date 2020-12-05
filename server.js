@@ -51,11 +51,12 @@ if(process.env.NODE_ENV === 'production') {
 /** Routes Middlewares */
 app.use('/api/v1/auth', require('./routes/auth'))
 app.use('/api/v1/users', require('./routes/user'))
-app.use('/api/v1/projects', require('./routes/project'))
-app.use('/api/v1/posts', require('./routes/post'))
 app.use('/api/v1/mediasocials', require('./routes/mediaSocial'))
 app.use('/api/v1/skills', require('./routes/skill'))
 app.use('/api/v1/techs', require('./routes/tech'))
+app.use('/api/v1/projects', require('./routes/project'))
+app.use('/api/v1/posts', require('./routes/post'))
+app.use('/api/v1/dashboard', require('./routes/dashboard'))
 
 /** Database Connection & Server Startup */
 mongoose.connect(

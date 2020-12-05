@@ -89,6 +89,8 @@ const {
   updatePrivateTech, 
   deletePrivateTech 
 } = require('./tech')
+// Dashboard Methods
+const { getPrivateDashboard } = require('./dashboard')
 
 /** Exports */
 module.exports = {
@@ -158,4 +160,6 @@ module.exports = {
   addPrivateTech, 
   updatePrivateTech, 
   deletePrivateTech,
+  // Dashboard
+  getPrivateDashboard,
 }
