@@ -28,7 +28,8 @@ export const getDashboard = async(dispatch) => {
       payload: result
     })
   })
-  .catch(async error => { console.log(error)
+  .catch(async error => { 
+    if(error.response && error.response.status === 500) console.log(error.response.status)
     const result = await error.response.data
 
     // set error

@@ -13,8 +13,6 @@ const {
 exports.getPrivateDashboard = async(req, res, next) => {
   try {
     // get ACTIVE user
-    // let user = await User.findOne().where({ status: 1 })
-    // .select('-name -credentials -status')
     let user = await User.aggregate([
       {$match: { status: 1 }}, 
       { $project: { 
