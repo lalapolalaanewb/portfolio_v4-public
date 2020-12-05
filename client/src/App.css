@@ -1,0 +1,129 @@
+* {
+  box-sizing: border-box;
+  /* margin: 0;
+  padding: 0; */
+  /* font-family: "Montserrat", sans-serif; */
+}
+
+:root {
+  --primary: #074c4f;
+  --darkprimary: #042d2f;
+  --accents: #49beb7;
+  --lightaccents: #ecfffb;
+  --redaccents: #fd3f3f;
+  --yellowaccents: #facf5a;
+  --whitey: #ffffff;
+  --dark: #242424;
+  /* mozillla scrollbar */
+  /* scrollbar-width: none; */
+}
+
+/* scroll bar redesign START */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar:vertical {
+  display: none;
+}
+
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  /* -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5); */
+  -webkit-box-shadow: inset 0 0 6px rgba(73, 190, 183, 1);
+}
+
+/* error message modal START */
+.error__container {
+  /* border: 2px solid red; */
+  position: relative;
+  width: 300px;
+  height: auto;
+  border-radius: 5px;
+  background-color: var(--yellowaccents);
+}
+
+.error__btn {
+  position: absolute;
+  top: 5%;
+  right: 3%;
+  fill: var(--darkprimary);
+  cursor: pointer;
+}
+
+.error__message {
+  /* border: 2px solid yellow; */
+  width: 100%;
+  margin: 20px 0;
+  padding: 0 30px 0 10px;
+  color: var(--darkprimary);
+  font-weight: 600;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5;
+}
+
+.message__break {
+  /* These are technically the same, but use both */
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+
+  -ms-word-break: break-all;
+  /* This is the dangerous one in WebKit, as it breaks things wherever */
+  word-break: break-all;
+  /* Instead use this non-standard one: */
+  word-break: break-word;
+
+  /* Adds a hyphen where the word breaks, if supported (No Blink) */
+  -ms-hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
+
+/* loading animation START */
+.lds-hourglass {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+.lds-hourglass:after {
+  content: " ";
+  display: block;
+  border-radius: 50%;
+  width: 0;
+  height: 0;
+  margin: 8px;
+  box-sizing: border-box;
+  border: 32px solid #fff;
+  border-color: #fff transparent #fff transparent;
+  animation: lds-hourglass 1.2s infinite;
+}
+.dark-ver:after {
+  border: 32px solid var(--primary);
+  border-color: var(--primary) transparent var(--primary) transparent;
+}
+.accents-ver:after {
+  border: 32px solid var(--accents);
+  border-color: var(--accents) transparent var(--accents) transparent;
+}
+@keyframes lds-hourglass {
+  0% {
+    transform: rotate(0);
+    animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  }
+  50% {
+    transform: rotate(900deg);
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+  100% {
+    transform: rotate(1800deg);
+  }
+}

@@ -1,0 +1,346 @@
+:root {
+  --primary: #074c4f;
+  --darkprimary: #042d2f;
+  --accents: #49beb7;
+  --lightaccents: #ecfffb;
+  --redaccents: #fd3f3f;
+  --yellowaccents: #facf5a;
+  --whitey: #ffffff;
+  --dark: #242424;
+}
+
+.post__section {
+  /* border: 1px solid red; */
+  position: relative;
+  padding: 6.25rem 0 6.25rem 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: var(--whitey);
+}
+
+.darkBg {
+  background-color: var(--darkprimary);
+}
+
+.post__wrapper {
+  /* border: 1px solid blue; */
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 1300px;
+  padding-right: 50px;
+  padding-left: 50px;
+}
+
+.post__container {
+  /* border: 1px solid red; */
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 901px;
+}
+
+.post__info {
+  /* border: 1px solid blue; */
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0 50px;
+}
+
+.post__info img {
+  width: 100%;
+  height: auto;
+  border: 3px solid var(--accents);
+}
+
+.post__title {
+  margin-top: 30px;
+  color: var(--primary);
+  align-self: start;
+}
+
+.light-title {
+  color: var(--whitey);
+}
+
+.post__features {
+  width: 100%;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: 5px;
+  margin-bottom: 35px;
+}
+
+.feature__dates p:last-child {
+  margin-bottom: 5px;
+}
+
+.feature__dates span {
+  font-weight: 600;
+  color: var(--accents);
+}
+
+.light-dates {
+  color: var(--whitey);
+}
+
+.feature__tech {
+  color: var(--whitey);
+  background-color: var(--accents);
+  border-radius: 5px;
+}
+
+.post__description {
+  width: 100%;
+  margin-bottom: 40px;
+}
+
+.light-description {
+  color: var(--whitey);
+}
+
+.post__likes {
+  align-self: flex-start;
+}
+
+.post__comment {
+  /* border: 1px solid blue; */
+  width: 100%;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  padding: 50px;
+  margin-top: 40px;
+  background-color: var(--lightaccents);
+}
+
+.comment__form {
+  height: auto;
+  width: 100%;
+  margin-top: 20px;
+  margin-bottom: 45px;
+}
+
+.form__group input,
+.form__group textarea {
+  padding: 0 10px;
+  border: transparent;
+  border-radius: 5px;
+  border-bottom: 2px solid var(--accents);
+}
+
+.form__group input:focus,
+.form__group textarea:focus,
+.form__group input:hover,
+.form__group textarea:hover {
+  outline: none;
+  border: 2px solid var(--accents);
+}
+
+.form__group input {
+  height: 45px;
+}
+
+.form__group textarea {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.form__actions {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.form__actions button {
+  padding: 0.5rem 1.25rem;
+  border-radius: 0.25rem;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  color: var(--whitey);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.5s ease-in-out;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.form__actions button:not(:last-child) {
+  margin-right: 10px;
+}
+
+.comment__btn-cancel {
+  background-color: var(--redaccents);
+}
+
+.comment__btn-cancel:hover {
+  background-color: #ff0000;
+}
+
+.comment__btn-refresh {
+  background-color: var(--yellowaccents);
+}
+
+.comment__btn-refresh:hover {
+  background-color: #ffbb00;
+}
+
+.comment__btn-submit {
+  background-color: var(--accents);
+}
+
+.comment__btn-submit:hover {
+  background-color: #00a095;
+}
+
+.comment__info {
+  position: relative;
+  width: 100%;
+  margin-bottom: 22.5px;
+}
+
+/* add this to every even no of comment__info div */
+.dark-overlay {
+  background-color: #c0c0c01a;
+}
+
+.comment__overlay {
+  position: absolute;
+  background-color: var(--dark);
+  width: 100%;
+  height: 100%;
+  opacity: 0.75;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.comment__overlay p {
+  color: var(--whitey);
+  font-weight: 600;
+}
+
+.comment__top {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.commenter__name,
+.commenter__email,
+.comment__date {
+  /* border: 1px solid blue; */
+  width: 250px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.commenter__name {
+  font-weight: 600;
+  color: var(--primary);
+  /* margin-bottom: 5px; */
+}
+
+.commenter__email {
+  color: var(--accents);
+  margin-bottom: 15px;
+}
+
+.comment__date {
+  color: var(--redaccents);
+  margin-bottom: 15px;
+}
+
+.comment__actions {
+  width: 80px;
+  display: flex;
+  flex-flow: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+
+.comment__message {
+  width: 100%;
+  line-height: 1.3;
+}
+
+.truncated {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.comment__misc {
+  margin-top: 5px;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.post__likes,
+.comment__likes {
+  /* border: 1px solid red; */
+  width: 150px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  color: var(--accents);
+}
+
+.post__likes span,
+.comment__likes span {
+  font-weight: 600;
+}
+
+.comment__read-more {
+  color: var(--accents);
+  text-align: right;
+  cursor: pointer;
+}
+
+.show-less {
+  color: var(--redaccents);
+}
+
+/* max-width: 960px */
+@media screen and (max-width: 60rem) {
+  .post__container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+
+  .post__wrapper {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .post__info {
+    padding: 0 15px;
+  }
+
+  .post__comment {
+    padding: 15px;
+  }
+}

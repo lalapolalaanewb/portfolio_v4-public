@@ -1,0 +1,33 @@
+{
+  "name": "portfolio_v4",
+  "version": "1.0.0",
+  "description": "Portfolio V4 API",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server",
+    "devServer": "nodemon server",
+    "client": "npm start --prefix client",
+    "dev": "concurrently \"npm run devServer\" \"npm run client\""
+  },
+  "author": "Lalapolalaa Newb",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^5.3.0",
+    "nodemon": "^2.0.4"
+  },
+  "dependencies": {
+    "@hapi/joi": "^17.1.1",
+    "bcryptjs": "^2.4.3",
+    "colors": "^1.4.0",
+    "connect-redis": "^5.0.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-session": "^1.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.10.9",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.2",
+    "redis": "^3.0.2"
+  }
+}
