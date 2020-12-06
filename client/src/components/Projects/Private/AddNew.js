@@ -28,6 +28,7 @@ const AddNew = ({
   projectCodeChange, setProjectCodeChange,
   projectTechsChange, setProjectTechsChange,
   projectDescChange, setProjectDescChange,
+  projectSubDescChange, setProjectSubDescChange,
   projectCreatorChange, setProjectCreatorChange,
   setCurrentCreator
 }) => {
@@ -43,6 +44,7 @@ const AddNew = ({
   const [projectCode, setProjectCode] = useState('')
   const [projectTechs, setProjectTechs] = useState([])
   const [projectDesc, setProjectDesc] = useState('')
+  const [projectSubDesc, setProjectSubDesc] = useState('')
 
   // add new project
   const handleProjectAdd = async() => {
@@ -54,6 +56,7 @@ const AddNew = ({
       code: projectCode,
       techs: projectTechs,
       desc: projectDesc,
+      subDesc: projectSubDesc,
       imgSrc: projectImg,
     })
 
@@ -64,17 +67,18 @@ const AddNew = ({
     setProjectCode('')
     setProjectTechs([])
     setProjectDesc('')
+    setProjectSubDesc('')
   }
 
   return (
     <>
       <Headline headline="Add New" subHeadline="PROJECT" />
       <form ref={addNewRef} className={classes.form}
-        // onSubmit={(e) => {
-        //   e.preventDefault()
-        //   if(isEdit) setIsSubmitChange(true)
-        //   else setIsSubmit(true)
-        // }}
+        onSubmit={e => {
+          e.preventDefault()
+          if(isEdit)  handleProjectUpdate()
+          else handleProjectAdd()
+        }}
       >
         <Grid container spacing={2}>
           <Grid item xs={12}>
@@ -217,30 +221,58 @@ const AddNew = ({
               </FormGroup>
             </Grid>
           </Grid>
-          <Grid item xs={12}>
-            <FormGroup>
-              <FormControl required variant="outlined" className={classes.formControl}>
-                <InputLabel 
-                  id="techsLabel"
-                  classes={{
-                    root: inputClasses.selectFieldLabelRoot,
-                    focused: inputClasses.selectFieldLabelFocused,
-                    // notchedOutline: classes.selectFieldLabelNotchedOutline,
+          <Grid item container spacing={2}>
+            <Grid item xs={12} md={6}>
+              <FormGroup>
+                <FormControl required variant="outlined" className={classes.formControl}>
+                  <InputLabel 
+                    id="techsLabel"
+                    classes={{
+                      root: inputClasses.selectFieldLabelRoot,
+                      focused: inputClasses.selectFieldLabelFocused,
+                      // notchedOutline: classes.selectFieldLabelNotchedOutline,
+                    }}
+                  >
+                    Techs
+                  </InputLabel>
+                  <TechnologyState>
+                    <Technologies 
+                      techsPassed={projectTechs}
+                      setTechsPassed={setProjectTechs}
+                      isEdit={isEdit}
+                      techsChange={projectTechsChange}
+                      setTechsChange={setProjectTechsChange}
+                    />
+                  </TechnologyState>
+                </FormControl>
+              </FormGroup>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <FormGroup>
+                <TextField 
+                  label="Sub Description"
+                  variant="outlined"
+                  value={isEdit ? projectSubDescChange : projectSubDesc}
+                  onChange={(e) => isEdit ? setProjectSubDescChange(e.target.value) : setProjectSubDesc(e.target.value)} 
+                  required
+                  multiline
+                  rowsMax={50}
+                  InputLabelProps={{
+                    classes: {
+                      root: inputClasses.textFieldLabel,
+                      focused: inputClasses.textFieldLabelFocused
+                    }
                   }}
-                >
-                  Techs
-                </InputLabel>
-                <TechnologyState>
-                  <Technologies 
-                    techsPassed={projectTechs}
-                    setTechsPassed={setProjectTechs}
-                    isEdit={isEdit}
-                    techsChange={projectTechsChange}
-                    setTechsChange={setProjectTechsChange}
-                  />
-                </TechnologyState>
-              </FormControl>
-            </FormGroup>
+                  InputProps={{
+                    classes: {
+                      root: inputClasses.textFieldRoot,
+                      focused: inputClasses.textFieldFocused,
+                      notchedOutline: inputClasses.textFieldNotchedOutline
+                    }
+                  }}
+                />
+              </FormGroup>
+            </Grid>
           </Grid>
           <Grid item container spacing={2}>
             <Grid item xs={12} md={6}>
@@ -292,6 +324,8 @@ const AddNew = ({
                   setProjectWwwChange('')
                   setProjectCodeChange('')
                   setProjectTechsChange([])
+                  setProjectDescChange('')
+                  setProjectSubDescChange('')
                   setProjectCreatorChange('')
                   setCurrentCreator('')
                   setProjectId('')
@@ -302,14 +336,10 @@ const AddNew = ({
               </Button>
             )}
             <Button 
+              type="submit"
               variant="contained" 
               color="secondary" 
               className={globalClasses.photoChangeFormSubmitBtn}
-              onClick={e => {
-                e.preventDefault()
-                if(isEdit)  handleProjectUpdate()
-                else handleProjectAdd()
-              }}
             >
               Submit
             </Button>

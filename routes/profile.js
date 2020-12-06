@@ -18,6 +18,11 @@ router.use('/home', require('./home'))
 // @access  Private (Require sessionId & uid) 
 router.use('/about', require('./about'))
 
+// @desc    Portfolio V4 User Profile (Get A User's Education)
+// @route   POST /api/v1/users/private/profile/education
+// @access  Private (Require sessionId & uid) 
+router.use('/education', require('./education'))
+
 // @desc    Portfolio V4 User Profile (Get A User's Job)
 // @route   POST /api/v1/users/private/profile/job
 // @access  Private (Require sessionId & uid) 

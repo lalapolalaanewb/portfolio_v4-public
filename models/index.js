@@ -6,6 +6,8 @@ const Home = require('./Home')
 const About = require('./About')
 // Social Media Model
 const Socialmedia = require('./Socialmedia')
+// Education Model
+const Education = require('./Education')
 // Job Model
 const Job = require('./Job')
 // Project Model
@@ -28,6 +30,7 @@ module.exports = {
   Home,
   About,
   Socialmedia, 
+  Education,
   Job,
   Project,
   Post,

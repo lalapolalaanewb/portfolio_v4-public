@@ -67,6 +67,7 @@ export const addProject = async (dispatch, project) => {
   formData.append('code', project.code)
   formData.append('techs', project.techs)
   formData.append('description', project.desc)
+  formData.append('subDescription', project.subDesc)
   formData.append('file', project.imgSrc)
 
   await axios.post('/api/v1/projects/private/add/', formData, configMultiPart)

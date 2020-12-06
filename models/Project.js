@@ -9,6 +9,12 @@ function descriptionRequired() {
   return typeof description === 'string' ? false : true
 }
 
+// Allow empty string for subDescription
+function subDescriptionRequired() {
+  let subDescription = this.subDescription
+  return typeof subDescription === 'string' ? false : true
+}
+
 // Allow empty string for liveUrls.www
 function liveUrlWwwRequired() {
   let liveUrl = this.liveUrls.www
@@ -29,6 +35,8 @@ const ProjectSchema = new mongoose.Schema({
   imgSrc: { type: String, trim: true, required: true },
   // Description
   description: { type: String, required: descriptionRequired },
+  // SubDescription
+  subDescription: { type: String, required: subDescriptionRequired },
   // Live URLs
   liveUrls: {
     // www

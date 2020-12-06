@@ -37,6 +37,13 @@ const {
 } = require('./about')
 // Profile Job Methods
 const {
+  getPrivateUserEducation,
+  addPrivateUserEducation,
+  updatePrivateUserEducation, updatePrivateUserEducationPublish,
+  deletePrivateUserEducation
+} = require('./education')
+// Profile Job Methods
+const {
   getPrivateUserJob,
   addPrivateUserJob,
   updatePrivateUserJob, updatePrivateUserJobPublish,
@@ -120,6 +127,11 @@ module.exports = {
   addPrivateUserAbout,
   updatePrivateUserAbout, updatePrivateUserAboutImg, updatePrivateUserAboutPublish,
   deletePrivateUserAbout,
+  // Profile Education
+  getPrivateUserEducation,
+  addPrivateUserEducation,
+  updatePrivateUserEducation, updatePrivateUserEducationPublish,
+  deletePrivateUserEducation,
   // Profile job
   getPrivateUserJob,
   addPrivateUserJob,

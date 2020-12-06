@@ -70,6 +70,7 @@ const ProjectsPrivate = () => {
   const [projectCodeChange, setProjectCodeChange] = useState('')
   const [projectTechsChange, setProjectTechsChange] = useState([])
   const [projectDescChange, setProjectDescChange] = useState('')
+  const [projectSubDescChange, setProjectSubDescChange] = useState('')
   const [projectCreatorChange, setProjectCreatorChange] = useState('')
   const [currentCreator, setCurrentCreator] = useState('')
   const [isEdit, setIsEdit] = useState(false)
@@ -130,6 +131,7 @@ const ProjectsPrivate = () => {
       code: projectCodeChange,
       techs: projectTechsChange,
       description: projectDescChange,
+      subDescription: projectSubDescChange,
       creator: {
         current: currentCreator,
         new: projectCreatorChange
@@ -143,6 +145,7 @@ const ProjectsPrivate = () => {
     setProjectCodeChange('')
     setProjectTechsChange([])
     setProjectDescChange('')
+    setProjectSubDescChange('')
     setProjectCreatorChange('')
     setCurrentCreator('')
     setIsEdit(false)
@@ -273,6 +276,8 @@ const ProjectsPrivate = () => {
                           setProjectWwwChange('')
                           setProjectCodeChange('')
                           setProjectTechsChange([])
+                          setProjectDescChange('')
+                          setProjectSubDescChange('')
                           setProjectCreatorChange('')
                           setCurrentCreator('')
                         }
@@ -337,6 +342,7 @@ const ProjectsPrivate = () => {
                               project.techs.map(tech => techs.push(tech.name))
                               setProjectTechsChange(techs)
                               project.description ? setProjectDescChange(project.description) : setProjectDescChange('none')
+                              setProjectSubDescChange(() => project.subDescription ? project.subDescription : 'none')
                               setProjectCreatorChange(project.creator._id)
                               setCurrentCreator(project.creator._id)
                               setProjectId(project._id)
@@ -387,6 +393,7 @@ const ProjectsPrivate = () => {
                 >
                   <Collapse in={openRow && projectId === project._id} timeout="auto" unmountOnExit>
                     <Box margin={1}>
+                      <Typography variant="body1">{project.subDescription ? project.subDescription : 'none'}</Typography>
                       <ReactMarkDown 
                         source={project.description}
                         renderers={{ code: Markdown }}
@@ -419,6 +426,7 @@ const ProjectsPrivate = () => {
         projectCodeChange={projectCodeChange} setProjectCodeChange={setProjectCodeChange}
         projectTechsChange={projectTechsChange} setProjectTechsChange={setProjectTechsChange}
         projectDescChange={projectDescChange} setProjectDescChange={setProjectDescChange}
+        projectSubDescChange={projectSubDescChange} setProjectSubDescChange={setProjectSubDescChange}
         projectCreatorChange={projectCreatorChange} setProjectCreatorChange={setProjectCreatorChange}
         setCurrentCreator={setCurrentCreator}
       />

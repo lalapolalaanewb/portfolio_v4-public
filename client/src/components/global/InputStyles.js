@@ -20,15 +20,21 @@ const useStyles = makeStyles(theme => ({
     maxWidth: '100%',
   },
   textFieldLabel: {
+    '&:hover': {
+      color: theme.palette.secondary.main
+    },
     '&$textFieldLabelFocused': {
       color: theme.palette.secondary.main
-    }
+    },
   },
   textFieldLabelFocused: {},
   textFieldRoot: {
+    // '&:hover $textFieldNotchedOutline': {
+    //   borderColor: theme.palette.secondary.main
+    // },
     '&$textFieldFocused $textFieldNotchedOutline': {
       borderColor: theme.palette.secondary.main
-    }
+    },
   },
   textFieldFocused: {},
   textFieldNotchedOutline: {},

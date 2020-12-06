@@ -127,6 +127,7 @@ exports.addPrivateProject = async(req, res, next) => {
     www, code,
     techs,
     description,
+    subDescription,
   } = req.body
 
   let techNames = techs.split(',')
@@ -136,6 +137,7 @@ exports.addPrivateProject = async(req, res, next) => {
     name: name,
     imgSrc: req.file.originalname,
     description: handleNoneInput(description),
+    subDescription: handleNoneInput(subDescription),
     liveUrls: {
       www: handleNoneInput(www),
       code: handleNoneInput(code)
@@ -242,6 +244,7 @@ exports.updatePrivateProject = async(req, res, next) => {
     www, code,
     techs,
     description,
+    subDescription,
     // like,
     creator
   } = req.body
@@ -260,6 +263,7 @@ exports.updatePrivateProject = async(req, res, next) => {
       },
       techs: techIds,
       description: handleNoneInput(description),
+      subDescription: handleNoneInput(subDescription),
       // like: like,
       creator: shouldCreatorUpdate === 'no' ? creator.current : creator.new
     } },
