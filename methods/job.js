@@ -42,12 +42,13 @@ exports.getPrivateUserJob = async(req, res, next) => {
 // @access  Private (Require sessionId & uid)
 exports.addPrivateUserJob = async(req, res, next) => {
   let {
-    name, abbreviation, creator
+    name, abbreviation, company, creator
   } = req.body
   // console.log(req.body)
   const job = new Job({ 
     name: name, 
-    abbreviation: handleNoneInput(abbreviation), 
+    abbreviation: handleNoneInput(abbreviation),
+    company: handleNoneInput(company), 
     creator: creator 
   })
   
@@ -85,7 +86,8 @@ exports.updatePrivateUserJob = async(req, res, next) => {
     { _id: jobId },
     { $set: {
       name: job.name,
-      abbreviation: job.abbreviation
+      abbreviation: handleNoneInput(job.abbreviation),
+      company: handleNoneInput(job.company)
     } },
     { new: true }
   )

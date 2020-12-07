@@ -1,86 +1,89 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { useJob } from '../../contexts/User/Private/Job/JobState'
-import { setLoading, setSuccess, setError, getJobs, updateJob, updateJobPublish, deleteJob } from '../../contexts/User/Private/Job/JobAction'
+import { useEducation } from '../../contexts/User/Private/Education/EducationState'
+import { setLoading, setSuccess, setError, getEdus, updateEdu, updateEduPublish, deleteEdu } from '../../contexts/User/Private/Education/EducationAction'
 import AlertMessage from '../../components/global/Alert'
 import { DividerBlank } from '../../components/global/Divider'
-import AddNew from '../../components/Profile/Child/AddNewJob'
+import AddNew from '../../components/Profile/Child/AddNewEdu'
 import { useTheme } from '@material-ui/core/styles';
 import MaterialTable from 'material-table'
 import { Icons2Use, PaginationTableCustom } from '../../components/global/TableMaterial'
 
-const Job = () => {
-  const [jobState, jobDispatch] = useJob()
-  const { jobs, loading, success, error, message } = jobState
+const Education = () => {
+  const [eduState, eduDispatch] = useEducation()
+  const { edus, loading, success, error, message } = eduState
   
   /** theme - states */
   const theme = useTheme()
 
   /** global - states */
   const addNewRef = useRef(null)
-  const [jobId, setJobId] = useState('')
+  const [eduId, setEduId] = useState('')
 
   /** table icons */
   const { allIcons } = Icons2Use()
 
-  /** job publish change - states */
+  /** edu publish change - states */
   const [intention, setIntention] = useState('')
   const [isPublish, setIsPublish] = useState(false)
 
-  /** job update - states */
-  const [nameChange, setNameChange] = useState('')
-  const [abbreviationChange, setAbbreviationChange] = useState('')
-  const [companyChange, setCompanyChange] = useState('')
+  /** edu update - states */
+  const [courseChange, setCourseChange] = useState('')
+  const [titleChange, setTitleChange] = useState('')
+  const [entityChange, setEntityChange] = useState('')
+  const [studyStatusChange, setStudyStatusChange] = useState('')
   const [currentCreator, setCurrentCreator] = useState('')
   const [isEdit, setIsEdit] = useState(false)
   const [isDelete, setIsDelete] = useState(false)
 
-  /** job get all - function */
+  /** edu get all - function */
   useEffect(() => {
     (async() => {
-      await getJobs(jobDispatch)
+      await getEdus(eduDispatch)
 
-      setLoading(jobDispatch, false)
+      setLoading(eduDispatch, false)
     })()
   }, [])
 
-  /** job publish - function */
+  /** edu publish - function */
   useEffect(() => {
     (async() => {
       if(isPublish) {
-        await updateJobPublish(jobDispatch, jobId, intention)
+        await updateEduPublish(eduDispatch, eduId, intention)
 
-        setLoading(jobDispatch, false)
-        setJobId('')
+        setLoading(eduDispatch, false)
+        setEduId('')
         setIntention('')
         setIsPublish(false)
       }
     })()
   }, [isPublish])
 
-  /** job update - function */
-  const handleJobUpdate = async() => {
-    await updateJob(jobDispatch, jobId, {
-      name: nameChange,
-      abbreviation: abbreviationChange,
-      company: companyChange,
+  /** edu update - function */
+  const handleEduUpdate = async() => {
+    await updateEdu(eduDispatch, eduId, {
+      course: courseChange,
+      title: titleChange,
+      entity: entityChange,
+      studyStatus: studyStatusChange,
     })
 
-    setLoading(jobDispatch, false)
-    setNameChange('')
-    setAbbreviationChange('')
-    setCompanyChange('')
-    setJobId('')
+    setLoading(eduDispatch, false)
+    setCourseChange('')
+    setTitleChange('')
+    setEntityChange('')
+    setStudyStatusChange('')
+    setEduId('')
     setIsEdit(false)
   }
 
-  /** job delete - function */
+  /** edu delete - function */
   useEffect(() => {
     (async() => {
       if(isDelete) {
-        await deleteJob(jobDispatch, jobId, currentCreator)
+        await deleteEdu(eduDispatch, eduId, currentCreator)
 
-        setLoading(jobDispatch, false)
-        setJobId('')
+        setLoading(eduDispatch, false)
+        setEduId('')
         setCurrentCreator('')
         setIsDelete(false)
       }
@@ -102,22 +105,22 @@ const Job = () => {
       {error && (
         <AlertMessage
           severity="warning" title="Warning"
-          dispatch={jobDispatch} message={message} 
+          dispatch={eduDispatch} message={message} 
           setStatus={setError}
         />
       )}
       {success && (
         <AlertMessage
           severity="success" title="Success"
-          dispatch={jobDispatch} message={message} 
+          dispatch={eduDispatch} message={message} 
           setStatus={setSuccess}
         />
       )}
       <div style={{width: '100%'}}>
         <MaterialTable
           icons={allIcons}
-          title="Jobs Table"
-          data={jobs}
+          title="Edus Table"
+          data={edus}
           components={{
             Pagination: props => <PaginationTableCustom 
               colSpan={props.colSpan} 
@@ -140,38 +143,44 @@ const Job = () => {
             })
           }}
           columns={[
-            { title: 'Name', field: 'name' },
             { 
-              title: 'Abbreviation', 
-              field: 'abbreviation',
-              render: rowData => handleNoneValue(rowData.abbreviation) 
+              title: 'Course', 
+              field: 'course',
+              render: rowData => handleNoneValue(rowData.course) 
             },
             { 
-              title: 'Company', 
-              field: 'company',
-              render: rowData => handleNoneValue(rowData.company) 
+              title: 'Title', 
+              field: 'title',
+              render: rowData => handleNoneValue(rowData.title) 
             },
+            { 
+              title: 'Entity', 
+              field: 'entity',
+              render: rowData => handleNoneValue(rowData.entity) 
+            },
+            { title: 'Status', field: 'studyStatus' },
           ]}
           actions={[
             {
               icon: allIcons.Edit,
-              tooltip: 'Edit Job',
+              tooltip: 'Edit Edu',
               // iconProps: { style: { color: 'red' } },
               onClick: (event, rowData) => {
-                setNameChange(rowData.name)
-                setAbbreviationChange(handleNoneValue(rowData.abbreviation))
-                setCompanyChange(handleNoneValue(rowData.company))
-                setJobId(rowData._id)
+                setCourseChange(handleNoneValue(rowData.course))
+                setTitleChange(handleNoneValue(rowData.title))
+                setEntityChange(handleNoneValue(rowData.entity))
+                setStudyStatusChange(rowData.studyStatus)
+                setEduId(rowData._id)
                 setIsEdit(true)
                 addNewRef.current.scrollIntoView({ behavior: 'smooth' })
               }
             },
             rowData => ({
               icon: allIcons.Delete,
-              tooltip: 'Delete Job',
+              tooltip: 'Delete Edu',
               onClick: (event, rowData) => {
                 setCurrentCreator(rowData.creator)
-                setJobId(rowData._id)
+                setEduId(rowData._id)
                 setIsDelete(true)
               },
               disabled: rowData.status === 1
@@ -180,7 +189,7 @@ const Job = () => {
               icon: rowData.status === 0 ? allIcons.Publish : allIcons.Unpublish,
               tooltip: rowData.status === 0 ? 'Publish' : 'Unpublish',
               onClick: (event, rowData) => {
-                setJobId(rowData._id)
+                setEduId(rowData._id)
                 setIntention((() => rowData.status === 0 ? 'publish' : 'unpublish')())
                 setIsPublish(true)
               }
@@ -192,14 +201,15 @@ const Job = () => {
       <AddNew
         addNewRef={addNewRef}
         isEdit={isEdit} setIsEdit={setIsEdit}
-        handleJobUpdate={handleJobUpdate}
-        setJobId={setJobId}
-        nameChange={nameChange} setNameChange={setNameChange}
-        abbreviationChange={abbreviationChange} setAbbreviationChange={setAbbreviationChange}
-        companyChange={companyChange} setCompanyChange={setCompanyChange}
+        handleEduUpdate={handleEduUpdate}
+        setEduId={setEduId}
+        courseChange={courseChange} setCourseChange={setCourseChange}
+        titleChange={titleChange} setTitleChange={setTitleChange}
+        entityChange={entityChange} setEntityChange={setEntityChange}
+        studyStatusChange={studyStatusChange} setStudyStatusChange={setStudyStatusChange}
       />
     </>
   )
 }
 
-export default Job
+export default Education

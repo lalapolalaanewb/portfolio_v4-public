@@ -57,6 +57,8 @@ const UserSchema = new mongoose.Schema({
     abouts: [{ type: mongoose.Schema.Types.ObjectId, ref: "About" }],
     // User's Social Media
     socialMedias: [{ type: mongoose.Schema.Types.ObjectId, ref: "Socialmedia" }],
+    // User's Edu
+    educations: [{ type: mongoose.Schema.Types.ObjectId, ref: "Education" }],
     // User's Job
     jobs: [{ type: mongoose.Schema.Types.ObjectId, ref: "Job" }],
     // User's Skills

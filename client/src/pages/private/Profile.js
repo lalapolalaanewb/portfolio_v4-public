@@ -3,11 +3,13 @@ import { PersonalState } from '../../contexts/User/Private/Personal/PersonalStat
 import { HomeState } from '../../contexts/User/Private/Home/HomeState'
 import { AboutState } from '../../contexts/User/Private/About/AboutState'
 import { SocialState } from '../../contexts/User/Private/Social/SocialState'
+import { EducationState } from '../../contexts/User/Private/Education/EducationState'
 import { JobState } from '../../contexts/User/Private/Job/JobState'
 import Personal from '../../components/Profile/Personal'
 import Home from '../../components/Profile/Home'
 import About from '../../components/Profile/About'
 import Social from '../../components/Profile/Social'
+import Education from '../../components/Profile/Education'
 import Job from '../../components/Profile/Job'
 import { makeStyles, useTheme } from '@material-ui/core/styles'
 import { 
@@ -20,6 +22,7 @@ import PersonPinIcon from '@material-ui/icons/PersonPin'
 import HomeIcon from '@material-ui/icons/Home'
 import PersonPinCircleIcon from '@material-ui/icons/PersonPinCircle'
 import TheatersIcon from '@material-ui/icons/Theaters'
+import BookIcon from '@material-ui/icons/Book'
 import WorkIcon from '@material-ui/icons/Work'
 
 const Profile = () => {
@@ -52,7 +55,8 @@ const Profile = () => {
             <Tab label="Home" icon={<HomeIcon />} {...a11yProps(1)} />
             <Tab label="About" icon={<PersonPinCircleIcon />} {...a11yProps(2)} />
             <Tab label="Social" icon={<TheatersIcon />} {...a11yProps(3)} />
-            <Tab label="Job" icon={<WorkIcon />} {...a11yProps(4)} />
+            <Tab label="Education" icon={<BookIcon />} {...a11yProps(4)} />
+            <Tab label="Job" icon={<WorkIcon />} {...a11yProps(5)} />
           </Tabs>
         </AppBar>
         <TabPanel value={value} index={0}>
@@ -68,6 +72,9 @@ const Profile = () => {
           <SocialState><Social /></SocialState>
         </TabPanel>
         <TabPanel value={value} index={4}>
+          <EducationState><Education /></EducationState>
+        </TabPanel>
+        <TabPanel value={value} index={5}>
           <JobState><Job /></JobState>
         </TabPanel>
       </div>

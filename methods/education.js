@@ -42,13 +42,14 @@ exports.getPrivateUserEducation = async(req, res, next) => {
 // @access  Private (Require sessionId & uid)
 exports.addPrivateUserEducation = async(req, res, next) => {
   let {
-    course, title, entity, creator
+    course, title, entity, studyStatus, creator
   } = req.body
   // console.log(req.body)
   const education = new Education({ 
     course: handleNoneInput(course),
     title: handleNoneInput(title), 
     entity: handleNoneInput(entity), 
+    studyStatus: studyStatus,
     creator: creator 
   })
   
@@ -87,7 +88,8 @@ exports.updatePrivateUserEducation = async(req, res, next) => {
     { $set: {
       course: handleNoneInput(edu.course),
       title: handleNoneInput(edu.title),
-      entity: handleNoneInput(edu.entity)
+      entity: handleNoneInput(edu.entity),
+      studyStatus: edu.studyStatus
     } },
     { new: true }
   )

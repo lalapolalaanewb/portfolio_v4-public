@@ -7,17 +7,9 @@ import classNames from 'classnames'
 import InputStyles from '../../../components/global/InputStyles'
 import { 
   Button, 
-  FormControl, 
   FormGroup, 
   Grid, 
-  IconButton, 
-  InputLabel,
-  MenuItem,
-  Select, 
   TextField, 
-  Tooltip, 
-  Typography, 
-  Zoom 
 } from '@material-ui/core'
 
 const AddNewJob = ({
@@ -27,6 +19,7 @@ const AddNewJob = ({
   setJobId,
   nameChange, setNameChange,
   abbreviationChange, setAbbreviationChange,
+  companyChange, setCompanyChange
 }) => {
   const [jobState, jobDispatch] = useJob()
   const { creator, error, success, message } = jobState
@@ -37,14 +30,16 @@ const AddNewJob = ({
   /** job add new - states */
   const [name, setName] = useState('')
   const [abbreviation, setAbbreviation] = useState('')
+  const [company, setCompany] = useState('')
 
   /** job add new - function */
   const handleJobAdd = async() => {
-    await addJob(jobDispatch, { name, abbreviation, creator })
+    await addJob(jobDispatch, { name, abbreviation, company, creator })
 
     setLoading(jobDispatch, false)
     setName('')
     setAbbreviation('')
+    setCompany('')
   }
 
   return (
@@ -125,6 +120,30 @@ const AddNewJob = ({
             </Grid>
           </Grid>
           <Grid item xs={12}>
+            <FormGroup>
+              <TextField 
+                label="Company"
+                variant="outlined"
+                value={isEdit ? companyChange : company}
+                onChange={(e) => isEdit ? setCompanyChange(e.target.value) : setCompany(e.target.value)} 
+                required
+                InputLabelProps={{
+                  classes: {
+                    root: inputClasses.textFieldLabel,
+                    focused: inputClasses.textFieldLabelFocused
+                  }
+                }}
+                InputProps={{
+                  classes: {
+                    root: inputClasses.textFieldRoot,
+                    focused: inputClasses.textFieldFocused,
+                    notchedOutline: inputClasses.textFieldNotchedOutline
+                  }
+                }}
+              />
+            </FormGroup>
+          </Grid>
+          <Grid item xs={12}>
             {isEdit && (
               <Button 
                 variant="contained" 
@@ -132,6 +151,7 @@ const AddNewJob = ({
                 onClick={() => {
                   setNameChange('')
                   setAbbreviationChange('')
+                  setCompanyChange('')
                   setJobId('')
                   setIsEdit(false)
                 }}
@@ -147,10 +167,12 @@ const AddNewJob = ({
                 if(isEdit) {
                   setNameChange('')
                   setAbbreviationChange('')
+                  setCompanyChange('')
                 }
                 else {
                   setName('')
                   setAbbreviation('')
+                  setCompany('')
                 }
               }}
             >

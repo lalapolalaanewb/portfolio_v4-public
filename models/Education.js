@@ -27,6 +27,8 @@ const EducationSchema = new mongoose.Schema({
   title: { type: String, trim: true, required: titleRequired },
   // Entity
   entity: { type: String, trim: true, required: entityRequired },
+  // Study Status
+  studyStatus: { type: String, trim: true, required: true },
   // Status (1 = Published, 0 = Unpublished)
   status: { type: Number, required: true, default: 0 },
   // Creator
