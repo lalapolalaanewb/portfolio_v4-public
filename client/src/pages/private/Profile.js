@@ -5,12 +5,14 @@ import { AboutState } from '../../contexts/User/Private/About/AboutState'
 import { SocialState } from '../../contexts/User/Private/Social/SocialState'
 import { EducationState } from '../../contexts/User/Private/Education/EducationState'
 import { JobState } from '../../contexts/User/Private/Job/JobState'
+import { ResumeState } from '../../contexts/User/Private/Resume/ResumeState'
 import Personal from '../../components/Profile/Personal'
 import Home from '../../components/Profile/Home'
 import About from '../../components/Profile/About'
 import Social from '../../components/Profile/Social'
 import Education from '../../components/Profile/Education'
 import Job from '../../components/Profile/Job'
+import Resume from '../../components/Profile/Resume'
 import { makeStyles, useTheme } from '@material-ui/core/styles'
 import { 
   AppBar,
@@ -57,6 +59,7 @@ const Profile = () => {
             <Tab label="Social" icon={<TheatersIcon />} {...a11yProps(3)} />
             <Tab label="Education" icon={<BookIcon />} {...a11yProps(4)} />
             <Tab label="Job" icon={<WorkIcon />} {...a11yProps(5)} />
+            <Tab label="Resume" icon={<WorkIcon />} {...a11yProps(6)} />
           </Tabs>
         </AppBar>
         <TabPanel value={value} index={0}>
@@ -76,6 +79,9 @@ const Profile = () => {
         </TabPanel>
         <TabPanel value={value} index={5}>
           <JobState><Job /></JobState>
+        </TabPanel>
+        <TabPanel value={value} index={6}>
+          <ResumeState><Resume /></ResumeState>
         </TabPanel>
       </div>
     </>

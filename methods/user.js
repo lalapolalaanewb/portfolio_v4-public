@@ -61,7 +61,7 @@ exports.getPublicUserHome = async(req, res, next) => {
   .populate('homes')
   .where({ status: 1 })
   .select('homes')
-  .then(data => { 
+  .then(data => { console.log(data) 
     return res.status(200).json({
       success: true,
       count: data.length,

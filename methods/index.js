@@ -35,7 +35,7 @@ const {
   updatePrivateUserAbout, updatePrivateUserAboutImg, updatePrivateUserAboutPublish,
   deletePrivateUserAbout
 } = require('./about')
-// Profile Job Methods
+// Profile Education Methods
 const {
   getPrivateUserEducation,
   addPrivateUserEducation,
@@ -49,6 +49,13 @@ const {
   updatePrivateUserJob, updatePrivateUserJobPublish,
   deletePrivateUserJob
 } = require('./job')
+// Profile Resume Methods
+const {
+  getPrivateUserResume,
+  addPrivateUserResume,
+  updatePrivateUserResume, updatePrivateUserResumePublish,
+  deletePrivateUserResume
+} = require('./resume')
 // Profile Social Methods
 const {
   getPrivateUserSocial,
@@ -137,6 +144,11 @@ module.exports = {
   addPrivateUserJob,
   updatePrivateUserJob, updatePrivateUserJobPublish,
   deletePrivateUserJob,
+  // Profile Resume
+  getPrivateUserResume,
+  addPrivateUserResume,
+  updatePrivateUserResume, updatePrivateUserResumePublish,
+  deletePrivateUserResume,
   // Profile Social
   getPrivateUserSocial,
   addPrivateUserSocial,

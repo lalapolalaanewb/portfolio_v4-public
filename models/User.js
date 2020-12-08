@@ -61,6 +61,8 @@ const UserSchema = new mongoose.Schema({
     educations: [{ type: mongoose.Schema.Types.ObjectId, ref: "Education" }],
     // User's Job
     jobs: [{ type: mongoose.Schema.Types.ObjectId, ref: "Job" }],
+    // User's Resume
+    resumes: [{ type: mongoose.Schema.Types.ObjectId, ref: "Resume" }],
     // User's Skills
     skills: [{ type: mongoose.Schema.Types.ObjectId, ref: "Skill" }],
     // User's Projects

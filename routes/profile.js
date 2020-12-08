@@ -18,6 +18,11 @@ router.use('/home', require('./home'))
 // @access  Private (Require sessionId & uid) 
 router.use('/about', require('./about'))
 
+// @desc    Portfolio V4 User Profile (Get A User's Social)
+// @route   POST /api/v1/users/private/profile/social
+// @access  Private (Require sessionId & uid) 
+router.use('/social', require('./social'))
+
 // @desc    Portfolio V4 User Profile (Get A User's Education)
 // @route   POST /api/v1/users/private/profile/education
 // @access  Private (Require sessionId & uid) 
@@ -28,10 +33,10 @@ router.use('/education', require('./education'))
 // @access  Private (Require sessionId & uid) 
 router.use('/job', require('./job'))
 
-// @desc    Portfolio V4 User Profile (Get A User's Social)
-// @route   POST /api/v1/users/private/profile/social
+// @desc    Portfolio V4 User Profile (Get A User's Resume)
+// @route   POST /api/v1/users/private/profile/resume
 // @access  Private (Require sessionId & uid) 
-router.use('/social', require('./social'))
+router.use('/resume', require('./resume'))
 
 /** Export */
 module.exports = router
