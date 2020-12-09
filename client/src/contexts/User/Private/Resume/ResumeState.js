@@ -11,6 +11,8 @@ export const ResumeState = ({ children }) => {
   const initialState = {
     resumes: [],
     projects: [],
+    educations: [],
+    occupations: [],
     creator: '',
     loading: false,
     success: false,

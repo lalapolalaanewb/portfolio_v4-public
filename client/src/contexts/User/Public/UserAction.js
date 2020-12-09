@@ -99,3 +99,38 @@ export const getUserOnAbout = async (dispatch) => {
     })
   })
 }
+
+// Get User (Resume Page)
+export const getUserOnResume = async (dispatch) => {
+  setLoading(dispatch, true)
+
+  // fetch user
+  await axios.post('/api/v1/users/getresume', { key: process.env.REACT_APP_ADMIN_ACCESS_PUBLIC }, config)
+  .then(async res => { 
+    const result = await res.data.data
+    
+    dispatch({
+      type: 'SET_USERRESUME',
+      payload: {
+        ...result,
+        name: result.name,
+        resume: {
+          ...result.resume,
+          contactInfo: result.resume.contactInfo,
+          techs: result.resume.techs,
+          projects: result.resume.projects,
+          educations: result.resume.educations,
+          jobs: result.resume.jobs
+        }
+      }
+    })
+  })
+  .catch(async error => { 
+    const result = await error.response.data
+
+    setError(dispatch, {
+      status: true,
+      message: result.error
+    })
+  })
+}

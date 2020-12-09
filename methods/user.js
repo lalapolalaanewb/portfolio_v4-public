@@ -3,8 +3,9 @@
 const bcrypt = require('bcryptjs')
 // Model - User
 const {
-  User, Technology, Mediasocial, Skill, Socialmedia
+  User, Technology, Mediasocial, Skill, Socialmedia, Resume
 } = require('../models')
+const { findOne } = require('../models/Job')
 
 /** Page Specific Functions */
 // handle 'none' input
@@ -106,6 +107,38 @@ exports.getPublicUserAbout = async(req, res, next) => {
     })
   })
   .catch(err => {
+    return res.status(500).json({
+      success: false,
+      error: `Failed to get data (abouts, skills & jobs) from User Collection`,
+      data: err
+    })
+  })
+}
+
+// @desc    Portfolio V4 Resume Page (Get A User)
+// @route   POST /api/v1/users/getresume
+// @access  Public (Only need Admin Public Access Key)
+exports.getPublicUserResume = async(req, res, next) => {
+  await User.findOne()
+  .where({ status: 1 })
+  .select('name')
+  .then(async data => { 
+    // get populated Resume
+    let resume = await Resume.findOne()
+    .where({ creator: data._id, status: 1 })
+    .populate('techs').populate('projects').populate('educations').populate('jobs')
+    console.log(resume)
+    return res.status(200).json({
+      success: true,
+      count: data.length,
+      data: {
+        _id: data._id,
+        name: data.name,
+        resume: resume
+      }
+    })
+  })
+  .catch(err => { console.log(err)
     return res.status(500).json({
       success: false,
       error: `Failed to get data (abouts, skills & jobs) from User Collection`,

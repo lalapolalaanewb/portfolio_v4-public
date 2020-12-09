@@ -221,32 +221,32 @@ const AddNew = ({
               </FormGroup>
             </Grid>
           </Grid>
+          <Grid item xs={12}>
+            <FormGroup>
+              <FormControl required variant="outlined" className={classes.formControl}>
+                <InputLabel 
+                  id="techsLabel"
+                  classes={{
+                    root: inputClasses.selectFieldLabelRoot,
+                    focused: inputClasses.selectFieldLabelFocused,
+                    // notchedOutline: classes.selectFieldLabelNotchedOutline,
+                  }}
+                >
+                  Techs
+                </InputLabel>
+                <TechnologyState>
+                  <Technologies 
+                    techsPassed={projectTechs}
+                    setTechsPassed={setProjectTechs}
+                    isEdit={isEdit}
+                    techsChange={projectTechsChange}
+                    setTechsChange={setProjectTechsChange}
+                  />
+                </TechnologyState>
+              </FormControl>
+            </FormGroup>
+          </Grid>
           <Grid item container spacing={2}>
-            <Grid item xs={12} md={6}>
-              <FormGroup>
-                <FormControl required variant="outlined" className={classes.formControl}>
-                  <InputLabel 
-                    id="techsLabel"
-                    classes={{
-                      root: inputClasses.selectFieldLabelRoot,
-                      focused: inputClasses.selectFieldLabelFocused,
-                      // notchedOutline: classes.selectFieldLabelNotchedOutline,
-                    }}
-                  >
-                    Techs
-                  </InputLabel>
-                  <TechnologyState>
-                    <Technologies 
-                      techsPassed={projectTechs}
-                      setTechsPassed={setProjectTechs}
-                      isEdit={isEdit}
-                      techsChange={projectTechsChange}
-                      setTechsChange={setProjectTechsChange}
-                    />
-                  </TechnologyState>
-                </FormControl>
-              </FormGroup>
-            </Grid>
             <Grid item xs={12} md={6}>
               <FormGroup>
                 <TextField 
@@ -272,6 +272,18 @@ const AddNew = ({
                   }}
                 />
               </FormGroup>
+            </Grid>
+            <Grid item xs={12} md={6}
+              style={{
+                borderRadius: 10,
+                backgroundColor: theme.palette.type === 'light' ? theme.palette.grey[200] : theme.palette.lighten.light
+              }}
+            >
+              <ReactMarkDown 
+                source={isEdit ? projectSubDescChange : projectSubDesc}
+                renderers={{ code: Markdown }}
+                // ![alt text](/images/Deku.PNG#thumbnail_fw)
+              />
             </Grid>
           </Grid>
           <Grid item container spacing={2}>

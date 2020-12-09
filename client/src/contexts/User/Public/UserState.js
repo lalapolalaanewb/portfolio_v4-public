@@ -21,6 +21,16 @@ export const UserState = ({ children }) => {
       jobs: [],
       skills: [] 
     },
+    userResume: {
+      name: {},
+      resume: {
+        contactInfo: {},
+        techs: [],
+        projects: [],
+        educations: [],
+        jobs: []
+      }
+    },
     loading: false,
     error: false,
     message: ''

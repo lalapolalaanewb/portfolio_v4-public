@@ -29,9 +29,12 @@ const Resume = () => {
 
   /** resume update - states */
   const [websiteChange, setWebsiteChange] = useState('')
+  const [titleChange, setTitleChange] = useState('')
   const [descChange, setDescChange] = useState('')
   const [techsChange, setTechsChange] = useState([])
   const [projsChange, setProjsChange] = useState([])
+  const [edusChange, setEdusChange] = useState([])
+  const [jobsChange, setJobsChange] = useState([])
   const [currentCreator, setCurrentCreator] = useState('')
   const [isEdit, setIsEdit] = useState(false)
   const [isDelete, setIsDelete] = useState(false)
@@ -63,16 +66,22 @@ const Resume = () => {
   const handleResumeUpdate = async() => {
     await updateResume(resumeDispatch, resumeId, {
       website: websiteChange,
+      title: titleChange,
       description: descChange,
       techs: techsChange,
       projects: projsChange,
+      educations: edusChange,
+      jobs: jobsChange
     })
 
     setLoading(resumeDispatch, false)
     setWebsiteChange('')
+    setTitleChange('')
     setDescChange('')
     setTechsChange([])
     setProjsChange([])
+    setEdusChange([])
+    setJobsChange([])
     setResumeId('')
     setIsEdit(false)
   }
@@ -150,9 +159,14 @@ const Resume = () => {
               render: rowData => handleNoneValue(rowData.contactInfo.website) 
             },
             { 
+              title: 'Title', 
+              field: 'title',
+              render: rowData => handleNoneValue(rowData.contactInfo.title) 
+            },
+            { 
               title: 'Description', 
               field: 'description',
-              render: rowData => handleNoneValue(rowData.description) 
+              render: rowData => <p style={{maxHeight: 100, overflow: 'auto'}}>{handleNoneValue(rowData.description)}</p> 
             },
             { 
               title: 'Techs', 
@@ -186,6 +200,38 @@ const Resume = () => {
               },
               sorting: false 
             },
+            { 
+              title: 'Edus', 
+              field: 'educations',
+              render: rowData => {
+                return (
+                  <ul className={classes.ulTable}>
+                    {rowData.educations?.length > 0 && (rowData.educations.sort((a, b) => a.course < b.course ? -1 : 1)).map(edu => (
+                      <li key={edu._id}>
+                        {edu.course} {edu.entity !== '' && <>(<span style={{ color: theme.palette.secondary.main }}>{edu.entity}</span>)</>}
+                      </li>
+                    ))}
+                  </ul>
+                )
+              },
+              sorting: false 
+            },
+            { 
+              title: 'Jobs', 
+              field: 'jobs',
+              render: rowData => {
+                return (
+                  <ul className={classes.ulTable}>
+                    {rowData.jobs?.length > 0 && (rowData.jobs.sort((a, b) => a.name < b.name ? -1 : 1)).map(job => (
+                      <li key={job._id}>
+                        {job.name} {job.company !== '' && <>(<span style={{ color: theme.palette.secondary.main }}>{job.company}</span>)</>}
+                      </li>
+                    ))}
+                  </ul>
+                )
+              },
+              sorting: false 
+            },
           ]}
           actions={[
             {
@@ -194,6 +240,7 @@ const Resume = () => {
               // iconProps: { style: { color: 'red' } },
               onClick: (event, rowData) => {
                 setWebsiteChange(handleNoneValue(rowData.contactInfo.website))
+                setTitleChange(handleNoneValue(rowData.contactInfo.title))
                 setDescChange(handleNoneValue(rowData.description))
                 setTechsChange(() => {
                   let techs = []
@@ -204,6 +251,16 @@ const Resume = () => {
                   let projects = []
                   rowData.projects.forEach(project => projects.push(project._id))
                   return projects
+                })
+                setEdusChange(() => {
+                  let edus = []
+                  rowData.educations.forEach(edu => edus.push(edu._id))
+                  return edus
+                })
+                setJobsChange(() => {
+                  let jobs = []
+                  rowData.jobs.forEach(job => jobs.push(job._id))
+                  return jobs
                 })
                 setResumeId(rowData._id)
                 setIsEdit(true)
@@ -239,9 +296,12 @@ const Resume = () => {
         handleResumeUpdate={handleResumeUpdate}
         setResumeId={setResumeId}
         websiteChange={websiteChange} setWebsiteChange={setWebsiteChange}
+        titleChange={titleChange} setTitleChange={setTitleChange}
         descChange={descChange} setDescChange={setDescChange}
         techsChange={techsChange} setTechsChange={setTechsChange}
         projsChange={projsChange} setProjsChange={setProjsChange}
+        edusChange={edusChange} setEdusChange={setEdusChange}
+        jobsChange={jobsChange} setJobsChange={setJobsChange}
       />
     </>
   )

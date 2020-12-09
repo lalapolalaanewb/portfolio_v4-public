@@ -3,9 +3,14 @@
 const mongoose = require('mongoose')
 
 /** Page Specific Functions */
-// Allow empty string for website
+// Allow empty string for contactInfo.website
 function websiteRequired() {
-  let state = this.website
+  let state = this.contactInfo.website
+  return typeof state === 'string' ? false : true
+}
+// Allow empty string for contactInfo.title
+function titleRequired() {
+  let state = this.contactInfo.title
   return typeof state === 'string' ? false : true
 }
 // Allow empty string for description
@@ -20,6 +25,8 @@ const ResumeSchema = new mongoose.Schema({
   contactInfo: {
     // Website
     website: { type: String, trim: true, required: websiteRequired },
+    // Title
+    title: { type: String, trim: true, required: titleRequired },
   },
   // Desc
   description: { type: String, trim: true, required: descRequired },
@@ -27,6 +34,10 @@ const ResumeSchema = new mongoose.Schema({
   techs: [{ type: mongoose.Schema.Types.ObjectId, ref: "Technology" }],
   // Projects
   projects: [{ type: mongoose.Schema.Types.ObjectId, ref: "Project" }],
+  // Educations
+  educations: [{ type: mongoose.Schema.Types.ObjectId, ref: "Education" }],
+  // Jobs
+  jobs: [{ type: mongoose.Schema.Types.ObjectId, ref: "Job" }],
   // Status (1 = Published, 0 = Unpublished)
   status: { type: Number, required: true, default: 0 },
   // Creator

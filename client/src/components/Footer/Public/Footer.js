@@ -107,6 +107,7 @@ const Footer = () => {
             <div className={classes.socialIcons}>
               {userFooterPublic.socialMedias.map(socialMedia => (
                 <a
+                  key={socialMedia._id}
                   href={socialMedia.url} 
                   target="_blank"
                   // area-label={socialMedia.name}

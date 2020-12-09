@@ -3,9 +3,8 @@
 const bcrypt = require('bcryptjs')
 // Model - User
 const {
-  User, Technology, Project
+  User, Technology, Resume
 } = require('../models')
-const Resume = require('../models/Resume')
 
 /** Page Specific Functions */
 // handle 'none' input
@@ -28,21 +27,6 @@ const handleGetTechIds = async (techNames) => {
 
   return techIds
 }
-// handle getting projectIds
-const handleGetProjectIds = async (projNames) => {
-
-  let projObjIds = await Project.find().select('_id').where('name').in(projNames).exec()
-  if(!projObjIds) return res.status(500).json({
-    success: false,
-    error: `No project found or match with Project Collection`,
-    data: {}
-  })
-
-  let projIds = []
-  projObjIds.forEach(objId => projIds.push(objId._id))
-
-  return projIds
-}
 
 /** Methods */
 // @desc    Portfolio V4 User Profile (Get A User)
@@ -50,13 +34,15 @@ const handleGetProjectIds = async (projNames) => {
 // @access  Private (Require sessionId & uid)
 exports.getPrivateUserResume = async(req, res, next) => {
   await User.findOne().where({ status: 1 })
-  .select('name.firstName resumes projects')
+  .select('name.firstName resumes projects educations jobs')
   .populate('resumes')
   .populate('projects')
+  .populate('educations')
+  .populate('jobs')
   .then(async data => {
     // get all resumes created by user
     let resumes = await Resume.find()
-    .populate('techs').populate('projects')
+    .populate('techs').populate('projects').populate('educations').populate('jobs')
     .where({ creator: data._id })
     if(!resumes) return res.status(400).json({
       success: false,
@@ -70,7 +56,9 @@ exports.getPrivateUserResume = async(req, res, next) => {
       data: {
         _id: data._id,
         resumes: resumes,
-        projects: data.projects
+        projects: data.projects,
+        educations: data.educations,
+        jobs: data.jobs
       }
     })
   })
@@ -88,19 +76,24 @@ exports.getPrivateUserResume = async(req, res, next) => {
 // @access  Private (Require sessionId & uid)
 exports.addPrivateUserResume = async(req, res, next) => {
   let {
-    website, desc, techs, projs, creator
+    website, title, desc, techs, projs, edus, jobs, creator
   } = req.body
-
+  console.log(req.body)
   let techIds = await handleGetTechIds(techs)
 
   const resume = new Resume({ 
-    contactInfo: { website: handleNoneInput(website) },
+    contactInfo: { 
+      website: handleNoneInput(website),
+      title: handleNoneInput(title) 
+    },
     description: handleNoneInput(desc), 
     techs: techIds,
     projects: projs, 
+    educations: edus,
+    jobs: jobs,
     creator: creator 
   })
-  
+  console.log(resume)
   resume.save()
   .then(async data => {
     await User.findOneAndUpdate(
@@ -108,7 +101,7 @@ exports.addPrivateUserResume = async(req, res, next) => {
       { $push: { resumes: data._id } },
     )
 
-    let resume = await data.populate('techs').populate('projects').execPopulate()
+    let resume = await data.populate('techs').populate('projects').populate('educations').populate('jobs').execPopulate()
     
     return res.status(200).json({
       success: true,
@@ -138,15 +131,20 @@ exports.updatePrivateUserResume = async(req, res, next) => {
   await Resume.findByIdAndUpdate(
     { _id: resumeId },
     { $set: {
-      contactInfo: { website: handleNoneInput(resume.website) },
+      contactInfo: { 
+        website: handleNoneInput(resume.website),
+        title: handleNoneInput(resume.title) 
+      },
       description: handleNoneInput(resume.description),
       techs: techIds,
       projects: resume.projects,
+      educations: resume.educations,
+      jobs: resume.jobs
     } },
     { new: true }
   )
   .then(async data => {
-    let resume = await data.populate('techs').populate('projects').execPopulate()
+    let resume = await data.populate('techs').populate('projects').populate('educations').populate('jobs').execPopulate()
 
     return res.status(200).json({
       success: true,
@@ -188,7 +186,7 @@ exports.updatePrivateUserResumePublish = async(req, res, next) => {
       { new: true }
     )
     
-    let resume = await data.populate('techs').populate('projects').execPopulate()
+    let resume = await data.populate('techs').populate('projects').populate('educations').populate('jobs').execPopulate()
 
     return res.status(200).json({
       success: true,

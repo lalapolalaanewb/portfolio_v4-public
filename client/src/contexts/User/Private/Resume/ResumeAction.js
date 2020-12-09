@@ -22,7 +22,7 @@ export const getResumes = async (dispatch) => {
   await axios.post(baseUrl + '/get', { uid: '' }, config)
   .then(async res => {
     const result = await res.data.data
-    
+    console.log(result.resumes)
     dispatch({
       type: 'SET_RESUMES',
       payload: result.resumes 
@@ -30,7 +30,23 @@ export const getResumes = async (dispatch) => {
 
     dispatch({
       type: 'SET_PROJECTS',
-      payload: result.projects.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt)) 
+      payload: (() => {
+        let published = result.projects.filter(state => state.status === 1)
+        return published.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt))
+      })()
+    })
+
+    dispatch({
+      type: 'SET_EDUS',
+      payload: (() => {
+        let published = result.educations.filter(state => state.status === 1)
+        return published.sort((a, b) => a.course < b.course ? -1 : 1)
+      })()
+    })
+
+    dispatch({
+      type: 'SET_JOBS',
+      payload: result.jobs.sort((a, b) => a.name < b.name ? -1 : 1)
     })
 
     dispatch({

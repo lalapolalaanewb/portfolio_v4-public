@@ -3,11 +3,12 @@ import './App.css'
 import { AuthState } from './contexts/Auth/AuthState'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import Navbar from './components/Navbar/Navbar'
-import { Home, About, Projects, Posts, Post, Contact, Login } from './pages/public'
+import { Home, About, Resume, Projects, Posts, Post, Contact, Login } from './pages/public'
 import { Profile, Dashboard, ProjectsPrivate, PostsPrivate, Users, MediaSocials, SkillsPrivate, TechsPrivate } from './pages/private'
 import {
   UnprotectedRouteParentHome,
   UnprotectedRouteParentAbout,
+  UnprotectedRouteParentResume,
   UnprotectedRouteParentProjects,
   UnprotectedRouteParentPosts,
   UnprotectedRouteParentPost
@@ -90,6 +91,7 @@ function App() {
             <Switch>
               <UnprotectedRouteParentHome exact path="/" component={Home} />
               <UnprotectedRouteParentAbout path="/about" component={About} />
+              <UnprotectedRouteParentResume path="/resume" component={Resume} />
               <UnprotectedRouteParentProjects exact path="/projects" component={Projects} />
               <UnprotectedRouteParentPosts exact path="/blog" component={Posts} />
               <UnprotectedRouteParentPost path="/blog/:id" component={Post} />

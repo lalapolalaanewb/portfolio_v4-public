@@ -187,7 +187,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode, children }) => {
         {/* <Typography variant="h4" classes={{root: classes.contentHeader}}>
           Where is this?
         </Typography> */}
-        {!isAuth ? (
+        {isAuth ? (
           <>
             <ContentPrivateContainer>
               {children}

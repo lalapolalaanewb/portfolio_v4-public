@@ -4,6 +4,8 @@ const User = require('./User')
 const Home = require('./Home')
 // About Model
 const About = require('./About')
+// Resume Model
+const Resume = require('./Resume')
 // Social Media Model
 const Socialmedia = require('./Socialmedia')
 // Education Model
@@ -29,6 +31,7 @@ module.exports = {
   User,
   Home,
   About,
+  Resume,
   Socialmedia, 
   Education,
   Job,

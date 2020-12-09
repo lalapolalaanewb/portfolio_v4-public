@@ -15,6 +15,11 @@ export default (state, action) => {
         ...state,
         userAbout: action.payload
       }
+    case 'SET_USERRESUME':
+      return {
+        ...state,
+        userResume: action.payload
+      }
     case 'SET_ERROR':
       return {
         ...state,

@@ -10,6 +10,16 @@ export default (state, action) => {
         ...state,
         projects: action.payload
       }
+    case 'SET_EDUS':
+      return {
+        ...state,
+        educations: action.payload
+      }
+    case 'SET_JOBS':
+      return {
+        ...state,
+        occupations: action.payload
+      }
     case 'SET_CREATOR':
       return {
         ...state,

@@ -7,7 +7,7 @@ const {
   redirect2Login, redirect2Home, adminAccessPublic,
 } = require('../controllers')
 // Project Methods
-const { getPublicUserFooterPublic, getPublicUserHome, getPublicUserAbout, getPrivateUsers, addPrivateUser, updatePrivateUserActive, updatePrivateUser, deletePrivateUser } = require('../methods')
+const { getPublicUserFooterPublic, getPublicUserHome, getPublicUserAbout, getPublicUserResume, getPrivateUsers, addPrivateUser, updatePrivateUserActive, updatePrivateUser, deletePrivateUser } = require('../methods')
 
 /** Routes */
 // @desc    Portfolio V4 Footer Public (Get A User)
@@ -27,6 +27,12 @@ router.route('/gethome')
 // @access  Public (Only need Admin Public Access Key)
 router.route('/getabout')
 .post(adminAccessPublic, getPublicUserAbout)
+
+// @desc    Portfolio V4 Resume Page (Get A User)
+// @route   POST /api/v1/users/getresume
+// @access  Public (Only need Admin Public Access Key)
+router.route('/getresume')
+.post(adminAccessPublic, getPublicUserResume)
 
 // @desc    Portfolio V4 Users Dashboard (Get All Users)
 // @route   POST /api/v1/users/private/get
