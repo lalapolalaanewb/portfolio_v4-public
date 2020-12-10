@@ -12,6 +12,7 @@ import FilterList from '@material-ui/icons/FilterList'
 import FirstPage from '@material-ui/icons/FirstPage'
 import GetApp from '@material-ui/icons/GetApp'
 import LastPage from '@material-ui/icons/LastPage'
+import Pdf from '@material-ui/icons/PictureAsPdf'
 import PhotoCamera from '@material-ui/icons/PhotoCamera'
 import Publish from '@material-ui/icons/Publish'
 import Remove from '@material-ui/icons/Remove'
@@ -33,6 +34,7 @@ export const Icons2Use = () => {
     FirstPage: forwardRef((props, ref) => <FirstPage {...props} ref={ref} />),
     LastPage: forwardRef((props, ref) => <LastPage {...props} ref={ref} />),
     NewImg: forwardRef((props, ref) => <PhotoCamera {...props} ref={ref} />),
+    NewPdf: forwardRef((props, ref) => <Pdf {...props} ref={ref} />),
     NextPage: forwardRef((props, ref) => <ChevronRight {...props} ref={ref} />),
     PreviousPage: forwardRef((props, ref) => <ChevronLeft {...props} ref={ref} />),
     Publish: forwardRef((props, ref) => <Publish {...props} ref={ref} />),

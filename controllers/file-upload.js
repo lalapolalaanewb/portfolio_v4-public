@@ -10,8 +10,8 @@ const {
   FILE_BASE_FOLDER_LOCATION = path.resolve(__dirname + '/', '../'),
   // Image Folder Location
   IMAGE_FOLDER_LOCATION = FILE_BASE_FOLDER_LOCATION + '/client/public/images/',
-  // File Folder Location
-  FILE_FOLDER_LOCATION = FILE_BASE_FOLDER_LOCATION + '/client/public/files/'
+  // Pdf Folder Location
+  PDF_FOLDER_LOCATION = FILE_BASE_FOLDER_LOCATION + '/client/public/files/'
 } = process.env
 
 // storage img
@@ -28,18 +28,43 @@ const storageImgFile = multer.diskStorage({
   }
 })
 
+// storage pdf
+const storagePdfFile = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, PDF_FOLDER_LOCATION)
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname)
+  }
+})
+
 // filter img types
 const filterImgFile = (req, file, cb) => {
-  const fileTypes = ['image/png', 'image/jpg', 'image/jpeg']
+  const fileTypes = ['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml']
   
   if(fileTypes.includes(file.mimetype)) cb(null, true)
-  else cb('Only .png .jpg and .jpeg format allowed!', false)
+  else cb('Only .png .jpg .jpeg & image/svg+xml format allowed!', false)
+}
+
+// filter pdf types
+const filterPdfFile = (req, file, cb) => {
+  const fileTypes = ['application/pdf']
+  
+  if(fileTypes.includes(file.mimetype)) cb(null, true)
+  else cb('Only .pdf format allowed!', false)
 }
 
 // Img FIle Upload Middleware
 const uploadImgFile = multer({
   storage: storageImgFile,
   filterImgFile: filterImgFile
+  // limits: { fieldSize: 10000000000 }
+})
+
+// Pdf FIle Upload Middleware
+const uploadPdfFile = multer({
+  storage: storagePdfFile,
+  filterPdfFile: filterPdfFile
   // limits: { fieldSize: 10000000000 }
 })
 
@@ -56,9 +81,22 @@ const handleImgRemove = (res, imgSrc) => {
   })
 }
 
+// Pdf Removing Handler
+const handlePdfRemove = (res, pdfSrc) => {
+  fileRemove.unlink(PDF_FOLDER_LOCATION + pdfSrc, async (err) => {
+    if(err) {
+      return res.status(500).json({
+        success: false,
+        error: `Failed at removing file from server files folder`,
+        data: err
+      })
+    }
+  })
+}
+
 module.exports = {
   imgFolderLocation: IMAGE_FOLDER_LOCATION,
-  fileFolderLocation: FILE_FOLDER_LOCATION,
-  uploadImgFile,
-  handleImgRemove,
+  pdfFolderLocation: PDF_FOLDER_LOCATION,
+  uploadImgFile, uploadPdfFile,
+  handleImgRemove, handlePdfRemove,
 }

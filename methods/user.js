@@ -121,7 +121,7 @@ exports.getPublicUserAbout = async(req, res, next) => {
 exports.getPublicUserResume = async(req, res, next) => {
   await User.findOne()
   .where({ status: 1 })
-  .select('name')
+  .select('name credentials.emails.main')
   .then(async data => { 
     // get populated Resume
     let resume = await Resume.findOne()
@@ -134,6 +134,7 @@ exports.getPublicUserResume = async(req, res, next) => {
       data: {
         _id: data._id,
         name: data.name,
+        email: data.credentials.emails.main,
         resume: resume
       }
     })

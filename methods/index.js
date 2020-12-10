@@ -54,7 +54,7 @@ const {
 const {
   getPrivateUserResume,
   addPrivateUserResume,
-  updatePrivateUserResume, updatePrivateUserResumePublish,
+  updatePrivateUserResume, updatePrivateUserResumePdf, updatePrivateUserResumePublish,
   deletePrivateUserResume
 } = require('./resume')
 // Profile Social Methods
@@ -149,7 +149,7 @@ module.exports = {
   // Profile Resume
   getPrivateUserResume,
   addPrivateUserResume,
-  updatePrivateUserResume, updatePrivateUserResumePublish,
+  updatePrivateUserResume, updatePrivateUserResumePdf, updatePrivateUserResumePublish,
   deletePrivateUserResume,
   // Profile Social
   getPrivateUserSocial,

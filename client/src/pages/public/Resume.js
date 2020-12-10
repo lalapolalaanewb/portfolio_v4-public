@@ -5,7 +5,7 @@ import ReactMarkDown from 'react-markdown'
 import Markdown from '../../components/global/Markdown'
 import classNames from 'classnames'
 import { makeStyles, useTheme } from '@material-ui/core/styles'
-import { Typography } from '@material-ui/core'
+import { Button, Typography } from '@material-ui/core'
 import { FaTimes } from 'react-icons/fa'
 
 const Resume = () => {
@@ -42,6 +42,18 @@ const Resume = () => {
         </div>
       )}
       <div className={theme.palette.type === 'light' ? classNames(classes.container, classes.containerBgDark) : classNames(classes.container, classes.containerBgLight)}>
+        <Button 
+          variant="contained" 
+          color="secondary" 
+          style={{
+            color: theme.palette.common.white,
+            alignSelf: 'flex-end',
+            margin: 10
+          }}
+          onClick={() => handleGoToUrl('/files/' + userResume.resume.pdfSrc)}
+        >
+          Download
+        </Button>
         <div className={theme.palette.type === 'light' ? classNames(classes.person, classes.personBgDark) : classNames(classes.person, classes.personBgLight)}>
           <Typography variant="h2" style={{fontWeight: 500}}>{userResume.name.firstName} {userResume.name.lastName}</Typography>
           <Typography variant="subtitle1">{userResume.resume.contactInfo.title}</Typography>
@@ -50,8 +62,8 @@ const Resume = () => {
           <div className={classes.contentLeft}>
             <div className="child">
               <Typography variant="body1" className={classes.itemTitle}>Info</Typography>
-              <Typography variant="body1" color="textSecondary">Email: {userResume.resume.contactInfo.website}</Typography>
-              <Typography variant="body1" color="textSecondary">Website: {userResume.resume.contactInfo.website}</Typography>
+              <Typography variant="body1" color="textSecondary" className={classes.emails}>Email: {userResume.email}</Typography>
+              <Typography variant="body1" color="textSecondary" className={classes.emails}>Website: <span style={{cursor: 'pointer', color: theme.palette.secondary.main}} onClick={() => handleGoToUrl(userResume.resume.contactInfo.website)}>{userResume.resume.contactInfo.website}</span></Typography>
             </div>
             {userResume.resume.techs.length > 0 && (
               <div className="child">
@@ -86,19 +98,27 @@ const Resume = () => {
                 <Typography variant="body1" color="textSecondary">{userResume.resume.description}</Typography>
               </div>
             )}
-            {userResume.resume.jobs.length > 0 ? (
+            {userResume.resume.jobs.length > 0 && (
               <div className="child">
                 <Typography variant="body1" className={classes.itemTitle}>Jobs</Typography>
-                {/* <Typography variant="body1" color="textSecondary">{userResume.resume.description}</Typography> */}
+                <div className={classes.scrollingItems}>
+                  {userResume.resume.jobs.map((job, index) => (
+                    <div key={job._id}>
+                      <Typography variant="body1" color="textSecondary">{+index + 1}) {job.name} - <span style={{fontStyle: 'italic'}}>{job.company}</span></Typography>
+                      <div className={classes.markdown}>{job.description !== '' && <ReactMarkDown source={job.description} renderers={{ code: Markdown }}/>}</div>
+                    </div>
+                  ))}
+                </div>
               </div>
-            ) : userResume.resume.projects.length > 0 && (
+            )}
+            {userResume.resume.projects.length > 0 && (
               <div className="child">
                 <Typography variant="body1" className={classes.itemTitle}>Projects</Typography>
                 <div className={classes.scrollingItems}>
                   {userResume.resume.projects.map((project, index) => (
                     <div key={project._id}>
                       <Typography variant="body1" color="textSecondary">{+index + 1}) {project.name}</Typography>
-                      {project.subDescription !== '' && <ReactMarkDown source={project.subDescription} renderers={{ code: Markdown }}/>}
+                      <div className={classes.markdown}>{project.subDescription !== '' && <ReactMarkDown source={project.subDescription} renderers={{ code: Markdown }}/>}</div>
                       <div style={{width: '100%', display: 'flex', flexFlow: 'row', justifyContent: 'flex-end', alignItems: 'center'}}>
                         {project.liveUrls.www !== '' && (
                           <Typography 
@@ -178,6 +198,11 @@ const useStyles = makeStyles(theme => ({
       '& h2': {
         fontSize: 40
       },
+    },
+    '@media (max-width: 330px)': {
+      '& h2': {
+        fontSize: 30
+      },
     }
   },
   personBgLight: {
@@ -225,6 +250,9 @@ const useStyles = makeStyles(theme => ({
     },
     '@media (max-width: 400px)': {
       padding: '20px 20px 20px 20px',
+    },
+    '@media (max-width: 300px)': {
+      padding: '20px 0px 20px 0px',
     }
   },
   contentRight: {
@@ -247,6 +275,9 @@ const useStyles = makeStyles(theme => ({
     },
     '@media (max-width: 400px)': {
       padding: '20px 20px 20px 20px',
+    },
+    '@media (max-width: 300px)': {
+      padding: '20px 0px 20px 0px',
     }
   },
   itemTitle: {
@@ -258,8 +289,21 @@ const useStyles = makeStyles(theme => ({
   },
   scrollingItems: {
     '@media (min-width: 900px)': {
-      maxHeight: 350, 
+      maxHeight: 360, 
       overflow: 'auto',
     }
+  },
+  emails: {
+    width: '100%',
+    overflow: 'hidden',
+    display: '-webkit-box',
+    WebkitBoxOrient: 'vertical',
+    WebkitLineClamp: 2,
+  },
+  markdown: {
+    // border: '1px solid yellow',
+    width: '100%',
+    maxWidth: '100%',
+    overflow: 'auto'
   },
 }))

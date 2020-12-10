@@ -3,8 +3,11 @@ import { useJob } from '../../../contexts/User/Private/Job/JobState'
 import { setLoading, setError, setSuccess, addJob } from '../../../contexts/User/Private/Job/JobAction'
 import AlertMessage from '../../../components/global/Alert'
 import Headline from '../../../components/global/Headline'
+import ReactMarkDown from 'react-markdown'
+import Markdown from '../../global/Markdown'
 import classNames from 'classnames'
 import InputStyles from '../../../components/global/InputStyles'
+import { useTheme } from '@material-ui/core/styles'
 import { 
   Button, 
   FormGroup, 
@@ -19,26 +22,32 @@ const AddNewJob = ({
   setJobId,
   nameChange, setNameChange,
   abbreviationChange, setAbbreviationChange,
+  descChange, setDescChange,
   companyChange, setCompanyChange
 }) => {
   const [jobState, jobDispatch] = useJob()
   const { creator, error, success, message } = jobState
 
-  /** theme & style - states */
+  /** theme - states */
+  const theme = useTheme()
+
+  /** input theme & style - states */
   const { inputClasses } = InputStyles()
 
   /** job add new - states */
   const [name, setName] = useState('')
   const [abbreviation, setAbbreviation] = useState('')
+  const [desc, setDesc] = useState('')
   const [company, setCompany] = useState('')
 
   /** job add new - function */
   const handleJobAdd = async() => {
-    await addJob(jobDispatch, { name, abbreviation, company, creator })
+    await addJob(jobDispatch, { name, abbreviation, desc, company, creator })
 
     setLoading(jobDispatch, false)
     setName('')
     setAbbreviation('')
+    setDesc('')
     setCompany('')
   }
 
@@ -143,6 +152,46 @@ const AddNewJob = ({
               />
             </FormGroup>
           </Grid>
+          <Grid item container spacing={2}>
+            <Grid item xs={12} md={6}>
+              <FormGroup>
+                <TextField 
+                  label="Description"
+                  variant="outlined"
+                  value={isEdit ? descChange : desc}
+                  onChange={(e) => isEdit ? setDescChange(e.target.value) : setDesc(e.target.value)} 
+                  required
+                  multiline
+                  rowsMax={50}
+                  InputLabelProps={{
+                    classes: {
+                      root: inputClasses.textFieldLabel,
+                      focused: inputClasses.textFieldLabelFocused
+                    }
+                  }}
+                  InputProps={{
+                    classes: {
+                      root: inputClasses.textFieldRoot,
+                      focused: inputClasses.textFieldFocused,
+                      notchedOutline: inputClasses.textFieldNotchedOutline
+                    }
+                  }}
+                />
+              </FormGroup>
+            </Grid>
+            <Grid item xs={12} md={6}
+              style={{
+                borderRadius: 10,
+                backgroundColor: theme.palette.type === 'light' ? theme.palette.grey[200] : theme.palette.lighten.light
+              }}
+            >
+              <ReactMarkDown 
+                source={isEdit ? descChange : desc}
+                renderers={{ code: Markdown }}
+                // ![alt text](/images/Deku.PNG#thumbnail_fw)
+              />
+            </Grid>
+          </Grid>
           <Grid item xs={12}>
             {isEdit && (
               <Button 
@@ -151,6 +200,7 @@ const AddNewJob = ({
                 onClick={() => {
                   setNameChange('')
                   setAbbreviationChange('')
+                  setDescChange('')
                   setCompanyChange('')
                   setJobId('')
                   setIsEdit(false)
@@ -167,11 +217,13 @@ const AddNewJob = ({
                 if(isEdit) {
                   setNameChange('')
                   setAbbreviationChange('')
+                  setDescChange('')
                   setCompanyChange('')
                 }
                 else {
                   setName('')
                   setAbbreviation('')
+                  setDesc('')
                   setCompany('')
                 }
               }}

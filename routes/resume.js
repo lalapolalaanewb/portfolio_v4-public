@@ -5,12 +5,14 @@ const router = require("express").Router();
 const {
   // Verification
   redirect2Login, redirect2Home,
+  // File Upload
+  uploadPdfFile,
 } = require('../controllers')
 // Project Methods
 const {
   getPrivateUserResume, 
   addPrivateUserResume, 
-  updatePrivateUserResume, updatePrivateUserResumePublish,
+  updatePrivateUserResume, updatePrivateUserResumePdf, updatePrivateUserResumePublish,
   deletePrivateUserResume, 
 } = require('../methods')
 
@@ -26,8 +28,8 @@ router.route('/get')
 // @route   POST /api/v1/users/private/profile/resume/add
 // @access  Private (Require sessionId & uid)
 router.route('/add')
-  // .post(redirect2Login, addPrivateUserResume)
-  .post(addPrivateUserResume)
+  // .post(redirect2Login, uploadPdfFile.single('file'), addPrivateUserResume)
+  .post(uploadPdfFile.single('file'), addPrivateUserResume)
 
 // @desc    Portfolio V4 Users Profile (Update A User's Resume)
 // @route   POST /api/v1/users/private/profile/resume/update
@@ -35,6 +37,13 @@ router.route('/add')
 router.route('/update')
   // .post(redirect2Login, updatePrivateUserResume)
   .post(updatePrivateUserResume)
+
+// @desc    Portfolio V4 Users Profile (Update A User's Resume Pdf)
+// @route   POST /api/v1/users/private/profile/resume/update/pdf
+// @access  Private (Require sessionId & uid)
+router.route('/update/pdf')
+  // .post(redirect2Login, uploadPdfFile.single('file'), updatePrivateUserResumePdf)
+  .post(uploadPdfFile.single('file'), updatePrivateUserResumePdf)
 
 // @desc    Portfolio V4 Users Profile (Update A User's Resume Publish)
 // @route   POST /api/v1/users/private/profile/resume/update/publish

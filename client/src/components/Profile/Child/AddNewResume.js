@@ -14,13 +14,20 @@ import {
   FormControl,
   FormGroup, 
   Grid, 
+  IconButton,
   InputLabel,
   MenuItem,
   Select,
   TextField, 
+  Tooltip,
+  Typography,
+  Zoom
 } from '@material-ui/core'
+import PictureAsPdfIcon from '@material-ui/icons/PictureAsPdf'
 
 const AddNewResume = ({
+  globalClasses,
+  PdfFileTypes,
   addNewRef,
   isEdit, setIsEdit,
   handleResumeUpdate,
@@ -41,6 +48,7 @@ const AddNewResume = ({
   const { inputClasses } = InputStyles()
 
   /** resume add new - states */
+  const [pdf, setPdf] = useState('')
   const [website, setWebsite] = useState('')
   const [title, setTitle] = useState('')
   const [desc, setDesc] = useState('')
@@ -51,9 +59,10 @@ const AddNewResume = ({
 
   /** resume add new - function */
   const handleResumeAdd = async() => {
-    await addResume(resumeDispatch, { website, title, desc, techs, projs, edus, jobs, creator })
+    await addResume(resumeDispatch, { pdf, website, title, desc, techs, projs, edus, jobs, creator })
 
     setLoading(resumeDispatch, false)
+    setPdf('')
     setWebsite('')
     setTitle('')
     setDesc('')
@@ -90,6 +99,34 @@ const AddNewResume = ({
               />
             )}
           </Grid>
+          {!isEdit && (
+            <Grid item xs={12}>
+              <FormGroup>
+                <input 
+                  accept="application/pdf" 
+                  className={globalClasses.photoInput} 
+                  id="icon-button-file" 
+                  type="file"
+                  onChange={(e) => {
+                    let selectedPdf = e.target.files[0]
+                    
+                    if(selectedPdf && PdfFileTypes.includes(selectedPdf.type)) setPdf(selectedPdf)
+                  }} 
+                  required 
+                />
+                <label htmlFor="icon-button-file"  className={globalClasses.photoLabel}>
+                  <Tooltip TransitionComponent={Zoom} title="Add pdf" placement="top-start">
+                    <IconButton color="primary" aria-label="upload picture" component="span" classes={{root: globalClasses.iconButtonPhoto}}>
+                      <PictureAsPdfIcon /> 
+                    </IconButton>
+                  </Tooltip>
+                  <Typography className={globalClasses.photoLabelText} variant="subtitle1">
+                    {pdf ? pdf.name : 'No Pdf Selected'}
+                  </Typography>
+                </label>
+              </FormGroup>
+            </Grid>
+          )}
           <Grid item container spacing={2}>
             <Grid item xs={12} md={6}>
               <FormGroup>
@@ -341,6 +378,7 @@ const AddNewResume = ({
                   setJobsChange([])
                 }
                 else {
+                  setPdf('')
                   setWebsite('')
                   setTitle('')
                   setDesc('')

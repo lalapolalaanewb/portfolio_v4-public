@@ -5,6 +5,8 @@ const bcrypt = require('bcryptjs')
 const {
   User, Technology, Resume
 } = require('../models')
+// Controllers
+const { pdfFolderLocation, handlePdfRemove } = require('../controllers')
 
 /** Page Specific Functions */
 // handle 'none' input
@@ -27,6 +29,8 @@ const handleGetTechIds = async (techNames) => {
 
   return techIds
 }
+// handle empty array
+const handleEmptyArray = array => array === '' ? [] : array.split(',')
 
 /** Methods */
 // @desc    Portfolio V4 User Profile (Get A User)
@@ -76,24 +80,26 @@ exports.getPrivateUserResume = async(req, res, next) => {
 // @access  Private (Require sessionId & uid)
 exports.addPrivateUserResume = async(req, res, next) => {
   let {
-    website, title, desc, techs, projs, edus, jobs, creator
+    website, title, description, techs, projects, educations, jobs, creator
   } = req.body
-  console.log(req.body)
-  let techIds = await handleGetTechIds(techs)
+  
+  let techNames = techs.split(',')
+  let techIds = await handleGetTechIds(techNames)
 
   const resume = new Resume({ 
+    pdfSrc: req.file.originalname,
     contactInfo: { 
       website: handleNoneInput(website),
       title: handleNoneInput(title) 
     },
-    description: handleNoneInput(desc), 
+    description: handleNoneInput(description), 
     techs: techIds,
-    projects: projs, 
-    educations: edus,
-    jobs: jobs,
+    projects: handleEmptyArray(projects), 
+    educations: handleEmptyArray(educations),
+    jobs: handleEmptyArray(jobs),
     creator: creator 
   })
-  console.log(resume)
+  // console.log(resume)
   resume.save()
   .then(async data => {
     await User.findOneAndUpdate(
@@ -110,11 +116,14 @@ exports.addPrivateUserResume = async(req, res, next) => {
     })
   })
   .catch(err => { console.log(err)
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
       error: `Failed to add new resume data from Resume Collection`,
       data: err
     })
+
+    // - remove image from server images folder
+    handlePdfRemove(res, req.file.originalname)
   })
 }
 
@@ -125,7 +134,7 @@ exports.updatePrivateUserResume = async(req, res, next) => {
   let {
     resumeId, resume
   } = req.body
-
+  console.log(resume.educations); console.log(typeof resume.educations)
   let techIds = await handleGetTechIds(resume.techs)
 
   await Resume.findByIdAndUpdate(
@@ -156,6 +165,38 @@ exports.updatePrivateUserResume = async(req, res, next) => {
     return res.status(500).json({
       success: false,
       error: `Failed to update resume from Resume Collection`,
+      data: err
+    })
+  })
+}
+
+// @desc    Portfolio V4 Users Profile (Update A User's Resume Pdf)
+// @route   POST /api/v1/users/private/profile/resume/update/pdf
+// @access  Private (Require sessionId & uid)
+exports.updatePrivateUserResumePdf = async(req, res, next) => {
+  let { resumeId, pdfSrc } = req.body
+
+  // - remove image from server images folder
+  handlePdfRemove(res, pdfSrc)
+
+  await Resume.findByIdAndUpdate(
+    { _id: resumeId },
+    { $set: { pdfSrc: req.file.originalname } },
+    { new: true }
+  )
+  .then(async data => {
+    let resume = await data.populate('techs').populate('projects').populate('educations').populate('jobs').execPopulate()
+
+    return res.status(200).json({
+      success: true,
+      count: resume.length,
+      data: resume
+    })
+  })
+  .catch(err => {
+    return res.status(500).json({
+      success: false,
+      error: `Failed to update resume pdf from Resume Collection`,
       data: err
     })
   })
@@ -218,7 +259,10 @@ exports.deletePrivateUserResume = async(req, res, next) => {
     }
 
     // remove resume
-    await Resume.findByIdAndDelete(req.body.resumeId)
+    let resumeDeleted = await Resume.findByIdAndDelete(req.body.resumeId)
+    
+    // - remove pdf from server files folder
+    handlePdfRemove(res, resumeDeleted.pdfSrc)
 
     // remove from user
     await User.updateOne(

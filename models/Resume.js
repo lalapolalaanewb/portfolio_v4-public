@@ -21,6 +21,8 @@ function descRequired() {
 
 /** Data Schema */
 const ResumeSchema = new mongoose.Schema({
+  // Pdf Src
+  pdfSrc: { type: String, trim: true, required: true },
   // Contact Info
   contactInfo: {
     // Website

@@ -22,7 +22,7 @@ export const getResumes = async (dispatch) => {
   await axios.post(baseUrl + '/get', { uid: '' }, config)
   .then(async res => {
     const result = await res.data.data
-    console.log(result.resumes)
+    // console.log(result.resumes)
     dispatch({
       type: 'SET_RESUMES',
       payload: result.resumes 
@@ -68,7 +68,18 @@ export const getResumes = async (dispatch) => {
 export const addResume = async (dispatch, resume) => {
   setLoading(dispatch, true)
   
-  await axios.post(baseUrl + '/add', resume, config)
+  const formData = new FormData()
+  formData.append('website', resume.website)
+  formData.append('title', resume.title)
+  formData.append('description', resume.desc)
+  formData.append('techs', resume.techs)
+  formData.append('projects', resume.projs)
+  formData.append('educations', resume.edus)
+  formData.append('jobs', resume.jobs)
+  formData.append('creator', resume.creator)
+  formData.append('file', resume.pdf)
+
+  await axios.post(baseUrl + '/add', formData, configMultiPart)
   .then(async res => {
     const result = await res.data.data
 
@@ -104,6 +115,46 @@ export const updateResume = async (dispatch, resumeId, resume) => {
     const result = await res.data.data
 
     // update state
+    dispatch({
+      type: 'DELETE_RESUME',
+      payload: resumeId
+    })
+    dispatch({
+      type: 'ADD_RESUME',
+      payload: result
+    })
+
+    // update success
+    setSuccess(dispatch, {
+      status: true,
+      message: 'Successfully update the resume.'
+    })
+  })
+  .catch(async error => {
+    const result = await error.response.data
+
+    // update state
+    setError(dispatch, {
+      status: true,
+      message: result.error
+    })
+  })
+}
+
+// Update A Resume Pdf
+export const updateResumePdf = async (dispatch, resumeId, pdf) => {
+  setLoading(dispatch, true)
+
+  const formData = new FormData()
+  formData.append('resumeId', resumeId)
+  formData.append('pdfSrc', pdf.old)
+  formData.append('file', pdf.new)
+
+  await axios.post(baseUrl + `/update/pdf`, formData, configMultiPart)
+  .then(async res => {
+    const result = await res.data.data
+
+    // update posts
     dispatch({
       type: 'DELETE_RESUME',
       payload: resumeId

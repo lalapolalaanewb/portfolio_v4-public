@@ -3,8 +3,13 @@ import { useJob } from '../../contexts/User/Private/Job/JobState'
 import { setLoading, setSuccess, setError, getJobs, updateJob, updateJobPublish, deleteJob } from '../../contexts/User/Private/Job/JobAction'
 import AlertMessage from '../../components/global/Alert'
 import { DividerBlank } from '../../components/global/Divider'
+import ReactMarkDown from 'react-markdown'
+import Markdown from '../../components/global/Markdown'
+import { MarkDownStyles } from '../../components/global/Markdown'
 import AddNew from '../../components/Profile/Child/AddNewJob'
+import classNames from 'classnames'
 import { useTheme } from '@material-ui/core/styles';
+import { Typography } from '@material-ui/core'
 import MaterialTable from 'material-table'
 import { Icons2Use, PaginationTableCustom } from '../../components/global/TableMaterial'
 
@@ -14,6 +19,9 @@ const Job = () => {
   
   /** theme - states */
   const theme = useTheme()
+
+  /** markdown - states */
+  const { markdownStyles } = MarkDownStyles()
 
   /** global - states */
   const addNewRef = useRef(null)
@@ -29,6 +37,7 @@ const Job = () => {
   /** job update - states */
   const [nameChange, setNameChange] = useState('')
   const [abbreviationChange, setAbbreviationChange] = useState('')
+  const [descChange, setDescChange] = useState('')
   const [companyChange, setCompanyChange] = useState('')
   const [currentCreator, setCurrentCreator] = useState('')
   const [isEdit, setIsEdit] = useState(false)
@@ -62,12 +71,14 @@ const Job = () => {
     await updateJob(jobDispatch, jobId, {
       name: nameChange,
       abbreviation: abbreviationChange,
+      description: descChange,
       company: companyChange,
     })
 
     setLoading(jobDispatch, false)
     setNameChange('')
     setAbbreviationChange('')
+    setDescChange('')
     setCompanyChange('')
     setJobId('')
     setIsEdit(false)
@@ -139,6 +150,17 @@ const Job = () => {
               backgroundColor: rowData.status === 0 && (() => theme.palette.type === 'light' ? theme.palette.grey[300] : theme.palette.lighten.main)()
             })
           }}
+          detailPanel={rowData => {
+            return (
+              <div style={{backgroundColor: theme.palette.type === 'light' ? theme.palette.grey[200] : theme.palette.lighten.light}}>
+                <div style={{padding: theme.spacing(3)}} className={theme.palette.type === 'light' ? classNames(markdownStyles.mdContainer, markdownStyles.mdContainerDark) : classNames(markdownStyles.mdContainer, markdownStyles.mdContainerLight)}>
+                <Typography variant="h5">Description</Typography>
+                  {rowData.description !== '' ? <ReactMarkDown source={rowData.description} renderers={{ code: Markdown }}/> : 'none'}
+                </div>
+              </div>
+            )
+          }}
+          onRowClick={(event, rowData, togglePanel) => togglePanel()}
           columns={[
             { title: 'Name', field: 'name' },
             { 
@@ -160,6 +182,7 @@ const Job = () => {
               onClick: (event, rowData) => {
                 setNameChange(rowData.name)
                 setAbbreviationChange(handleNoneValue(rowData.abbreviation))
+                setDescChange(handleNoneValue(rowData.description))
                 setCompanyChange(handleNoneValue(rowData.company))
                 setJobId(rowData._id)
                 setIsEdit(true)
@@ -196,6 +219,7 @@ const Job = () => {
         setJobId={setJobId}
         nameChange={nameChange} setNameChange={setNameChange}
         abbreviationChange={abbreviationChange} setAbbreviationChange={setAbbreviationChange}
+        descChange={descChange} setDescChange={setDescChange}
         companyChange={companyChange} setCompanyChange={setCompanyChange}
       />
     </>

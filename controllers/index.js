@@ -10,7 +10,11 @@ const { redirect2Login, redirect2Home, userIsAuthenticated, userIsActive, adminA
 // Validation
 const { registerValidation } = require('./validation')
 // File Upload
-const { imgFolderLocation, fileFolderLocation, uploadImgFile, handleImgRemove } = require('./file-upload')
+const { 
+  imgFolderLocation, pdfFolderLocation, 
+  uploadImgFile, uploadPdfFile, 
+  handleImgRemove, handlePdfRemove
+} = require('./file-upload')
 /** Exports */
 module.exports = {
   // Session
@@ -24,5 +28,7 @@ module.exports = {
   // Validation
   registerValidation,
   // File Upload
-  imgFolderLocation, fileFolderLocation, uploadImgFile, handleImgRemove
+  imgFolderLocation, pdfFolderLocation, 
+  uploadImgFile, uploadPdfFile, 
+  handleImgRemove, handlePdfRemove
 }

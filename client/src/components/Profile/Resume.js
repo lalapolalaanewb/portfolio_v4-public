@@ -1,12 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useResume } from '../../contexts/User/Private/Resume/ResumeState'
-import { setLoading, setSuccess, setError, getResumes, updateResume, updateResumePublish, deleteResume } from '../../contexts/User/Private/Resume/ResumeAction'
+import { setLoading, setSuccess, setError, getResumes, updateResume, updateResumePdf, updateResumePublish, deleteResume } from '../../contexts/User/Private/Resume/ResumeAction'
 import AlertMessage from '../../components/global/Alert'
 import { DividerBlank } from '../../components/global/Divider'
 import AddNew from '../../components/Profile/Child/AddNewResume'
 import { makeStyles, useTheme } from '@material-ui/core/styles';
+import {
+  Button,
+  FormGroup,
+  IconButton,
+  Modal, 
+  Tooltip,
+  Typography,
+  Zoom,
+} from '@material-ui/core'
 import MaterialTable from 'material-table'
 import { Icons2Use, PaginationTableCustom } from '../../components/global/TableMaterial'
+import PictureAsPdfIcon from '@material-ui/icons/PictureAsPdf'
 
 const Resume = () => {
   const [resumeState, resumeDispatch] = useResume()
@@ -18,10 +28,16 @@ const Resume = () => {
 
   /** global - states */
   const addNewRef = useRef(null)
+  const PdfFileTypes = ['application/pdf']
   const [resumeId, setResumeId] = useState('')
 
   /** table icons */
   const { allIcons } = Icons2Use()
+
+  /** resume pdf change - states */
+  const [pdfChange, setPdfChange] = useState('')
+  const [currentPdfSrc, setCurrentPdfSrc] = useState('')
+  const [isPdfChange, setIsPdfChange] = useState(false)
 
   /** resume publish change - states */
   const [intention, setIntention] = useState('')
@@ -47,6 +63,22 @@ const Resume = () => {
       setLoading(resumeDispatch, false)
     })()
   }, [])
+
+  /** resume pdf change - function */
+  const handlePdfUpdate = async() => {
+    if(!pdfChange) return setError(resumeDispatch, { status: true, message: 'Cannot send blank file!' })
+    
+    await updateResumePdf(resumeDispatch, resumeId, {
+      new: pdfChange, 
+      old: currentPdfSrc 
+    })
+
+    setLoading(resumeDispatch, false)
+    setResumeId('')
+    setPdfChange('')
+    setCurrentPdfSrc('')
+    setIsPdfChange(false)
+  }
 
   /** resume publish - function */
   useEffect(() => {
@@ -126,6 +158,57 @@ const Resume = () => {
           setStatus={setSuccess}
         />
       )}
+      <Modal
+        open={isPdfChange}
+        onClose={() => {
+          setResumeId('')
+          setPdfChange('')
+          setCurrentPdfSrc('')
+          setIsPdfChange(false)
+        }}
+        aria-labelledby="simple-modal-title"
+        aria-describedby="simple-modal-description"
+      >
+        <div className={classes.photoModal}>
+          <form className={classes.photoChangeForm}>
+            <FormGroup>
+              <input 
+                accept="application/pdf" 
+                className={classes.photoInput} 
+                id="icon-button-file-change"
+                type="file"
+                onChange={(e) => {
+                  let selectedPdf = e.target.files[0]
+                  
+                  if(selectedPdf && PdfFileTypes.includes(selectedPdf.type)) setPdfChange(selectedPdf)
+                }} 
+                required 
+              />
+              <label htmlFor="icon-button-file-change"  className={classes.photoLabel}>
+                <Tooltip TransitionComponent={Zoom} title="Add pdf" placement="top-start">
+                  <IconButton color="primary" aria-label="upload picture" component="span" classes={{root: classes.iconButtonPhoto}}>
+                    <PictureAsPdfIcon /> 
+                  </IconButton>
+                </Tooltip>
+                <Typography className={classes.photoLabelText} variant="subtitle1">
+                  {pdfChange ? pdfChange.name : 'No Pdf Selected'}
+                </Typography>
+              </label>
+            </FormGroup>
+            <Button  
+              variant="contained" 
+              color="secondary" 
+              className={classes.photoChangeFormSubmitBtn}
+              onClick={e => {
+                // e.preventDefault()
+                handlePdfUpdate()
+              }}
+            >
+              Change Photo
+            </Button>
+          </form>
+        </div>
+      </Modal>
       <div style={{width: '100%'}}>
         <MaterialTable
           icons={allIcons}
@@ -154,6 +237,11 @@ const Resume = () => {
           }}
           columns={[
             { 
+              title: 'File', 
+              field: 'pdfSrc',
+              render: rowData => <a href={'/files/' + rowData.pdfSrc} target='_blank' className={classes.pdfLink}>{rowData.pdfSrc}</a> 
+            },
+            { 
               title: 'Website', 
               field: 'website',
               render: rowData => handleNoneValue(rowData.contactInfo.website) 
@@ -172,15 +260,16 @@ const Resume = () => {
               title: 'Techs', 
               field: 'techs',
               render: rowData => {
-                return (
+                if(rowData.techs?.length > 0) return (
                   <ul className={classes.ulTable}>
-                    {rowData.techs?.length > 0 && (rowData.techs.sort((a, b) => a.name < b.name ? -1 : 1)).map(tech => (
+                    {(rowData.techs.sort((a, b) => a.name < b.name ? -1 : 1)).map(tech => (
                       <li key={tech._id}>
                         {tech.name}
                       </li>
                     ))}
                   </ul>
                 )
+                else return 'N/A'
               },
               sorting: false 
             },
@@ -188,15 +277,16 @@ const Resume = () => {
               title: 'Projects', 
               field: 'projects',
               render: rowData => {
-                return (
+                if(rowData.projects?.length > 0) return (
                   <ul className={classes.ulTable}>
-                    {rowData.projects?.length > 0 && (rowData.projects.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt))).map(project => (
+                    {(rowData.projects.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt))).map(project => (
                       <li key={project._id}>
                         {project.name} (<span style={{ color: theme.palette.secondary.main }}>{new Date(project.publishedAt).toDateString()}</span>)
                       </li>
                     ))}
                   </ul>
                 )
+                else return 'N/A'
               },
               sorting: false 
             },
@@ -204,15 +294,16 @@ const Resume = () => {
               title: 'Edus', 
               field: 'educations',
               render: rowData => {
-                return (
+                if(rowData.educations?.length > 0) return (
                   <ul className={classes.ulTable}>
-                    {rowData.educations?.length > 0 && (rowData.educations.sort((a, b) => a.course < b.course ? -1 : 1)).map(edu => (
+                    {(rowData.educations.sort((a, b) => a.course < b.course ? -1 : 1)).map(edu => (
                       <li key={edu._id}>
                         {edu.course} {edu.entity !== '' && <>(<span style={{ color: theme.palette.secondary.main }}>{edu.entity}</span>)</>}
                       </li>
                     ))}
                   </ul>
                 )
+                else return 'N/A'
               },
               sorting: false 
             },
@@ -220,20 +311,39 @@ const Resume = () => {
               title: 'Jobs', 
               field: 'jobs',
               render: rowData => {
-                return (
+                if(rowData.jobs?.length > 0) return (
                   <ul className={classes.ulTable}>
-                    {rowData.jobs?.length > 0 && (rowData.jobs.sort((a, b) => a.name < b.name ? -1 : 1)).map(job => (
+                    {(rowData.jobs.sort((a, b) => a.name < b.name ? -1 : 1)).map(job => (
                       <li key={job._id}>
                         {job.name} {job.company !== '' && <>(<span style={{ color: theme.palette.secondary.main }}>{job.company}</span>)</>}
                       </li>
                     ))}
                   </ul>
                 )
+                else return 'N/A'
               },
               sorting: false 
             },
           ]}
           actions={[
+            {
+              icon: allIcons.NewPdf,
+              tooltip: 'Change Pdf',
+              // iconProps: { style: { color: 'red' } },
+              onClick: (event, rowData) => {
+                setResumeId(rowData._id)
+                setCurrentPdfSrc(rowData.pdfSrc)
+                setIsPdfChange(true)
+                setIsEdit(false)
+                setWebsiteChange('')
+                setTitleChange('')
+                setDescChange('')
+                setTechsChange([])
+                setProjsChange([])
+                setEdusChange([])
+                setJobsChange([])
+              }
+            },
             {
               icon: allIcons.Edit,
               tooltip: 'Edit Resume',
@@ -263,6 +373,7 @@ const Resume = () => {
                   return jobs
                 })
                 setResumeId(rowData._id)
+                setIsPdfChange(false)
                 setIsEdit(true)
                 addNewRef.current.scrollIntoView({ behavior: 'smooth' })
               }
@@ -291,6 +402,8 @@ const Resume = () => {
       </div>
       <DividerBlank />
       <AddNew
+        globalClasses={classes}
+        PdfFileTypes={PdfFileTypes}
         addNewRef={addNewRef}
         isEdit={isEdit} setIsEdit={setIsEdit}
         handleResumeUpdate={handleResumeUpdate}
@@ -319,5 +432,70 @@ const useStyles = makeStyles(theme => ({
     '& li:not(:last-child)': {
       marginBottom: 10
     },
-  }
+  },
+  pdfLink: {
+    textDecoration: 'none',
+    '&:link': {
+      color: theme.palette.secondary.main
+    },
+    '&:visited': {
+      color: theme.palette.secondary.main
+    },
+    '&:hover': {
+      color: theme.palette.secondary.main
+    },
+    '&:active': {
+      color: theme.palette.secondary.main
+    },
+  },
+  photoModal: {
+    position: 'absolute',
+    top: `50%`,
+    left: `50%`,
+    transform: `translate(-50%, -50%)`,
+    minWidth: 220,
+    maxWidth: 400,
+    backgroundColor: theme.palette.background.paper,
+    border: '2px solid #000',
+    boxShadow: theme.shadows[5],
+    padding: theme.spacing(2, 4, 3),
+  },
+  photoChangeForm: {
+    width: 223,
+    height: 120,
+    display: 'flex',
+    flexFlow: 'column',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  photoChangeFormSubmitBtn: {
+    color: theme.palette.common.white,
+    marginTop: 20
+  },
+  img: {
+    maxWidth: 100,
+  },
+  photoInput: {
+    display: 'none'
+  },
+  iconButtonPhoto: {
+    color: theme.palette.common.white,
+    backgroundColor: theme.palette.secondary.main,
+    '&:hover': {
+      backgroundColor: theme.palette.secondary.main
+    }
+  },
+  photoLabel: {
+    display: 'flex',
+    justifyContent: 'start',
+    alignItems: 'center'
+  },
+  photoLabelText: {
+    marginLeft: '15px',
+    width: '100%', 
+    overflow: 'hidden',
+    display: '-webkit-box',
+    WebkitBoxOrient: 'vertical',
+    WebkitLineClamp: 1,
+  },
 }))
