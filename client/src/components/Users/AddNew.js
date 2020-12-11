@@ -7,16 +7,10 @@ import classNames from 'classnames'
 import InputStyles from '../global/InputStyles'
 import { makeStyles, useTheme } from '@material-ui/core/styles'
 import { 
-  Button, 
-  FormControl, 
+  Button,  
   FormGroup, 
   Grid, 
-  IconButton, 
-  InputLabel, 
   TextField, 
-  Tooltip, 
-  Typography, 
-  Zoom 
 } from '@material-ui/core'
 
 const AddNew = ({
@@ -97,7 +91,7 @@ const AddNew = ({
 
   return (
     <>
-      <Headline headline="Add New" subHeadline="USER" />
+      <Headline headline={isEdit ? 'Edit Existing' : 'Add New'} subHeadline="USER" />
       <form ref={addNewRef} className={inputClasses.form}
         onSubmit={e => {
           e.preventDefault()

@@ -1,19 +1,21 @@
-import Profile from './Profile'
 import Dashboard from './Dashboard'
-import ProjectsPrivate from './Projects'
-import PostsPrivate from './Posts'
-import Users from './Users'
 import MediaSocials from './MediaSocials'
+import Policies from './Policies'
+import PostsPrivate from './Posts'
+import Profile from './Profile'
+import ProjectsPrivate from './Projects'
 import SkillsPrivate from './Skills'
 import TechsPrivate from './Techs'
+import Users from './Users'
 
 export {
-  Profile,
   Dashboard,
-  ProjectsPrivate,
-  PostsPrivate,
-  Users,
   MediaSocials,
+  Policies,
+  PostsPrivate,
+  Profile,
+  ProjectsPrivate,
   SkillsPrivate,
-  TechsPrivate
+  TechsPrivate,
+  Users,
 }

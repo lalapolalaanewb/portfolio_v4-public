@@ -142,25 +142,36 @@ exports.updatePrivateUserJobPublish = async(req, res, next) => {
 // @route   POST /api/v1/users/private/profile/job/delete
 // @access  Private (Require sessionId & uid)
 exports.deletePrivateUserJob = async(req, res, next) => {
-  await Job.findByIdAndDelete(req.body.jobId)
-  .then(async data => {
+  try {
+    // check if job is published first
+    let job = await Job.findById(req.body.jobId)
+    if(job) {
+      if(job.status === 1) return res.status(400).json({
+        success: false,
+        error: `Unable to delete job! Please unpublished the job first.`,
+        data: {}
+      })
+    }
+
     // remove from user
     await User.updateOne(
       { _id: req.body.creator },
       { $pull: { jobs: req.body.jobId } },
     )
 
+    // delete job
+    job.remove()
+
     return res.status(200).json({
       success: true,
       count: 0,
       data: {}
     })
-  })
-  .catch(err => {
+  } catch(err) {
     return res.status(500).json({
       success: false,
       error: `Failed to delete job data from Job Collection`,
       data: err
     })
-  })
+  }
 }

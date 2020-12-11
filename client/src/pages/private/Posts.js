@@ -318,15 +318,16 @@ const Posts = () => {
                 addNewRef.current.scrollIntoView({ behavior: 'smooth' })
               }
             },
-            {
+            rowData => ({
               icon: allIcons.Delete,
               tooltip: 'Delete Post',
               onClick: (event, rowData) => {
                 setCurrentCreator(rowData.creator._id)
                 setPostId(rowData._id)
                 setIsDelete(true)
-              }
-            },
+              },
+              disabled: rowData.status === 1 
+            }),
             rowData => ({
               icon: rowData.status === 0 ? allIcons.Publish : allIcons.Unpublish,
               tooltip: rowData.status === 0 ? 'Publish' : 'Unpublish',

@@ -1,21 +1,23 @@
-import ProtectedRouteParentLogin from './ProtectedRouteParentLogin'
-import ProtectedRouteParentProfile from './ProtectedRouteParentProfile'
 import ProtectedRouteParentDashboard from './ProtectedRouteParentDashboard'
-import ProtectedRouteParentProjects from './ProtectedRouteParentProjects'
-import ProtectedRouteParentPosts from './ProtectedRouteParentPosts'
-import ProtectedRouteParentUsers from './ProtectedRouteParentUsers'
+import ProtectedRouteParentLogin from './ProtectedRouteParentLogin'
 import ProtectedRouteParentMediaSocials from './ProtectedRouteParentMediaSocials'
+import ProtectedRouteParentPolicies from './ProtectedRouteParentPolicies'
+import ProtectedRouteParentPosts from './ProtectedRouteParentPosts'
+import ProtectedRouteParentProfile from './ProtectedRouteParentProfile'
+import ProtectedRouteParentProjects from './ProtectedRouteParentProjects'
 import ProtectedRouteParentSkills from './ProtectedRouteParentSkills'
 import ProtectedRouteParentTechs from './ProtectedRouteParentTechs'
+import ProtectedRouteParentUsers from './ProtectedRouteParentUsers'
 
 export {
-  ProtectedRouteParentLogin,
-  ProtectedRouteParentProfile,
   ProtectedRouteParentDashboard,
-  ProtectedRouteParentProjects,
-  ProtectedRouteParentPosts,
-  ProtectedRouteParentUsers,
+  ProtectedRouteParentLogin,
   ProtectedRouteParentMediaSocials,
+  ProtectedRouteParentPolicies,
+  ProtectedRouteParentPosts,
+  ProtectedRouteParentProfile,
+  ProtectedRouteParentProjects,
   ProtectedRouteParentSkills,
-  ProtectedRouteParentTechs
+  ProtectedRouteParentTechs,
+  ProtectedRouteParentUsers,
 }

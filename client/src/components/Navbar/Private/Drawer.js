@@ -63,10 +63,11 @@ const Drawer = ({
   }
 
   const createDataMenuList = [
-    {_id: 0, name: 'User', icon: <EditOutlinedIcon />, urlLink: '/pfv4-admin/create/users'},
-    {_id: 1, name: 'Media Social', icon: <EditOutlinedIcon />, urlLink: '/pfv4-admin/create/mediasocials'},
+    {_id: 0, name: 'Media Social', icon: <EditOutlinedIcon />, urlLink: '/pfv4-admin/create/mediasocials'},
+    {_id: 1, name: 'Policy', icon: <EditOutlinedIcon />, urlLink: '/pfv4-admin/create/policies'},
     {_id: 2, name: 'Skill', icon: <EditOutlinedIcon />, urlLink: '/pfv4-admin/create/skills'},
     {_id: 3, name: 'Tech', icon: <EditOutlinedIcon />, urlLink: '/pfv4-admin/create/techs'},
+    {_id: 4, name: 'User', icon: <EditOutlinedIcon />, urlLink: '/pfv4-admin/create/users'},
   ]
 
   const createDataListItems = (id, url, icon, name) => {

@@ -304,10 +304,16 @@ exports.updatePrivateProject = async(req, res, next) => {
 // @route   POST /api/v1/projects/private/delete/:id
 // @access  Private (Require sessionId & uid)
 exports.deletePrivateProject = async(req, res, next) => {
-  await Project.findByIdAndDelete(req.params.id)
-  .then(async data => {
-    // - remove image from server images folder
-    handleImgRemove(res, data.imgSrc)
+  try {
+    // check if project is published first
+    let project = await Project.findById(req.params.id)
+    if(project) {
+      if(project.status === 1) return res.status(400).json({
+        success: false,
+        error: `Unable to delete project! Please unpublished the project first.`,
+        data: {}
+      })
+    }
 
     // remove from user
     await User.updateOne(
@@ -315,17 +321,22 @@ exports.deletePrivateProject = async(req, res, next) => {
       { $pull: { projects: req.params.id } },
     )
 
+    // - remove image from server images folder
+    handleImgRemove(res, project.imgSrc)
+
+    // delete post
+    project.remove()
+
     return res.status(200).json({
       success: true,
       count: 0,
       data: {}
     })
-  })
-  .catch(err => {
+  } catch(err) {
     return res.status(500).json({
       success: false,
-      error: `Failed to delete project data from Techs Collection`,
+      error: `Failed to delete project data from Project Collection`,
       data: err
     })
-  })
+  }
 }

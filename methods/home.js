@@ -181,10 +181,16 @@ exports.updatePrivateUserHomePublish = async(req, res, next) => {
 // @route   POST /api/v1/users/private/profile/home/delete
 // @access  Private (Require sessionId & uid)
 exports.deletePrivateUserHome = async(req, res, next) => {
-  await Home.findByIdAndDelete(req.body.homeId)
-  .then(async data => {
-    // - remove image from server images folder
-    handleImgRemove(res, data.imgSrc)
+  try {
+    // check if home is published first
+    let home = await Home.findById(req.body.homeId)
+    if(home) {
+      if(home.status === 1) return res.status(400).json({
+        success: false,
+        error: `Unable to delete home! Please unpublished the home first.`,
+        data: {}
+      })
+    }
 
     // remove from user
     await User.updateOne(
@@ -192,17 +198,22 @@ exports.deletePrivateUserHome = async(req, res, next) => {
       { $pull: { homes: req.body.homeId } },
     )
 
+    // - remove image from server images folder
+    handleImgRemove(res, home.imgSrc)
+
+    // delete home
+    home.remove()
+
     return res.status(200).json({
       success: true,
       count: 0,
       data: {}
     })
-  })
-  .catch(err => {
+  } catch(err) {
     return res.status(500).json({
       success: false,
-      error: `Failed to delete about data from Home Collection`,
+      error: `Failed to delete home data from Home Collection`,
       data: err
     })
-  })
+  }
 }

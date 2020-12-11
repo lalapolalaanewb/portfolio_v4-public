@@ -354,17 +354,19 @@ const ProjectsPrivate = () => {
                             <EditIcon  style={{color: theme.palette.secondary.main}}/>
                           </IconButton>
                         </Tooltip>
-                        <Tooltip TransitionComponent={Zoom} title="Delete" placement="top-end">
-                          <IconButton
-                            onClick={() => {
-                              setProjectId(project._id)
-                              setCurrentCreator(project.creator._id)
-                              setIsDelete(true)
-                            }}
-                          >
-                            <DeleteIcon style={{color: theme.palette.error.main}}/>
-                          </IconButton>
-                        </Tooltip>
+                        {project.status !== 1 && (
+                          <Tooltip TransitionComponent={Zoom} title="Delete" placement="top-end">
+                            <IconButton
+                              onClick={() => {
+                                setProjectId(project._id)
+                                setCurrentCreator(project.creator._id)
+                                setIsDelete(true)
+                              }}
+                            >
+                              <DeleteIcon style={{color: theme.palette.error.main}}/>
+                            </IconButton>
+                          </Tooltip>
+                        )}
                         <Tooltip TransitionComponent={Zoom} title={project.status === 0 ? 'Publish' : 'Unpublish'} placement="top-end">
                           <IconButton
                             onClick={() => {

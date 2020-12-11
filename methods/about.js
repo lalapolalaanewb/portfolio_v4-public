@@ -179,10 +179,16 @@ exports.updatePrivateUserAboutPublish = async(req, res, next) => {
 // @route   POST /api/v1/users/private/profile/about/delete
 // @access  Private (Require sessionId & uid)
 exports.deletePrivateUserAbout = async(req, res, next) => {
-  await About.findByIdAndDelete(req.body.aboutId)
-  .then(async data => {
-    // - remove image from server images folder
-    handleImgRemove(res, data.imgSrc)
+  try {
+    // check if about is published first
+    let about = await About.findById(req.body.aboutId)
+    if(about) {
+      if(about.status === 1) return res.status(400).json({
+        success: false,
+        error: `Unable to delete about! Please unpublished the about first.`,
+        data: {}
+      })
+    }
 
     // remove from user
     await User.updateOne(
@@ -190,17 +196,22 @@ exports.deletePrivateUserAbout = async(req, res, next) => {
       { $pull: { abouts: req.body.aboutId } },
     )
 
+    // - remove image from server images folder
+    handleImgRemove(res, about.imgSrc)
+
+    // delete about
+    about.remove()
+
     return res.status(200).json({
       success: true,
       count: 0,
       data: {}
     })
-  })
-  .catch(err => {
+  } catch(err) {
     return res.status(500).json({
       success: false,
-      error: `Failed to delete about data from About Collection`,
+      error: `Failed to delete about data from Home Collection`,
       data: err
     })
-  })
+  }
 }

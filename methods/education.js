@@ -142,25 +142,36 @@ exports.updatePrivateUserEducationPublish = async(req, res, next) => {
 // @route   POST /api/v1/users/private/profile/education/delete
 // @access  Private (Require sessionId & uid)
 exports.deletePrivateUserEducation = async(req, res, next) => {
-  await Education.findByIdAndDelete(req.body.eduId)
-  .then(async data => {
+  try {
+    // check if edu is published first
+    let edu = await Education.findById(req.body.eduId)
+    if(edu) {
+      if(edu.status === 1) return res.status(400).json({
+        success: false,
+        error: `Unable to delete education! Please unpublished the education first.`,
+        data: {}
+      })
+    }
+
     // remove from user
     await User.updateOne(
       { _id: req.body.creator },
       { $pull: { educations: req.body.eduId } },
     )
 
+    // delete edu
+    edu.remove()
+
     return res.status(200).json({
       success: true,
       count: 0,
       data: {}
     })
-  })
-  .catch(err => {
+  } catch(err) {
     return res.status(500).json({
       success: false,
-      error: `Failed to delete education data from Education Collection`,
+      error: `Failed to delete edu data from Education Collection`,
       data: err
     })
-  })
+  }
 }

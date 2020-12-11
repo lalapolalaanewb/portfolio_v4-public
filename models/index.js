@@ -1,45 +1,49 @@
-// User Model
-const User = require('./User')
-// Home Model
-const Home = require('./Home')
 // About Model
 const About = require('./About')
-// Resume Model
-const Resume = require('./Resume')
-// Social Media Model
-const Socialmedia = require('./Socialmedia')
-// Education Model
-const Education = require('./Education')
-// Job Model
-const Job = require('./Job')
-// Project Model
-const Project = require('./Project')
-// Post Model
-const Post = require('./Post')
 // Comment Model
 const Comment = require('./Comment')
+// Education Model
+const Education = require('./Education')
+// Home Model
+const Home = require('./Home')
+// Job Model
+const Job = require('./Job')
 // Likedstatus Model
 const Likestatus = require('./Likestatus')
 // Media Social Model
 const Mediasocial = require('./Mediasocial')
+// Policy Model
+const Policy = require('./Policy')
+// Post Model
+const Post = require('./Post')
+// Project Model
+const Project = require('./Project')
+// Resume Model
+const Resume = require('./Resume')
 // Skill Model
 const { Skill } = require('./Skill')
+// Social Media Model
+const Socialmedia = require('./Socialmedia')
 // Technology Model
 const Technology = require('./Technology')
+// User Model
+const User = require('./User')
+
 
 module.exports = {
-  User,
-  Home,
   About,
-  Resume,
-  Socialmedia, 
-  Education,
-  Job,
-  Project,
-  Post,
   Comment,
+  Education,
+  Home,
+  Job,
   Likestatus,
   Mediasocial,
-  Skill, 
+  Policy,
+  Post,
+  Project,
+  Resume,
+  Skill,
+  Socialmedia,  
   Technology,
+  User,
 }

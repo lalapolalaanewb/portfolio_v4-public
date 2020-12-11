@@ -118,7 +118,7 @@ export const getUserOnResume = async (dispatch) => {
           ...result.resume,
           contactInfo: result.resume.contactInfo,
           techs: result.resume.techs,
-          projects: result.resume.projects,
+          projects: result.resume.projects.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt)),
           educations: result.resume.educations,
           jobs: result.resume.jobs
         }

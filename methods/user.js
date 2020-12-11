@@ -3,7 +3,7 @@
 const bcrypt = require('bcryptjs')
 // Model - User
 const {
-  User, Technology, Mediasocial, Skill, Socialmedia, Resume
+ Mediasocial, Policy,  Resume, Skill, Socialmedia, Technology, User
 } = require('../models')
 const { findOne } = require('../models/Job')
 
@@ -362,6 +362,13 @@ exports.deletePrivateUser = async(req, res, next) => {
   try {
     let data = await User.findById(req.params.id)
 
+    // check user data from abouts
+    if(data.abouts.length > 0) return res.status(400).json({
+      success: false,
+      error: `Please delete data from About Collection first`,
+      data: {}
+    })
+
     // check user data from homes
     if(data.homes.length > 0) return res.status(400).json({
       success: false,
@@ -369,10 +376,40 @@ exports.deletePrivateUser = async(req, res, next) => {
       data: {}
     })
 
-    // check user data from abouts
-    if(data.abouts.length > 0) return res.status(400).json({
+    // check user data from jobs
+    if(data.jobs.length > 0) return res.status(400).json({
       success: false,
-      error: `Please delete data from About Collection first`,
+      error: `Please delete data from Job Collection first`,
+      data: {}
+    })
+
+    // check user data from media socials
+    let mediaSocials = await Mediasocial.find().where({ creator: req.params.id })
+    if(mediaSocials.length > 0) return res.status(400).json({
+      success: false,
+      error: `Please delete data from Media Social Collection first`,
+      data: {}
+    })
+
+    // check user data from policies
+    let policies = await Policy.find().where({ creator: req.params.id })
+    if(policies.length > 0) return res.status(400).json({
+      success: false,
+      error: `Please delete data from Policy Collection first`,
+      data: {}
+    })
+
+    // check user data from posts
+    if(data.posts.length > 0) return res.status(400).json({
+      success: false,
+      error: `Please delete data from Post Collection first`,
+      data: {}
+    })
+
+    // check user data from projects
+    if(data.projects.length > 0) return res.status(400).json({
+      success: false,
+      error: `Please delete data from Project Collection first`,
       data: {}
     })
 
@@ -383,42 +420,18 @@ exports.deletePrivateUser = async(req, res, next) => {
       data: {}
     })
 
-    // check user data from jobs
-    if(data.jobs.length > 0) return res.status(400).json({
-      success: false,
-      error: `Please delete data from Job Collection first`,
-      data: {}
-    })
     // check user data from skills
     if(data.skills.length > 0) return res.status(400).json({
       success: false,
       error: `Please delete data from Skill Collection first`,
       data: {}
     })
+
     // check user data from techs
     let techs = await Technology.find().where({ creator: req.params.id })
     if(techs.length > 0) return res.status(400).json({
       success: false,
       error: `Please delete data from Tech Collection first`,
-      data: {}
-    })
-    // check user data from media socials
-    let mediaSocials = await Mediasocial.find().where({ creator: req.params.id })
-    if(mediaSocials.length > 0) return res.status(400).json({
-      success: false,
-      error: `Please delete data from Media Social Collection first`,
-      data: {}
-    })
-    // check user data from projects
-    if(data.projects.length > 0) return res.status(400).json({
-      success: false,
-      error: `Please delete data from Project Collection first`,
-      data: {}
-    })
-    // check user data from posts
-    if(data.posts.length > 0) return res.status(400).json({
-      success: false,
-      error: `Please delete data from Post Collection first`,
       data: {}
     })
 

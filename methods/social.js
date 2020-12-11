@@ -157,25 +157,36 @@ exports.updatePrivateUserSocialPublish = async(req, res, next) => {
 // @route   POST /api/v1/users/private/profile/social/delete
 // @access  Private (Require sessionId & uid)
 exports.deletePrivateUserSocial = async(req, res, next) => {
-  await Socialmedia.findByIdAndDelete(req.body.socialId)
-  .then(async data => {
+  try {
+    // check if social is published first
+    let social = await Socialmedia.findById(req.body.socialId)
+    if(social) {
+      if(social.status === 1) return res.status(400).json({
+        success: false,
+        error: `Unable to delete social! Please unpublished the social first.`,
+        data: {}
+      })
+    }
+
     // remove from user
     await User.updateOne(
       { _id: req.body.creator },
       { $pull: { socialMedias: req.body.socialId } },
     )
 
+    // delete about
+    social.remove()
+
     return res.status(200).json({
       success: true,
       count: 0,
       data: {}
     })
-  })
-  .catch(err => {
+  } catch(err) {
     return res.status(500).json({
       success: false,
       error: `Failed to delete social data from Social Collection`,
       data: err
     })
-  })
+  }
 }

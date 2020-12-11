@@ -202,10 +202,10 @@ export const updatePost = async (dispatch, postId, post) => {
 }
 
 // Delete A Post
-export const deletePost = async (dispatch, postId) => {
+export const deletePost = async (dispatch, postId, creator) => {
   setLoading(dispatch, true)
-
-  await axios.delete(`/api/v1/posts/private/delete/${postId}`, config)
+  
+  await axios.post(`/api/v1/posts/private/delete/${postId}`, { creator }, config)
   .then(async res => {
     const result = await res.data.data
 
@@ -220,7 +220,7 @@ export const deletePost = async (dispatch, postId) => {
       message: 'Successfully delete the post.'
     })
   })
-  .catch(async error => {
+  .catch(async error => { 
     const result = await error.response.data
 
     // update state

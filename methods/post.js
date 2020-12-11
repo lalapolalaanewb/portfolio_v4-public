@@ -306,10 +306,16 @@ exports.updatePrivatePost = async(req, res, next) => {
 // @route   POST /api/v1/posts/private/delete/:id
 // @access  Private (Require sessionId & uid)
 exports.deletePrivatePost = async(req, res, next) => {
-  return await Post.findByIdAndDelete(req.params.id)
-  .then(async data => {
-    // - remove image from server images folder
-    handleImgRemove(res, data.imgSrc)
+  try {
+    // check if post is published first
+    let post = await Post.findById(req.params.id)
+    if(post) {
+      if(post.status === 1) return res.status(400).json({
+        success: false,
+        error: `Unable to delete post! Please unpublished the post first.`,
+        data: {}
+      })
+    }
 
     // remove from user
     await User.updateOne(
@@ -317,17 +323,22 @@ exports.deletePrivatePost = async(req, res, next) => {
       { $pull: { posts: req.params.id } },
     )
 
+    // - remove image from server images folder
+    handleImgRemove(res, post.imgSrc)
+
+    // delete post
+    post.remove()
+
     return res.status(200).json({
       success: true,
       count: 0,
       data: {}
     })
-  })
-  .catch(err => {
+  } catch(err) {
     return res.status(500).json({
       success: false,
       error: `Failed to delete post data from Post Collection`,
       data: err
     })
-  })
+  }
 }

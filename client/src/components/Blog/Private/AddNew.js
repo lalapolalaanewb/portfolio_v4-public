@@ -72,7 +72,7 @@ const AddNew = ({
 
   return (
     <>
-      <Headline headline="Add New" subHeadline="POST" />
+      <Headline headline={isEdit ? 'Edit Existing' : 'Add New'} subHeadline="POST" />
       <form ref={addNewRef} className={inputClasses.form}>
         <Grid container spacing={2}>
           <Grid item xs={12}>

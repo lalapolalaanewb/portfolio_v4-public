@@ -4,31 +4,31 @@ const {
   userLogin, userLogout, 
   userRegister, userRegisterOnLike, userRegisterOnComment 
 } = require('./auth')
-// User Methods
+// Dashboard Methods
+const { getPrivateDashboard } = require('./dashboard')
+// Media Social Methods
 const {
-  getPublicUserFooterPublic, 
-  getPublicUserHome,
-  getPublicUserAbout,
-  getPublicUserResume,
-  getPrivateUsers, 
-  addPrivateUser, 
-  updatePrivateUserActive,
-  updatePrivateUser, 
-  deletePrivateUser 
-} = require('./user')
-// Profile Personal Methods
+  getPrivateMediaSocials, 
+  addPrivateMediaSocial, 
+  updatePrivateMediaSocial, 
+  deletePrivateMediaSocial
+} = require('./mediaSocial')
+// Policy Methods
+const {
+  getPrivatePolicies,
+  addPrivatePolicy,
+  updatePrivatePolicy, updatePrivatePolicyPublish,
+  deletePrivatePolicy
+} = require('./policy') 
+// Post Methods
 const { 
-  getPrivateUserPersonal, 
-  updatePrivateUserPersonal,
-  updatePrivateUserPersonalPassword, 
-} = require('./personal')
-// Profile Home Methods
-const {
-  getPrivateUserHome,
-  addPrivateUserHome,
-  updatePrivateUserHome, updatePrivateUserHomeImg, updatePrivateUserHomePublish,
-  deletePrivateUserHome
-} = require('./home')
+  getPublicPosts, getPublicPost, 
+  updatePublicPost, 
+  getPrivatePosts, 
+  addPrivatePost, 
+  updatePrivatePostImg, updatePrivatePostPublish, updatePrivatePost, 
+  deletePrivatePost 
+} = require('./post')
 // Profile About Methods
 const {
   getPrivateUserAbout,
@@ -43,6 +43,13 @@ const {
   updatePrivateUserEducation, updatePrivateUserEducationPublish,
   deletePrivateUserEducation
 } = require('./education')
+// Profile Home Methods
+const {
+  getPrivateUserHome,
+  addPrivateUserHome,
+  updatePrivateUserHome, updatePrivateUserHomeImg, updatePrivateUserHomePublish,
+  deletePrivateUserHome
+} = require('./home')
 // Profile Job Methods
 const {
   getPrivateUserJob,
@@ -50,6 +57,12 @@ const {
   updatePrivateUserJob, updatePrivateUserJobPublish,
   deletePrivateUserJob
 } = require('./job')
+// Profile Personal Methods
+const { 
+  getPrivateUserPersonal, 
+  updatePrivateUserPersonal,
+  updatePrivateUserPersonalPassword, 
+} = require('./personal')
 // Profile Resume Methods
 const {
   getPrivateUserResume,
@@ -73,22 +86,6 @@ const {
   updatePrivateProjectimg, updatePrivateProjectPublish, updatePrivateProject, 
   deletePrivateProject 
 } = require('./project')
-// Post Methods
-const { 
-  getPublicPosts, getPublicPost, 
-  updatePublicPost, 
-  getPrivatePosts, 
-  addPrivatePost, 
-  updatePrivatePostImg, updatePrivatePostPublish, updatePrivatePost, 
-  deletePrivatePost 
-} = require('./post')
-// Media Social Methods
-const {
-  getPrivateMediaSocials, 
-  addPrivateMediaSocial, 
-  updatePrivateMediaSocial, 
-  deletePrivateMediaSocial
-} = require('./mediaSocial')
 // Skill Methods
 const { 
   getPublicSkills, 
@@ -104,16 +101,9 @@ const {
   updatePrivateTech, 
   deletePrivateTech 
 } = require('./tech')
-// Dashboard Methods
-const { getPrivateDashboard } = require('./dashboard')
-
-/** Exports */
-module.exports = {
-  // Auth
-  userLogin, userLogout, 
-  userRegister, userRegisterOnLike, userRegisterOnComment,
-  // User
-  getPublicUserFooterPublic,
+// User Methods
+const {
+  getPublicUserFooterPublic, 
   getPublicUserHome,
   getPublicUserAbout,
   getPublicUserResume,
@@ -121,16 +111,33 @@ module.exports = {
   addPrivateUser, 
   updatePrivateUserActive,
   updatePrivateUser, 
-  deletePrivateUser, 
-  // Profile Personal
-  getPrivateUserPersonal, 
-  updatePrivateUserPersonal,
-  updatePrivateUserPersonalPassword, 
-  // Profile Home
-  getPrivateUserHome,
-  addPrivateUserHome,
-  updatePrivateUserHome, updatePrivateUserHomeImg, updatePrivateUserHomePublish,
-  deletePrivateUserHome,
+  deletePrivateUser 
+} = require('./user')
+
+/** Exports */
+module.exports = {
+  // Auth
+  userLogin, userLogout, 
+  userRegister, userRegisterOnLike, userRegisterOnComment,
+  // Dashboard
+  getPrivateDashboard,
+  // Media Social
+  getPrivateMediaSocials, 
+  addPrivateMediaSocial, 
+  updatePrivateMediaSocial, 
+  deletePrivateMediaSocial,
+  // Policy
+  getPrivatePolicies,
+  addPrivatePolicy,
+  updatePrivatePolicy, updatePrivatePolicyPublish,
+  deletePrivatePolicy,
+  // Post
+  getPublicPosts, getPublicPost, 
+  updatePublicPost, 
+  getPrivatePosts, 
+  addPrivatePost, 
+  updatePrivatePostImg, updatePrivatePostPublish, updatePrivatePost, 
+  deletePrivatePost,
   // Profile About
   getPrivateUserAbout,
   addPrivateUserAbout,
@@ -141,11 +148,20 @@ module.exports = {
   addPrivateUserEducation,
   updatePrivateUserEducation, updatePrivateUserEducationPublish,
   deletePrivateUserEducation,
+  // Profile Home
+  getPrivateUserHome,
+  addPrivateUserHome,
+  updatePrivateUserHome, updatePrivateUserHomeImg, updatePrivateUserHomePublish,
+  deletePrivateUserHome,
   // Profile job
   getPrivateUserJob,
   addPrivateUserJob,
   updatePrivateUserJob, updatePrivateUserJobPublish,
   deletePrivateUserJob,
+  // Profile Personal
+  getPrivateUserPersonal, 
+  updatePrivateUserPersonal,
+  updatePrivateUserPersonalPassword, 
   // Profile Resume
   getPrivateUserResume,
   addPrivateUserResume,
@@ -163,18 +179,6 @@ module.exports = {
   addPrivateProject, 
   updatePrivateProjectimg, updatePrivateProjectPublish, updatePrivateProject, 
   deletePrivateProject,
-  // Post
-  getPublicPosts, getPublicPost, 
-  updatePublicPost, 
-  getPrivatePosts, 
-  addPrivatePost, 
-  updatePrivatePostImg, updatePrivatePostPublish, updatePrivatePost, 
-  deletePrivatePost,
-  // Media Social
-  getPrivateMediaSocials, 
-  addPrivateMediaSocial, 
-  updatePrivateMediaSocial, 
-  deletePrivateMediaSocial,
   // Skill
   getPublicSkills, 
   getPrivateSkills, 
@@ -186,6 +190,14 @@ module.exports = {
   addPrivateTech, 
   updatePrivateTech, 
   deletePrivateTech,
-  // Dashboard
-  getPrivateDashboard,
+  // User
+  getPublicUserFooterPublic,
+  getPublicUserHome,
+  getPublicUserAbout,
+  getPublicUserResume,
+  getPrivateUsers, 
+  addPrivateUser, 
+  updatePrivateUserActive,
+  updatePrivateUser, 
+  deletePrivateUser, 
 }

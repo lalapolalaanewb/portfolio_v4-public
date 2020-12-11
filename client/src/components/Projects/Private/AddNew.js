@@ -72,7 +72,7 @@ const AddNew = ({
 
   return (
     <>
-      <Headline headline="Add New" subHeadline="PROJECT" />
+      <Headline headline={isEdit ? 'Edit Existing' : 'Add New'} subHeadline="PROJECT" />
       <form ref={addNewRef} className={classes.form}
         onSubmit={e => {
           e.preventDefault()

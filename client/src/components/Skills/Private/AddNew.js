@@ -15,12 +15,8 @@ import {
   FormControl, 
   FormGroup, 
   Grid, 
-  IconButton, 
   InputLabel, 
   TextField, 
-  Tooltip, 
-  Typography, 
-  Zoom 
 } from '@material-ui/core'
 
 const AddNew = ({
@@ -59,7 +55,7 @@ const AddNew = ({
 
   return (
     <>
-      <Headline headline="Add New" subHeadline="SKILL" />
+      <Headline headline={isEdit ? 'Edit Existing' : 'Add New'} subHeadline="SKILL" />
       <form ref={addNewRef} className={inputClasses.form}>
         <Grid container spacing={2}>
           <Grid item xs={12}>

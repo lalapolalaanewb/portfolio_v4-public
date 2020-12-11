@@ -124,6 +124,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode, children }) => {
       color="secondary"
       classes={{root: classes.ctaResume}}
       startIcon={<GetAppIcon />}
+      onClick={() => goToPage('/resume')}
     >
       Resume
     </Button>
@@ -187,7 +188,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode, children }) => {
         {/* <Typography variant="h4" classes={{root: classes.contentHeader}}>
           Where is this?
         </Typography> */}
-        {isAuth ? (
+        {!isAuth ? (
           <>
             <ContentPrivateContainer>
               {children}
