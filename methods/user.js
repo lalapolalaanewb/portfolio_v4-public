@@ -3,9 +3,8 @@
 const bcrypt = require('bcryptjs')
 // Model - User
 const {
- Mediasocial, Policy,  Resume, Skill, Socialmedia, Technology, User
+ Media, Mediasocial, Policy,  Resume, Skill, Socialmedia, Technology, User
 } = require('../models')
-const { findOne } = require('../models/Job')
 
 /** Page Specific Functions */
 // handle 'none' input
@@ -380,6 +379,14 @@ exports.deletePrivateUser = async(req, res, next) => {
     if(data.jobs.length > 0) return res.status(400).json({
       success: false,
       error: `Please delete data from Job Collection first`,
+      data: {}
+    })
+
+    // check user data from media
+    let medias = await Media.find().where({ creator: req.params.id })
+    if(medias.length > 0) return res.status(400).json({
+      success: false,
+      error: `Please delete data from Media Collection first`,
       data: {}
     })
 

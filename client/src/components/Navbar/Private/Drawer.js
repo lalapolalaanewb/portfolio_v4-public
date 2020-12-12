@@ -15,6 +15,7 @@ import NoteAddIcon from '@material-ui/icons/NoteAdd'
 import ExpandLess from '@material-ui/icons/ExpandLess'
 import ExpandMore from '@material-ui/icons/ExpandMore'
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined'
+import PermMediaIcon from '@material-ui/icons/PermMedia'
 
 const Drawer = ({
   classesGlobal,
@@ -27,7 +28,8 @@ const Drawer = ({
     {_id: 0, name: 'Dashboard', icon: <HomeIcon />, urlLink: '/pfv4-admin/dashboard'},
     {_id: 1, name: 'Projects', icon: <AssignmentIcon />, urlLink: '/pfv4-admin/projects'},
     {_id: 2, name: 'Posts', icon: <DescriptionIcon />, urlLink: '/pfv4-admin/posts'},
-    {_id: 3, name: 'Create', icon: <NoteAddIcon />, urlLink: ''},
+    {_id: 4, name: 'Media', icon: <PermMediaIcon />, urlLink: '/pfv4-admin/medias'},
+    {_id: 5, name: 'Create', icon: <NoteAddIcon />, urlLink: ''},
   ]
 
   const systemDataListItems = (id, url, icon, name) => {

@@ -1,4 +1,5 @@
 import Dashboard from './Dashboard'
+import Medias from './Medias'
 import MediaSocials from './MediaSocials'
 import Policies from './Policies'
 import PostsPrivate from './Posts'
@@ -10,6 +11,7 @@ import Users from './Users'
 
 export {
   Dashboard,
+  Medias,
   MediaSocials,
   Policies,
   PostsPrivate,

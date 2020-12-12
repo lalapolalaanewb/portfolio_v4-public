@@ -1,5 +1,6 @@
 import ProtectedRouteParentDashboard from './ProtectedRouteParentDashboard'
 import ProtectedRouteParentLogin from './ProtectedRouteParentLogin'
+import ProtectedRouteParentMedias from './ProtectedRouteParentMedias'
 import ProtectedRouteParentMediaSocials from './ProtectedRouteParentMediaSocials'
 import ProtectedRouteParentPolicies from './ProtectedRouteParentPolicies'
 import ProtectedRouteParentPosts from './ProtectedRouteParentPosts'
@@ -12,6 +13,7 @@ import ProtectedRouteParentUsers from './ProtectedRouteParentUsers'
 export {
   ProtectedRouteParentDashboard,
   ProtectedRouteParentLogin,
+  ProtectedRouteParentMedias,
   ProtectedRouteParentMediaSocials,
   ProtectedRouteParentPolicies,
   ProtectedRouteParentPosts,

@@ -2,6 +2,8 @@
 const multer = require('multer')
 // Path
 const path = require('path')
+// Util
+const util = require('util')
 // File Remove
 const fileRemove = require('fs')
 
@@ -46,6 +48,14 @@ const filterImgFile = (req, file, cb) => {
   else cb('Only .png .jpg .jpeg & image/svg+xml format allowed!', false)
 }
 
+// filter multiple img types
+const filterMultiImgFile = (req, file, cb) => {
+  const fileTypes = ['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml']
+  
+  if(fileTypes.indexOf(file.mimetype) !== -1) cb(null, true)
+  else cb('Only .png .jpg .jpeg & image/svg+xml format allowed!', false)
+}
+
 // filter pdf types
 const filterPdfFile = (req, file, cb) => {
   const fileTypes = ['application/pdf']
@@ -60,6 +70,13 @@ const uploadImgFile = multer({
   filterImgFile: filterImgFile
   // limits: { fieldSize: 10000000000 }
 })
+
+// Multi Img FIle Upload Middleware
+const uploadMultiImgFile = multer({
+  storage: storageImgFile,
+  filterMultiImgFile: filterMultiImgFile
+  // limits: { fieldSize: 10000000000 }
+}).array('multiFiles', 10)
 
 // Pdf FIle Upload Middleware
 const uploadPdfFile = multer({
@@ -97,6 +114,9 @@ const handlePdfRemove = (res, pdfSrc) => {
 module.exports = {
   imgFolderLocation: IMAGE_FOLDER_LOCATION,
   pdfFolderLocation: PDF_FOLDER_LOCATION,
-  uploadImgFile, uploadPdfFile,
-  handleImgRemove, handlePdfRemove,
+  uploadImgFile: uploadImgFile, 
+  uploadMultiImgFile: util.promisify(uploadMultiImgFile),
+  uploadPdfFile: uploadPdfFile,
+  handleImgRemove: handleImgRemove, 
+  handlePdfRemove: handlePdfRemove,
 }

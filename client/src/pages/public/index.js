@@ -1,12 +1,13 @@
-import Home from './Home' 
 import About from './About'
-import Resume from './Resume'
-import Posts from './Posts'
-import Post from './Post'
-import Projects from './Projects'
 import Contact from './Contact'
+import Home from './Home' 
 import Login from './Login'
+import PolicyComment from './PolicyComment'
+import Post from './Post'
+import Posts from './Posts'
+import Projects from './Projects'
+import Resume from './Resume'
 
 export {
-  Home, About, Resume, Posts, Post, Projects, Contact, Login
+  About, Contact, Home, Login, PolicyComment, Post, Posts, Projects, Resume
 }

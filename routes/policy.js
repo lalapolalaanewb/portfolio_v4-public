@@ -4,10 +4,11 @@ const router = require("express").Router();
 // Controllers
 const {
   // Verification
-  redirect2Login, redirect2Home,
+  redirect2Login, redirect2Home, adminAccessPublic,
 } = require('../controllers')
 // Project Methods
 const {
+  getPublicPolicyComment,
   getPrivatePolicies, 
   addPrivatePolicy, 
   updatePrivatePolicy, updatePrivatePolicyPublish,
@@ -15,6 +16,12 @@ const {
 } = require('../methods')
 
 /** Routes */
+// @desc    Portfolio V4 Policy Comment Page
+// @route   POST /api/v1/policies/public/get/comment
+// @access  Public (Only need Admin Public Access Key)
+router.route('/public/get/comment')
+  .post(adminAccessPublic , getPublicPolicyComment)
+
 // @desc    Portfolio V4 Policy Dashboard (Get All Policy)
 // @route   POST /api/v1/policies/private/get
 // @access  Private (Require sessionId & uid)

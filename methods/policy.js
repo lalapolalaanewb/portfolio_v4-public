@@ -14,6 +14,28 @@ const handleNoneInput = input => {
 }
 
 /** Methods */
+// @desc    Portfolio V4 Policy Comment Page
+// @route   POST /api/v1/policies/get/comment
+// @access  Public (Only need Admin Public Access Key)
+exports.getPublicPolicyComment = async(req, res, next) => {
+  await Policy.findOne().where({ status: 1 })
+  .select('comment')
+  .then(data => {
+    return res.status(200).json({
+      success: true,
+      count: data.length,
+      data: data
+    })
+  })
+  .catch(err => {
+    return res.status(500).json({
+      success: false,
+      error: `Failed to get policy comment data from Policy Collection`,
+      data: err
+    })
+  })
+}
+
 // @desc    Portfolio V4 Policy Dashboard (Get All Policy)
 // @route   POST /api/v1/policies/private/get
 // @access  Private (Require sessionId & uid)

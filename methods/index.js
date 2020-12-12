@@ -6,6 +6,13 @@ const {
 } = require('./auth')
 // Dashboard Methods
 const { getPrivateDashboard } = require('./dashboard')
+// Media Methods
+const {
+  getPrivateMedias,
+  addPrivateMedia,
+  updatePrivateMedia, updatePrivateMediaPublish,
+  deletePrivateMedia
+} = require('./media')
 // Media Social Methods
 const {
   getPrivateMediaSocials, 
@@ -15,6 +22,7 @@ const {
 } = require('./mediaSocial')
 // Policy Methods
 const {
+  getPublicPolicyComment,
   getPrivatePolicies,
   addPrivatePolicy,
   updatePrivatePolicy, updatePrivatePolicyPublish,
@@ -121,12 +129,18 @@ module.exports = {
   userRegister, userRegisterOnLike, userRegisterOnComment,
   // Dashboard
   getPrivateDashboard,
+  // Media
+  getPrivateMedias,
+  addPrivateMedia,
+  updatePrivateMedia, updatePrivateMediaPublish,
+  deletePrivateMedia,
   // Media Social
   getPrivateMediaSocials, 
   addPrivateMediaSocial, 
   updatePrivateMediaSocial, 
   deletePrivateMediaSocial,
   // Policy
+  getPublicPolicyComment,
   getPrivatePolicies,
   addPrivatePolicy,
   updatePrivatePolicy, updatePrivatePolicyPublish,

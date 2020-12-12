@@ -3,11 +3,12 @@ import './App.css'
 import { AuthState } from './contexts/Auth/AuthState'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import Navbar from './components/Navbar/Navbar'
-import { About, Contact, Home, Login, Post, Posts, Projects, Resume } from './pages/public'
-import { Dashboard, MediaSocials, Policies, PostsPrivate, Profile, ProjectsPrivate, SkillsPrivate, TechsPrivate, Users } from './pages/private'
+import { About, Contact, Home, Login, PolicyComment, Post, Posts, Projects, Resume } from './pages/public'
+import { Dashboard, Medias, MediaSocials, Policies, PostsPrivate, Profile, ProjectsPrivate, SkillsPrivate, TechsPrivate, Users } from './pages/private'
 import {
   UnprotectedRouteParentAbout,
   UnprotectedRouteParentHome,
+  UnprotectedRouteParentPolicy,
   UnprotectedRouteParentPost,
   UnprotectedRouteParentPosts,
   UnprotectedRouteParentProjects,
@@ -16,6 +17,7 @@ import {
 import {
   ProtectedRouteParentDashboard,
   ProtectedRouteParentLogin,
+  ProtectedRouteParentMedias,
   ProtectedRouteParentMediaSocials,
   ProtectedRouteParentPolicies,
   ProtectedRouteParentPosts,
@@ -95,6 +97,7 @@ function App() {
               <UnprotectedRouteParentPosts exact path="/blog" component={Posts} />
               <UnprotectedRouteParentPost path="/blog/:id" component={Post} />
               <Route path="/contact" component={Contact} />
+              <UnprotectedRouteParentPolicy path="/policy/comment" component={PolicyComment} />
               <UnprotectedRouteParentProjects exact path="/projects" component={Projects} />
               <UnprotectedRouteParentResume path="/resume" component={Resume} />
               <ProtectedRouteParentLogin exact path="/pfv4-admin" component={Login} />
@@ -104,6 +107,7 @@ function App() {
               <ProtectedRouteParentTechs exact path="/pfv4-admin/create/techs" component={TechsPrivate} />
               <ProtectedRouteParentUsers exact path="/pfv4-admin/create/users" component={Users} />
               <ProtectedRouteParentDashboard exact path="/pfv4-admin/dashboard" component={Dashboard} />
+              <ProtectedRouteParentMedias exact path="/pfv4-admin/medias" component={Medias} />
               <ProtectedRouteParentPosts exact path="/pfv4-admin/posts" component={PostsPrivate} />
               <ProtectedRouteParentProfile exact path="/pfv4-admin/profile" component={Profile} />
               <ProtectedRouteParentProjects exact path="/pfv4-admin/projects" component={ProjectsPrivate} />

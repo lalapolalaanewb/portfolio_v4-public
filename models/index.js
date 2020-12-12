@@ -10,6 +10,8 @@ const Home = require('./Home')
 const Job = require('./Job')
 // Likedstatus Model
 const Likestatus = require('./Likestatus')
+// Media Mode;
+const Media = require('./Media')
 // Media Social Model
 const Mediasocial = require('./Mediasocial')
 // Policy Model
@@ -37,6 +39,7 @@ module.exports = {
   Home,
   Job,
   Likestatus,
+  Media,
   Mediasocial,
   Policy,
   Post,

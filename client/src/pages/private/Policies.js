@@ -157,7 +157,7 @@ const Policies = () => {
                 </div>
                 <div style={{padding: theme.spacing(3)}} className={theme.palette.type === 'light' ? classNames(markdownStyles.mdContainer, markdownStyles.mdContainerDark) : classNames(markdownStyles.mdContainer, markdownStyles.mdContainerLight)}>
                 <Typography variant="h5">Comment</Typography>
-                  {rowData.comment !== '' ? <ReactMarkDown source={rowData.description} renderers={{ code: Markdown }}/> : 'none'}
+                  {rowData.comment !== '' ? <ReactMarkDown source={rowData.comment} renderers={{ code: Markdown }}/> : 'none'}
                 </div>
               </div>
             )

@@ -12,7 +12,7 @@ const { registerValidation } = require('./validation')
 // File Upload
 const { 
   imgFolderLocation, pdfFolderLocation, 
-  uploadImgFile, uploadPdfFile, 
+  uploadImgFile, uploadMultiImgFile, uploadPdfFile, 
   handleImgRemove, handlePdfRemove
 } = require('./file-upload')
 /** Exports */
@@ -29,6 +29,6 @@ module.exports = {
   registerValidation,
   // File Upload
   imgFolderLocation, pdfFolderLocation, 
-  uploadImgFile, uploadPdfFile, 
+  uploadImgFile, uploadMultiImgFile, uploadPdfFile, 
   handleImgRemove, handlePdfRemove
 }

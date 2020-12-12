@@ -1,15 +1,17 @@
-import UnprotectedRouteParentHome from './UnprotectedRouteParentHome'
 import UnprotectedRouteParentAbout from './UnprotectedRouteParentAbout'
-import UnprotectedRouteParentResume from './UnprotectedRouteParentResume'
-import UnprotectedRouteParentProjects from './UnprotectedRouteParentProjects'
-import UnprotectedRouteParentPosts from './UnprotectedRouteParentPosts'
+import UnprotectedRouteParentHome from './UnprotectedRouteParentHome'
+import UnprotectedRouteParentPolicy from './UnprotectedRouteParentPolicy'
 import UnprotectedRouteParentPost from './UnprotectedRouteParentPost'
+import UnprotectedRouteParentPosts from './UnprotectedRouteParentPosts'
+import UnprotectedRouteParentProjects from './UnprotectedRouteParentProjects'
+import UnprotectedRouteParentResume from './UnprotectedRouteParentResume'
 
 export {
-  UnprotectedRouteParentHome,
   UnprotectedRouteParentAbout,
-  UnprotectedRouteParentResume,
-  UnprotectedRouteParentProjects,
+  UnprotectedRouteParentHome,
+  UnprotectedRouteParentPolicy,
+  UnprotectedRouteParentPost,
   UnprotectedRouteParentPosts,
-  UnprotectedRouteParentPost
+  UnprotectedRouteParentProjects,
+  UnprotectedRouteParentResume,
 }
