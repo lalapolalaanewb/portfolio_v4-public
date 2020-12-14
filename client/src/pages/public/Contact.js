@@ -139,7 +139,7 @@ const Contact = () => {
                     renderValue={(selected) => selected.join(', ')}
                     MenuProps={MenuProps}
                   >
-                    {['General', 'Hiring', 'Wordpress', 'Custom', 'Another'].map((name) => (
+                    {['General', 'Hiring', 'Wordpress', 'Custom', 'Others'].map((name) => (
                       <MenuItem key={name} value={name}>
                         <Checkbox checked={concerns.indexOf(name) > -1} />
                         <ListItemText primary={name} />

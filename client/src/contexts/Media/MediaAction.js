@@ -39,29 +39,31 @@ export const getMedias = async (dispatch) => {
 }
 
 // Add New Media/s
-export const addMedias = async (dispatch, medias) => {
+export const addMedias = async (dispatch, { images }) => {
   setLoading(dispatch, true)
   
   const formData = new FormData()
-  formData.append('multiFiles', medias)
-
-  await axios.post(baseUrl + '/add/', formData, configMultiPart)
+  images.forEach(image => {
+    formData.append('files', image);
+  });
+  
+  await axios.post(baseUrl + '/add', formData, configMultiPart)
   .then(async res => {
     const result = await res.data.data
 
     // update state
     dispatch({
-      type: medias.length === 1 ? 'ADD_MEDIA' : 'ADD_MEDIAS',
+      type: 'ADD_MEDIAS',
       payload: result
     })
 
     // update success
     setSuccess(dispatch, {
       status: true,
-      message: (() => medias.length > 0 ? 'Successfully added new medias.' : 'Successfully added new media.')()
+      message: (() => images.length > 0 ? 'Successfully added new medias.' : 'Successfully added new media.')()
     })
   })
-  .catch(async error => {
+  .catch(async error => { 
     const result = await error.response.data
 
     // update state

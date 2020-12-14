@@ -76,7 +76,7 @@ const uploadMultiImgFile = multer({
   storage: storageImgFile,
   filterMultiImgFile: filterMultiImgFile
   // limits: { fieldSize: 10000000000 }
-}).array('multiFiles', 10)
+}).array('files', 10)
 
 // Pdf FIle Upload Middleware
 const uploadPdfFile = multer({

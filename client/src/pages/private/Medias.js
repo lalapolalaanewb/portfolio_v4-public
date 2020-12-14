@@ -14,12 +14,16 @@ import {
   GridListTile,
   GridListTileBar,
   IconButton,
+  ListSubheader,
   Modal,
   Tooltip, 
   Typography, 
   Zoom,
 } from '@material-ui/core'
-import InfoIcon from '@material-ui/icons/Info'
+import DeleteOutline from '@material-ui/icons/DeleteOutline'
+import Edit from '@material-ui/icons/Edit'
+import GetApp from '@material-ui/icons/GetApp'
+import Publish from '@material-ui/icons/Publish'
 
 export const Medias = () => {
   const [mediaState, mediaDispatch] = useMedia()
@@ -123,20 +127,53 @@ export const Medias = () => {
       )}
       <div className={classes.root}>
         <GridList cellHeight={180} className={classes.gridList}>
-          {tryy.map((media) => (
+          {medias.length > 0 ? medias.map((media) => (
             <GridListTile key={media._id} className={classes.imgListTile}>
               <img src={'/images/' + media.imgSrc} alt={media.imgAlt} />
               <GridListTileBar
                 title={media.imgAlt}
                 subtitle={<span>by: {media.creator.name.firstName}</span>}
                 actionIcon={
-                  <IconButton aria-label={`info about ${media.imgAlt}`} className={classes.icon}>
-                    <InfoIcon />
-                  </IconButton>
+                  <div className={classes.icons}>
+                    <IconButton aria-label={`info about ${media.imgAlt}`} className={classes.icon}
+                      onClick={() => {
+                        setImgAltChange(handleNoneValue(media.imgAlt))
+                        setCreatorChange(media.creator._id)
+                        setMediaId(media._id)
+                        setIsEdit(true)
+                        addNewRef.current.scrollIntoView({ behavior: 'smooth' })
+                      }}
+                    >
+                      <Edit />
+                    </IconButton>
+                    {media.status === 0 && (
+                      <IconButton aria-label={`info about ${media.imgAlt}`} className={classes.icon}
+                        onClick={() => {
+                          setMediaId(media._id)
+                          setIsDelete(true)
+                        }}
+                      >
+                        <DeleteOutline />
+                      </IconButton>
+                    )}
+                    <IconButton aria-label={`info about ${media.imgAlt}`} className={classes.icon}
+                      onClick={() => {
+                        setMediaId(media._id)
+                        setIntention((() => media.status === 0 ? 'publish' : 'unpublish')())
+                        setIsPublish(true)
+                      }}                    
+                    >
+                      {media.status === 0 ? <Publish /> : <GetApp />}
+                    </IconButton>
+                  </div>
                 }
               />
             </GridListTile>
-          ))}
+          )) : (
+            <GridListTile key="Subheader" cols={2} style={{ height: 'auto' }}>
+              <ListSubheader component="div">No image available</ListSubheader>
+            </GridListTile>
+          )}
         </GridList>
       </div>
       <DividerBlank />
@@ -155,22 +192,22 @@ export const Medias = () => {
 export default Medias
 
 const tryy = [
-  { _id: '1a', imgSrc: 'blog_sendCustomDomainEmail_1.PNG', imgAlt: 'Custom Domain', creator: { name: { firstName: 'Fathi' } } },
-  { _id: '1b', imgSrc: 'blog_sendCustomDomainEmail_1.PNG', imgAlt: 'Custom Domain', creator: { name: { firstName: 'Fathi' } } },
-  { _id: '1c', imgSrc: 'blog_sendCustomDomainEmail_1.PNG', imgAlt: 'Custom Domain', creator: { name: { firstName: 'Fathi' } } },
-  { _id: '1d', imgSrc: 'blog_sendCustomDomainEmail_1.PNG', imgAlt: 'Custom Domain', creator: { name: { firstName: 'Fathi' } } },
-  { _id: '1e', imgSrc: 'blog_sendCustomDomainEmail_1.PNG', imgAlt: 'Custom Domain', creator: { name: { firstName: 'Fathi' } } },
-  { _id: '1f', imgSrc: 'blog_sendCustomDomainEmail_1.PNG', imgAlt: 'Custom Domain', creator: { name: { firstName: 'Fathi' } } },
-  { _id: '1g', imgSrc: 'blog_sendCustomDomainEmail_1.PNG', imgAlt: 'Custom Domain', creator: { name: { firstName: 'Fathi' } } },
-  { _id: '1h', imgSrc: 'blog_sendCustomDomainEmail_1.PNG', imgAlt: 'Custom Domain', creator: { name: { firstName: 'Fathi' } } },
-  { _id: '1i', imgSrc: 'blog_sendCustomDomainEmail_1.PNG', imgAlt: 'Custom Domain', creator: { name: { firstName: 'Fathi' } } },
-  { _id: '1j', imgSrc: 'blog_sendCustomDomainEmail_1.PNG', imgAlt: 'Custom Domain', creator: { name: { firstName: 'Fathi' } } },
-  { _id: '1k', imgSrc: 'blog_sendCustomDomainEmail_1.PNG', imgAlt: 'Custom Domain', creator: { name: { firstName: 'Fathi' } } },
-  { _id: '1l', imgSrc: 'blog_sendCustomDomainEmail_1.PNG', imgAlt: 'Custom Domain', creator: { name: { firstName: 'Fathi' } } },
-  { _id: '1m', imgSrc: 'blog_sendCustomDomainEmail_1.PNG', imgAlt: 'Custom Domain', creator: { name: { firstName: 'Fathi' } } },
-  { _id: '1n', imgSrc: 'blog_sendCustomDomainEmail_1.PNG', imgAlt: 'Custom Domain', creator: { name: { firstName: 'Fathi' } } },
-  { _id: '1o', imgSrc: 'blog_sendCustomDomainEmail_1.PNG', imgAlt: 'Custom Domain', creator: { name: { firstName: 'Fathi' } } },
-  { _id: '1p', imgSrc: 'blog_sendCustomDomainEmail_1.PNG', imgAlt: 'Custom Domain', creator: { name: { firstName: 'Fathi' } } },
+  { _id: '1a', status: 1, imgSrc: 'blog_sendCustomDomainEmail_1.PNG', imgAlt: 'Custom Domain Mob Psycho Mob Psycho', creator: { name: { firstName: 'Fathi Mob Psycho Mob Psycho Mob Psycho' } } },
+  { _id: '1b', status: 1, imgSrc: 'blog_sendCustomDomainEmail_1.PNG', imgAlt: 'Custom Domain', creator: { name: { firstName: 'Fathi' } } },
+  { _id: '1c', status: 0, imgSrc: 'blog_sendCustomDomainEmail_1.PNG', imgAlt: 'Custom Domain', creator: { name: { firstName: 'Fathi' } } },
+  { _id: '1d', status: 1, imgSrc: 'blog_sendCustomDomainEmail_1.PNG', imgAlt: 'Custom Domain', creator: { name: { firstName: 'Fathi' } } },
+  { _id: '1e', status: 1, imgSrc: 'blog_sendCustomDomainEmail_1.PNG', imgAlt: 'Custom Domain', creator: { name: { firstName: 'Fathi' } } },
+  { _id: '1f', status: 1, imgSrc: 'blog_sendCustomDomainEmail_1.PNG', imgAlt: 'Custom Domain', creator: { name: { firstName: 'Fathi' } } },
+  { _id: '1g', status: 0, imgSrc: 'blog_sendCustomDomainEmail_1.PNG', imgAlt: 'Custom Domain', creator: { name: { firstName: 'Fathi' } } },
+  { _id: '1h', status: 1, imgSrc: 'blog_sendCustomDomainEmail_1.PNG', imgAlt: 'Custom Domain', creator: { name: { firstName: 'Fathi' } } },
+  { _id: '1i', status: 1, imgSrc: 'blog_sendCustomDomainEmail_1.PNG', imgAlt: 'Custom Domain', creator: { name: { firstName: 'Fathi' } } },
+  { _id: '1j', status: 1, imgSrc: 'blog_sendCustomDomainEmail_1.PNG', imgAlt: 'Custom Domain', creator: { name: { firstName: 'Fathi' } } },
+  { _id: '1k', status: 0, imgSrc: 'blog_sendCustomDomainEmail_1.PNG', imgAlt: 'Custom Domain', creator: { name: { firstName: 'Fathi' } } },
+  { _id: '1l', status: 0, imgSrc: 'blog_sendCustomDomainEmail_1.PNG', imgAlt: 'Custom Domain', creator: { name: { firstName: 'Fathi' } } },
+  { _id: '1m', status: 1, imgSrc: 'blog_sendCustomDomainEmail_1.PNG', imgAlt: 'Custom Domain', creator: { name: { firstName: 'Fathi' } } },
+  { _id: '1n', status: 1, imgSrc: 'blog_sendCustomDomainEmail_1.PNG', imgAlt: 'Custom Domain', creator: { name: { firstName: 'Fathi' } } },
+  { _id: '1o', status: 0, imgSrc: 'blog_sendCustomDomainEmail_1.PNG', imgAlt: 'Custom Domain', creator: { name: { firstName: 'Fathi' } } },
+  { _id: '1p', status: 1, imgSrc: 'blog_sendCustomDomainEmail_1.PNG', imgAlt: 'Custom Domain', creator: { name: { firstName: 'Fathi' } } },
 ]
 
 const useStyles = makeStyles((theme) => ({
@@ -187,14 +224,22 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   gridList: {
-    maxHeight: 555.45,
+    maxHeight: 555,
   },
   imgListTile: {
-    maxWidth: 345, 
-    maxHeight: 185.15,
+    minWidth: 344,
+    maxWidth: 344, 
+    maxHeight: 185,
     '@media (max-width: 450px)': {
       minWidth: 255
     }
+  },
+  icons: {
+    maxWidth: 150,
+    display: 'flex',
+    flexFlow: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center'
   },
   icon: {
     color: 'rgba(255, 255, 255, 0.54)',

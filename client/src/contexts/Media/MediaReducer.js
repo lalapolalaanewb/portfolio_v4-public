@@ -5,15 +5,15 @@ export default (state, action) => {
         ...state,
         medias: action.payload
       }
-    case 'ADD_MEDIAS':
-      return {
-        ...state,
-        medias: [...action.payload, ...state.medias]
-      }
     case 'ADD_MEDIA':
       return {
         ...state,
         medias: [action.payload, ...state.medias]
+      }
+    case 'ADD_MEDIAS':
+      return {
+        ...state,
+        medias: [...action.payload, ...state.medias]
       }
     case 'DELETE_MEDIA':
       return {

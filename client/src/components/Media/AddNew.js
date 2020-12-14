@@ -44,6 +44,7 @@ export const AddNew = ({
 
   /** media add new - states */
   const [images, setImages] = useState([])
+  const [imgNames, setImgNames] = useState([])
 
   /** media add new - function */
   const handleMediasAdd = async() => {
@@ -53,6 +54,7 @@ export const AddNew = ({
 
     setLoading(mediaDispatch, false)
     setImages([])
+    setImgNames([])
   }
   
   return (
@@ -137,17 +139,24 @@ export const AddNew = ({
               <FormGroup required>
                 <input 
                   multiple
+                  name="files"
                   accept="image/*" 
                   className={classes.photoInput} 
                   id="icon-button-file" 
                   type="file"
-                  onChange={(e) => { console.log(e.target.files)
+                  onChange={(e) => { 
+                    let files = e.target.files
                     let images = []
-                    e.target.files.forEach(file => ImgFileTypes.includes(file.type) && images.push(file))
-                    setImages(images)
-
-                    // let selectedImg = e.target.files[0]
-                    // if(selectedImg && ImgFileTypes.includes(selectedImg.type)) setImg(selectedImg)
+                    let imgNames = []
+                    for(let i=0; i < files.length; i++) {
+                      if(ImgFileTypes.includes(files[i].type)) {
+                        images.push(files[i])
+                        imgNames.push(files[i].name)
+                      } 
+                    }
+                    // setImages(files)
+                    setImages(images) 
+                    setImgNames(imgNames)
                   }} 
                   required 
                 />
@@ -158,7 +167,7 @@ export const AddNew = ({
                     </IconButton>
                   </Tooltip>
                   <Typography className={classes.photoLabelText} variant="subtitle1">
-                    {images.length > 0 ? images.join(', ') : 'No Image Selected'}
+                    {imgNames.length > 0 ? imgNames.join(', ') : 'No Image Selected'}
                   </Typography>
                 </label>
               </FormGroup>
@@ -190,6 +199,7 @@ export const AddNew = ({
                 }
                 else {
                   setImages([])
+                  setImgNames([])
                 }
               }}
             >
