@@ -5,7 +5,6 @@ const {
 } = require('../models')
 // Controllers
 const { imgFolderLocation, uploadMultiImgFile, handleImgRemove } = require('../controllers')
-const { populate } = require('../models/Job')
 
 /** Page Specific Functions */
 // handle 'none' input

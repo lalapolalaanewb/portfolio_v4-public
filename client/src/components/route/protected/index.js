@@ -1,3 +1,4 @@
+import ProtectedRouteParentContact from './ProtectedRouteParentContact'
 import ProtectedRouteParentDashboard from './ProtectedRouteParentDashboard'
 import ProtectedRouteParentLogin from './ProtectedRouteParentLogin'
 import ProtectedRouteParentMedias from './ProtectedRouteParentMedias'
@@ -11,6 +12,7 @@ import ProtectedRouteParentTechs from './ProtectedRouteParentTechs'
 import ProtectedRouteParentUsers from './ProtectedRouteParentUsers'
 
 export {
+  ProtectedRouteParentContact,
   ProtectedRouteParentDashboard,
   ProtectedRouteParentLogin,
   ProtectedRouteParentMedias,

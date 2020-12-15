@@ -4,6 +4,13 @@ const {
   userLogin, userLogout, 
   userRegister, userRegisterOnLike, userRegisterOnComment 
 } = require('./auth')
+// Contact Methods
+const {
+  getPrivateContact,
+  addPrivateContact,
+  updatePrivateContact, updatePrivateContactPublish,
+  deletePrivateContact
+} = require('./contact')
 // Dashboard Methods
 const { getPrivateDashboard } = require('./dashboard')
 // Media Methods
@@ -127,6 +134,11 @@ module.exports = {
   // Auth
   userLogin, userLogout, 
   userRegister, userRegisterOnLike, userRegisterOnComment,
+  // Contact
+  getPrivateContact,
+  addPrivateContact,
+  updatePrivateContact, updatePrivateContactPublish,
+  deletePrivateContact,
   // Dashboard
   getPrivateDashboard,
   // Media

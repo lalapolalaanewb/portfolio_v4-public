@@ -14,6 +14,7 @@ import {
   Grid,
   TextField, Typography 
 } from '@material-ui/core'
+
 const Personal = () => {
   const [personalState, personalDispatch] = usePersonal()
   const { user, loading, success, error, message } = personalState

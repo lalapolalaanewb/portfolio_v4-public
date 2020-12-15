@@ -2,6 +2,8 @@
 const About = require('./About')
 // Comment Model
 const Comment = require('./Comment')
+// Contact Model
+const Contact = require('./Contact')
 // Education Model
 const Education = require('./Education')
 // Home Model
@@ -10,6 +12,8 @@ const Home = require('./Home')
 const Job = require('./Job')
 // Likedstatus Model
 const Likestatus = require('./Likestatus')
+// Mail Model
+const Mail = require('./Mail')
 // Media Mode;
 const Media = require('./Media')
 // Media Social Model
@@ -35,10 +39,12 @@ const User = require('./User')
 module.exports = {
   About,
   Comment,
+  Contact,
   Education,
   Home,
   Job,
   Likestatus,
+  Mail,
   Media,
   Mediasocial,
   Policy,

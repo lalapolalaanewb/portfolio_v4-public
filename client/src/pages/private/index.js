@@ -1,6 +1,7 @@
 import Dashboard from './Dashboard'
 import Medias from './Medias'
 import MediaSocials from './MediaSocials'
+import Messages from './Messages'
 import Policies from './Policies'
 import PostsPrivate from './Posts'
 import Profile from './Profile'
@@ -13,6 +14,7 @@ export {
   Dashboard,
   Medias,
   MediaSocials,
+  Messages,
   Policies,
   PostsPrivate,
   Profile,

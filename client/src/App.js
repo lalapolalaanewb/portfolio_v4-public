@@ -4,7 +4,7 @@ import { AuthState } from './contexts/Auth/AuthState'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import Navbar from './components/Navbar/Navbar'
 import { About, Contact, Home, Login, PolicyComment, Post, Posts, Projects, Resume } from './pages/public'
-import { Dashboard, Medias, MediaSocials, Policies, PostsPrivate, Profile, ProjectsPrivate, SkillsPrivate, TechsPrivate, Users } from './pages/private'
+import { Dashboard, Medias, MediaSocials, Messages, Policies, PostsPrivate, Profile, ProjectsPrivate, SkillsPrivate, TechsPrivate, Users } from './pages/private'
 import {
   UnprotectedRouteParentAbout,
   UnprotectedRouteParentHome,
@@ -15,6 +15,7 @@ import {
   UnprotectedRouteParentResume,
 } from './components/route/unprotected'
 import {
+  ProtectedRouteParentContact,
   ProtectedRouteParentDashboard,
   ProtectedRouteParentLogin,
   ProtectedRouteParentMedias,
@@ -108,6 +109,7 @@ function App() {
               <ProtectedRouteParentUsers exact path="/pfv4-admin/create/users" component={Users} />
               <ProtectedRouteParentDashboard exact path="/pfv4-admin/dashboard" component={Dashboard} />
               <ProtectedRouteParentMedias exact path="/pfv4-admin/medias" component={Medias} />
+              <ProtectedRouteParentContact exact path="/pfv4-admin/messages" component={Messages} />
               <ProtectedRouteParentPosts exact path="/pfv4-admin/posts" component={PostsPrivate} />
               <ProtectedRouteParentProfile exact path="/pfv4-admin/profile" component={Profile} />
               <ProtectedRouteParentProjects exact path="/pfv4-admin/projects" component={ProjectsPrivate} />
