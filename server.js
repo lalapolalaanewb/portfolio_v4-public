@@ -52,6 +52,7 @@ if(process.env.NODE_ENV === 'production') {
 app.use('/api/v1/auth', require('./routes/auth'))
 app.use('/api/v1/dashboard', require('./routes/dashboard'))
 app.use('/api/v1/contacts', require('./routes/contact'))
+app.use('/api/v1/mails', require('./routes/mail'))
 app.use('/api/v1/medias', require('./routes/media'))
 app.use('/api/v1/mediasocials', require('./routes/mediaSocial'))
 app.use('/api/v1/policies', require('./routes/policy'))

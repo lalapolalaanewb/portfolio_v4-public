@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
+import { MailState } from '../../contexts/Mail/Private/MailState'
 import Setting from '../../components/Messages/Setting'
+import Mails from '../../components/Messages/Mails'
 import { makeStyles, useTheme } from '@material-ui/core/styles'
 import { 
   AppBar,
@@ -44,7 +46,7 @@ const Messages = () => {
           <Setting />
         </TabPanel>
         <TabPanel value={value} index={1}>
-          Mails tab
+          <MailState><Mails /></MailState>
         </TabPanel>
       </div>
     </>

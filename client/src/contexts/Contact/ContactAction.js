@@ -44,7 +44,7 @@ export const getContact = async (dispatch) => {
       })()
     })
   })
-  .catch(async error => { console.log(error.response)
+  .catch(async error => { 
     const result = await error.response.data
     
     setError(dispatch, {

@@ -8,6 +8,7 @@ import { Dashboard, Medias, MediaSocials, Messages, Policies, PostsPrivate, Prof
 import {
   UnprotectedRouteParentAbout,
   UnprotectedRouteParentHome,
+  UnprotectedRouteParentMail,
   UnprotectedRouteParentPolicy,
   UnprotectedRouteParentPost,
   UnprotectedRouteParentPosts,
@@ -97,7 +98,7 @@ function App() {
               <UnprotectedRouteParentAbout path="/about" component={About} />
               <UnprotectedRouteParentPosts exact path="/blog" component={Posts} />
               <UnprotectedRouteParentPost path="/blog/:id" component={Post} />
-              <Route path="/contact" component={Contact} />
+              <UnprotectedRouteParentMail path="/contact" component={Contact} />
               <UnprotectedRouteParentPolicy path="/policy/comment" component={PolicyComment} />
               <UnprotectedRouteParentProjects exact path="/projects" component={Projects} />
               <UnprotectedRouteParentResume path="/resume" component={Resume} />

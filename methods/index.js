@@ -13,6 +13,14 @@ const {
 } = require('./contact')
 // Dashboard Methods
 const { getPrivateDashboard } = require('./dashboard')
+// Mail Methods
+const {
+  getPublicContactStatus,
+  addPublicMail,
+  getPrivateMails,
+  updatePrivateMailNoty, updatePrivateMailRead, updatePrivateMailReply,
+  deletePrivateMail
+} = require('./mail')
 // Media Methods
 const {
   getPrivateMedias,
@@ -141,6 +149,12 @@ module.exports = {
   deletePrivateContact,
   // Dashboard
   getPrivateDashboard,
+  // Mail
+  getPublicContactStatus,
+  addPublicMail,
+  getPrivateMails,
+  updatePrivateMailNoty, updatePrivateMailRead, updatePrivateMailReply,
+  deletePrivateMail,
   // Media
   getPrivateMedias,
   addPrivateMedia,

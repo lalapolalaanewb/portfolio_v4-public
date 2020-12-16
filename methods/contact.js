@@ -11,14 +11,14 @@ const {
 exports.getPrivateContact = async (req, res, next) => {
   await Contact.findOne().where({ creator: '5f8fc26c6a103b243428bec1' })
   .select('-mails')
-  .then(data => { console.log(data)
+  .then(data => { 
     return res.status(200).json({
       success: true,
       count: 1,
       data: data
     })
   })
-  .catch(err => { console.log(err)
+  .catch(err => { 
     return res.status(500).json({
       success: false,
       error: `Failed to get data from Contact Collection`,
@@ -89,7 +89,7 @@ exports.updatePrivateContactPublish = async (req, res, next) => {
       data: contact
     })
   })
-  .catch(err => { console.log(err)
+  .catch(err => { 
     return res.status(500).json({
       success: false,
       error: `Failed to update contact status publish from Contact Collection`,

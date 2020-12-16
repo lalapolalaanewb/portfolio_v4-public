@@ -2,22 +2,26 @@ import React, { forwardRef } from 'react'
 import { TablePagination } from '@material-ui/core'
 import AddBox from '@material-ui/icons/AddBox'
 import ArrowDownward from '@material-ui/icons/ArrowDownward'
+import CancelScheduleSend from '@material-ui/icons/CancelScheduleSend';
 import Check from '@material-ui/icons/Check'
 import ChevronLeft from '@material-ui/icons/ChevronLeft'
 import ChevronRight from '@material-ui/icons/ChevronRight'
 import Clear from '@material-ui/icons/Clear'
 import DeleteOutline from '@material-ui/icons/DeleteOutline'
 import Edit from '@material-ui/icons/Edit'
+import Email from '@material-ui/icons/Email';
 import FilterList from '@material-ui/icons/FilterList'
 import FirstPage from '@material-ui/icons/FirstPage'
 import GetApp from '@material-ui/icons/GetApp'
 import LastPage from '@material-ui/icons/LastPage'
+import MarkunreadMailbox from '@material-ui/icons/MarkunreadMailbox';
 import Pdf from '@material-ui/icons/PictureAsPdf'
 import PhotoCamera from '@material-ui/icons/PhotoCamera'
 import Publish from '@material-ui/icons/Publish'
 import Remove from '@material-ui/icons/Remove'
 import SaveAlt from '@material-ui/icons/SaveAlt'
 import Search from '@material-ui/icons/Search'
+import Send from '@material-ui/icons/Send';
 import ViewColumn from '@material-ui/icons/ViewColumn'
 
 export const Icons2Use = () => {
@@ -29,10 +33,12 @@ export const Icons2Use = () => {
     Delete: forwardRef((props, ref) => <DeleteOutline {...props} ref={ref} />),
     DetailPanel: forwardRef((props, ref) => <ChevronRight {...props} ref={ref} />),
     Edit: forwardRef((props, ref) => <Edit {...props} ref={ref} />),
+    Email: forwardRef((props, ref) => <Email {...props} ref={ref} />),
     Export: forwardRef((props, ref) => <SaveAlt {...props} ref={ref} />),
     Filter: forwardRef((props, ref) => <FilterList {...props} ref={ref} />),
     FirstPage: forwardRef((props, ref) => <FirstPage {...props} ref={ref} />),
     LastPage: forwardRef((props, ref) => <LastPage {...props} ref={ref} />),
+    MarkReadEmail: forwardRef((props, ref) => <MarkunreadMailbox {...props} ref={ref} />),
     NewImg: forwardRef((props, ref) => <PhotoCamera {...props} ref={ref} />),
     NewPdf: forwardRef((props, ref) => <Pdf {...props} ref={ref} />),
     NextPage: forwardRef((props, ref) => <ChevronRight {...props} ref={ref} />),
@@ -40,9 +46,11 @@ export const Icons2Use = () => {
     Publish: forwardRef((props, ref) => <Publish {...props} ref={ref} />),
     ResetSearch: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
     Search: forwardRef((props, ref) => <Search {...props} ref={ref} />),
+    Send: forwardRef((props, ref) => <Send {...props} ref={ref} />),
     SortArrow: forwardRef((props, ref) => <ArrowDownward {...props} ref={ref} />),
     ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
     Unpublish: forwardRef((props, ref) => <GetApp {...props} ref={ref} />),
+    Unsend: forwardRef((props, ref) => <CancelScheduleSend {...props} ref={ref} />),
     ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
   }
 

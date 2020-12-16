@@ -4,16 +4,11 @@ import { setLoading, setError, setSuccess, getContact, addContact, updateContact
 import AlertMessage from '../global/Alert'
 import { DividerBlank } from '../global/Divider'
 import AddNew from './Child/AddNewSetting'
-import Headline from '../global/Headline'
-import InputStyles from '../global/InputStyles'
-import classNames from 'classnames'
 import { makeStyles, useTheme } from '@material-ui/core/styles'
 import { 
   Button, 
   Card, CardActions, CardContent,
-  FormGroup,
-  Grid,
-  TextField, Typography 
+  Typography 
 } from '@material-ui/core'
 
 const Setting = () => {
@@ -25,7 +20,6 @@ const Setting = () => {
   const theme = useTheme()
 
   /** global - states */
-  const emailRegex = /^.+@[^\.].*\.[a-z]{2,}$/
   const addNewRef = useRef(null)
   const [contactId, setContactId] = useState('')
 
@@ -155,15 +149,6 @@ const Setting = () => {
       <div>
         <Card style={{ backgroundColor: theme.palette.type === 'light' ? theme.palette.grey[200] : theme.palette.lighten.light }}>
           <CardContent>
-            {/* <Typography className={classes.nickName} color="textSecondary" gutterBottom>
-              {contact.senderGm}
-            </Typography>
-            <Typography variant="h5" component="h2">
-              {handleNoneValue(user.name.firstName)}
-            </Typography>
-            <Typography className={classes.lastName} color="textSecondary">
-              {handleNoneValue(user.name.lastName)}
-            </Typography> */}
             <Typography variant="body2" component="p" className={classes.textCut}>
               Sender Gmail : {handleNoneValue(contact.senderGmail)}
               <br />
