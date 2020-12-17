@@ -1,7 +1,7 @@
 import axios from 'axios'
-import { config, configMultiPart } from '../../../Utils/headers/header'
-import { getCookie, setCookie } from "../../../services/Cookie"
-import { ipv4 } from '../../../Utils/ipv4/ipv4'
+import { configPrivate, configMultiPartPrivate } from '../../../Utils/headers/header'
+
+const baseUrl = '/api/v1/projects/private'
 
 // Set Loading
 export const setLoading = (dispatch, status) => dispatch({ type: 'SET_LOADING', payload: status })
@@ -17,7 +17,7 @@ export const getProjects = async (dispatch) => {
   setLoading(dispatch, true)
 
   // do fetch
-  await axios.post('/api/v1/projects/private/get', { uid: '' }, config)
+  await axios.get(baseUrl + '/get', configPrivate)
   .then(async res => {
     const result = await res.data.data
     
@@ -47,8 +47,6 @@ export const getProjects = async (dispatch) => {
   })
   .catch(async error => {
     const result = await error.response.data
-    console.log(result.success)
-    console.log(result.error)
 
     setError(dispatch, {
       status: true,
@@ -70,7 +68,7 @@ export const addProject = async (dispatch, project) => {
   formData.append('subDescription', project.subDesc)
   formData.append('file', project.imgSrc)
 
-  await axios.post('/api/v1/projects/private/add/', formData, configMultiPart)
+  await axios.post(baseUrl + '/add', formData, configMultiPartPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -106,7 +104,7 @@ export const updateProjectImg = async (dispatch, projectId, img, imgSrc) => {
   formData.append('imgSrc', imgSrc)
   formData.append('file', img)
 
-  await axios.post('/api/v1/projects/private/update/image', formData, configMultiPart)
+  await axios.post(baseUrl + '/update/image', formData, configMultiPartPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -141,7 +139,7 @@ export const updateProjectImg = async (dispatch, projectId, img, imgSrc) => {
 export const updateProjectPublish = async (dispatch, projectId, intention) => {
   setLoading(dispatch, true) 
   
-  await axios.post(`/api/v1/projects/private/update/publish`, { projectId, intention }, config)
+  await axios.post(baseUrl + `/update/publish`, { projectId, intention }, configPrivate)
   .then(async res => {
     const result = await res.data.data
     
@@ -176,7 +174,7 @@ export const updateProjectPublish = async (dispatch, projectId, intention) => {
 export const updateProject = async (dispatch, projectId, project) => {
   setLoading(dispatch, true)
 
-  await axios.post(`/api/v1/projects/private/update/${projectId}`, project, config)
+  await axios.post(baseUrl + `/update/${projectId}`, project, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -211,7 +209,7 @@ export const updateProject = async (dispatch, projectId, project) => {
 export const deleteProject = async (dispatch, projectId, creator) => {
   setLoading(dispatch, true)
 
-  await axios.post(`/api/v1/projects/private/delete/${projectId}`, { creator }, config)
+  await axios.post(`/api/v1/projects/private/delete/${projectId}`, { creator }, configPrivate)
   .then(async res => {
     const result = await res.data.data
 

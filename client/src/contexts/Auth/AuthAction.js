@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { config } from '../../Utils/headers/header'
+import { config, configPrivate } from '../../Utils/headers/header'
 import { getCookie, setCookie, removeCookie } from '../../services/Cookie'
 import { ipv4 } from '../../Utils/ipv4/ipv4'
 
@@ -45,15 +45,13 @@ export const isLogout = async(dispatch) => {
   // get uid cookie
   let uid = getCookie('uid')
 
-  await axios.post('/api/v1/auth/logout', { uid: uid }, config)
+  await axios.post('/api/v1/auth/logout', { uid: uid }, configPrivate)
   .then(async res => {
     const result = await res.data
-
+    
     if(result.success) {
-      console.log('removing cookie')
       // remove cookie
-      removeCookie('uid')
-      console.log('cookie removed')
+      removeCookie('uid', { path: '/' })
     }
 
     dispatch({
@@ -61,11 +59,7 @@ export const isLogout = async(dispatch) => {
       payload: false
     })
   }).catch(async error => {
-    console.log('displying error')
-    console.log(error)
     const result = await error.response.data
-    console.log(result)
-    console.log(result.error)
 
     // update state
     dispatch({
@@ -81,7 +75,6 @@ export const isLogout = async(dispatch) => {
 // Check user isAuthenticated
 export const isAuthenticated = async(dispatch) => {
   setLoading(dispatch, true)
-  console.log('in isAuth')
 
   // get uid cookie
   let uid = getCookie('uid')

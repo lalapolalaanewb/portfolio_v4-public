@@ -1,7 +1,5 @@
 import axios from 'axios'
-import { config, configMultiPart } from '../../../../Utils/headers/header'
-import { getCookie, setCookie } from "../../../../services/Cookie"
-import { ipv4 } from '../../../../Utils/ipv4/ipv4'
+import { configPrivate, configMultiPartPrivate } from '../../../../Utils/headers/header'
 
 const baseUrl = '/api/v1/users/private/profile/resume'
 
@@ -19,7 +17,7 @@ export const getResumes = async (dispatch) => {
   setLoading(dispatch, true)
 
   // do fetch
-  await axios.post(baseUrl + '/get', { uid: '' }, config)
+  await axios.get(baseUrl + '/get', configPrivate)
   .then(async res => {
     const result = await res.data.data
     // console.log(result.resumes)
@@ -79,7 +77,7 @@ export const addResume = async (dispatch, resume) => {
   formData.append('creator', resume.creator)
   formData.append('file', resume.pdf)
 
-  await axios.post(baseUrl + '/add', formData, configMultiPart)
+  await axios.post(baseUrl + '/add', formData, configMultiPartPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -110,7 +108,7 @@ export const addResume = async (dispatch, resume) => {
 export const updateResume = async (dispatch, resumeId, resume) => {
   setLoading(dispatch, true)
 
-  await axios.post(baseUrl + `/update`, { resumeId, resume }, config)
+  await axios.post(baseUrl + `/update`, { resumeId, resume }, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -150,7 +148,7 @@ export const updateResumePdf = async (dispatch, resumeId, pdf) => {
   formData.append('pdfSrc', pdf.old)
   formData.append('file', pdf.new)
 
-  await axios.post(baseUrl + `/update/pdf`, formData, configMultiPart)
+  await axios.post(baseUrl + `/update/pdf`, formData, configMultiPartPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -185,7 +183,7 @@ export const updateResumePdf = async (dispatch, resumeId, pdf) => {
 export const updateResumePublish = async (dispatch, resumeId, intention) => {
   setLoading(dispatch, true)
 
-  await axios.post(baseUrl + `/update/publish`, { resumeId, intention }, config)
+  await axios.post(baseUrl + `/update/publish`, { resumeId, intention }, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -220,7 +218,7 @@ export const updateResumePublish = async (dispatch, resumeId, intention) => {
 export const deleteResume = async (dispatch, resumeId, creator) => {
   setLoading(dispatch, true)
 
-  await axios.post(baseUrl + `/delete`, { resumeId, creator }, config)
+  await axios.post(baseUrl + `/delete`, { resumeId, creator }, configPrivate)
   .then(async res => {
     const result = await res.data.data
 

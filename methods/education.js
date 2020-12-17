@@ -1,6 +1,4 @@
 /** Dependencies */
-// Bcrypt
-const bcrypt = require('bcryptjs')
 // Model - User
 const {
   User, Education

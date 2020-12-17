@@ -181,6 +181,7 @@ export const ProjectList = ({
               type="text" 
               ref={e => setLink2Copy(e)} 
               value={proj.liveUrls.code}
+              readOnly
               style={{position: 'absolute', left: '-10000000000px'}} 
             />
             <CardHeader

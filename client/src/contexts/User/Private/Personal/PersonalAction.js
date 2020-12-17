@@ -1,6 +1,7 @@
 import axios from 'axios'
-import { config } from '../../../../Utils/headers/header'
-import { getCookie } from '../../../../services/Cookie'
+import { configPrivate } from '../../../../Utils/headers/header'
+
+const baseUrl = '/api/v1/users/private/profile/personal'
 
 // Set Loading
 export const setLoading = (dispatch, status) => dispatch({ type: 'SET_LOADING', payload: status })
@@ -18,7 +19,7 @@ export const getUser = async(dispatch) => {
   // get current user cookie
   // let uid = getCookie('uid')
 
-  await axios.post('/api/v1/users/private/profile/personal/get', { uid: 'uid' }, config)
+  await axios.get(baseUrl + '/get', configPrivate)
   .then(async res => {
     const result = await res.data.data
     
@@ -46,17 +47,11 @@ export const getUser = async(dispatch) => {
   })
 }
 
-// Add User's Job
-// export const addUserJob = async (dispatch, userId, job) => {}
-
-// Add User's Social Media
-// export const addUserSocial = async (dispatch, userId, social) => {}
-
 // Update User's Personal
 export const updateUserPersonal = async (dispatch, userId, personal) => {
   setLoading(dispatch, true)
   
-  await axios.post(`/api/v1/users/private/profile/personal/update`, { userId, personal }, config)
+  await axios.post(baseUrl + `/update`, { userId, personal }, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -94,7 +89,7 @@ export const updateUserPersonal = async (dispatch, userId, personal) => {
 export const updateUserPersonalPassword = async (dispatch, userId, password) => {
   setLoading(dispatch, true)
 
-  await axios.post(`/api/v1/users/private/profile/personal/update/password`, { userId, password }, config)
+  await axios.post(baseUrl + `/update/password`, { userId, password }, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -127,20 +122,3 @@ export const updateUserPersonalPassword = async (dispatch, userId, password) => 
     })
   })
 }
-
-// Update User's About Img
-// export const updateUserAboutImg = async (dispatch, userId, personalImg) => {
-//   setLoading(dispatch, true)
-// }
-
-// Update User's Job
-// export const updateUserJob = async (dispatch, userId, job) => {}
-
-// Update User's Social
-// export const updateUserSocial = async (dispatch, userId, social) => {}
-
-// Delete User's Job
-// export const deleteUserJob = async (dispatch, userId, jobId) => {}
-
-// Delete User's Social
-// export const deleteUserSocial = async (dispatch, userId, socialId) => {}

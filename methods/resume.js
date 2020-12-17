@@ -1,12 +1,10 @@
 /** Dependencies */
-// Bcrypt
-const bcrypt = require('bcryptjs')
 // Model - User
 const {
   User, Technology, Resume
 } = require('../models')
 // Controllers
-const { pdfFolderLocation, handlePdfRemove } = require('../controllers')
+const { handlePdfRemove } = require('../controllers')
 
 /** Page Specific Functions */
 // handle 'none' input

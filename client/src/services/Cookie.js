@@ -11,4 +11,4 @@ export const getCookie = (key) => cookie.get(key)
 export const setCookie = (key, value, options) => cookie.set(key, value, options)
 
 // Remove Cookie
-export const removeCookie = (key) => cookie.remove(key)
+export const removeCookie = (key, options) => cookie.remove(key, options)

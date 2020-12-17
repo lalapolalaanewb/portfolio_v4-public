@@ -4,7 +4,7 @@ const router = require("express").Router();
 // Controllers
 const {
   // Verification
-  redirect2Login, redirect2Home, adminAccessPublic,
+  redirect2Login, adminAccessPublic,
 } = require('../controllers')
 // Project Methods
 const { 
@@ -32,36 +32,36 @@ router.route('/public/add')
 // @route   POST /api/v1/mails/private/get
 // @access  Private (Require sessionId & uid)
 router.route('/private/get')
-  // .post(redirect2Login, getPrivateMails)
-  .post(getPrivateMails)
+  .get(redirect2Login, getPrivateMails)
+  // .get(getPrivateMails)
 
 // @desc    Portfolio V4 Mail Dashboard (Update A Mail Status Noty)
 // @route   POST /api/v1/mails/private/update/noty
 // @access  Private (Require sessionId & uid)
 router.route('/private/update/noty')
-  // .post(redirect2Login, updatePrivateMailNoty)
-  .post(updatePrivateMailNoty)
+  .post(redirect2Login, updatePrivateMailNoty)
+  // .post(updatePrivateMailNoty)
 
 // @desc    Portfolio V4 Mail Dashboard (Update A Mail Status Read)
 // @route   POST /api/v1/mails/private/update/read
 // @access  Private (Require sessionId & uid)
 router.route('/private/update/read')
-  // .post(redirect2Login, updatePrivateMailRead)
-  .post(updatePrivateMailRead)
+  .post(redirect2Login, updatePrivateMailRead)
+  // .post(updatePrivateMailRead)
 
 // @desc    Portfolio V4 Mail Dashboard (Update A Mail Status Reply)
 // @route   POST /api/v1/mails/private/update/reply
 // @access  Private (Require sessionId & uid)
 router.route('/private/update/reply')
-  // .post(redirect2Login, updatePrivateMailReply)
-  .post(updatePrivateMailReply)
+  .post(redirect2Login, updatePrivateMailReply)
+  // .post(updatePrivateMailReply)
 
 // @desc    Portfolio V4 Mail Dashboard (Delete A Mail)
 // @route   POST /api/v1/mails/private/delete/:id
 // @access  Private (Require sessionId & uid)
 router.route('/private/delete/:id')
-  // .post(redirect2Login, deletePrivateMail)
-  .post(deletePrivateMail)
+  .post(redirect2Login, deletePrivateMail)
+  // .post(deletePrivateMail)
 
 /** Export */
 module.exports = router

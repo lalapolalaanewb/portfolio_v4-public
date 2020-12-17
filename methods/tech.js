@@ -56,14 +56,14 @@ exports.addPrivateTech = async(req, res, next) => {
   let {
     name, abbreviation
   } = req.body
-
-  const tech = new Technology({
+  
+  const newTech = new Technology({
     name: name,
     abbreviation: abbreviation,
-    creator: '5f8fc26c6a103b243428bec1' // add current logged-in user ID
+    creator: req.session.userId // add current logged-in user ID
   })
 
-  tech.save()
+  newTech.save()
   .then(async data => {
     let tech = await data.populate('creator').execPopulate()
 

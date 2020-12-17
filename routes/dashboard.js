@@ -4,7 +4,7 @@ const router = require("express").Router();
 // Controllers
 const {
   // Verification
-  redirect2Login, redirect2Home
+  redirect2Login, 
 } = require('../controllers')
 // Project Methods
 const { getPrivateDashboard } = require('../methods')
@@ -14,8 +14,8 @@ const { getPrivateDashboard } = require('../methods')
 // @route   POST /api/v1/dashboard
 // @access  Private (Require sessionId & uid)
 router.route('/')
-  // .post(redirect2Login, getPrivateDashboard)
-  .post(getPrivateDashboard)
+  .get(redirect2Login, getPrivateDashboard)
+  // .get(getPrivateDashboard)
 
 /** Export */
 module.exports = router

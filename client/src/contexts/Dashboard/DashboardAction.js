@@ -1,6 +1,5 @@
 import axios from 'axios'
-import { config } from '../../Utils/headers/header'
-import { getCookie } from '../../services/Cookie'
+import { configPrivate } from '../../Utils/headers/header'
 
 // Set Loading
 export const setLoading = (dispatch, status) => dispatch({ type: 'SET_LOADING', payload: status })
@@ -14,14 +13,11 @@ export const setSuccess = (dispatch, success) => dispatch({ type: 'SET_SUCCESS',
 // Get All Dashboard
 export const getDashboard = async(dispatch) => {
   setLoading(dispatch, true)
-
-  // get current user cookie
-  // let uid = getCookie('uid')
-
-  await axios.post('/api/v1/dashboard', { uid: 'uid' }, config)
+  
+  await axios.get('/api/v1/dashboard', configPrivate)
   .then(async res => {
     const result = await res.data.data
-    console.log(result)
+    
     // set techs
     dispatch({
       type: 'SET_DASHBOARD',

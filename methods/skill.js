@@ -85,16 +85,16 @@ exports.addPrivateSkill = async(req, res, next) => {
   
   let techIds = await handleGetTechIds(techs)
   
-  const skill = new Skill({
+  const newSkill = new Skill({
     name: name,
     techs: techIds,
-    creator: '5f8fc26c6a103b243428bec1' // add current logged-in user ID
+    creator: req.session.userId // add current logged-in user ID
   })
 
-  skill.save()
+  newSkill.save()
   .then(async data => {
     await User.updateOne(
-      { _id: '5f8fc26c6a103b243428bec1' },
+      { _id: req.session.userId },
       { $push: { skills: data._id } },
     )
 

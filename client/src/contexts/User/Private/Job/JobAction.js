@@ -1,7 +1,7 @@
 import axios from 'axios'
-import { config, configMultiPart } from '../../../../Utils/headers/header'
-import { getCookie, setCookie } from "../../../../services/Cookie"
-import { ipv4 } from '../../../../Utils/ipv4/ipv4'
+import { configPrivate } from '../../../../Utils/headers/header'
+
+const baseUrl = '/api/v1/users/private/profile/job'
 
 // Set Loading
 export const setLoading = (dispatch, status) => dispatch({ type: 'SET_LOADING', payload: status })
@@ -17,7 +17,7 @@ export const getJobs = async (dispatch) => {
   setLoading(dispatch, true)
 
   // do fetch
-  await axios.post('/api/v1/users/private/profile/job/get', { uid: '' }, config)
+  await axios.get(baseUrl + '/get', configPrivate)
   .then(async res => {
     const result = await res.data.data
     
@@ -45,7 +45,7 @@ export const getJobs = async (dispatch) => {
 export const addJob = async (dispatch, job) => {
   setLoading(dispatch, true)
   
-  await axios.post('/api/v1/users/private/profile/job/add', job, config)
+  await axios.post(baseUrl + '/add', job, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -76,7 +76,7 @@ export const addJob = async (dispatch, job) => {
 export const updateJob = async (dispatch, jobId, job) => {
   setLoading(dispatch, true)
 
-  await axios.post(`/api/v1/users/private/profile/job/update`, { jobId, job }, config)
+  await axios.post(baseUrl + `/update`, { jobId, job }, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -111,7 +111,7 @@ export const updateJob = async (dispatch, jobId, job) => {
 export const updateJobPublish = async (dispatch, jobId, intention) => {
   setLoading(dispatch, true)
 
-  await axios.post(`/api/v1/users/private/profile/job/update/publish`, { jobId, intention }, config)
+  await axios.post(baseUrl + `/update/publish`, { jobId, intention }, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -146,7 +146,7 @@ export const updateJobPublish = async (dispatch, jobId, intention) => {
 export const deleteJob = async (dispatch, jobId, creator) => {
   setLoading(dispatch, true)
 
-  await axios.post(`/api/v1/users/private/profile/job/delete`, { jobId, creator }, config)
+  await axios.post(baseUrl + `/delete`, { jobId, creator }, configPrivate)
   .then(async res => {
     const result = await res.data.data
 

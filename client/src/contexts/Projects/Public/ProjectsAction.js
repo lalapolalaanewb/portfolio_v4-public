@@ -17,7 +17,7 @@ export const getProjects = async (dispatch) => {
   await axios.post('/api/v1/projects', { key: process.env.REACT_APP_ADMIN_ACCESS_PUBLIC }, config)
   .then(async res => {
     const result = await res.data.data
-    console.log(result)
+    // console.log(result)
     dispatch({
       type: 'SET_PROJECTS',
       payload: result 
@@ -44,8 +44,8 @@ export const getProjects = async (dispatch) => {
   })
   .catch(async error => {
     const result = await error.response.data
-    console.log(result.success)
-    console.log(result.error)
+    // console.log(result.success)
+    // console.log(result.error)
 
     dispatch({
       type: 'SET_ERROR',

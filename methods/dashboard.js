@@ -3,7 +3,7 @@
 const bcrypt = require('bcryptjs')
 // Model - User
 const {
-  User, Home, About, Socialmedia, Job, Skill, Technology, Project, Post
+  About, Contact, Home, Job, Mail, Media, Post, Project, Skill, Socialmedia, Technology, User,
 } = require('../models')
 
 /** Methods */
@@ -31,7 +31,25 @@ exports.getPrivateDashboard = async(req, res, next) => {
       error: `Failed to get active user data from User Collection`,
       data: {}
     })
-    // console.log('user'); console.log(user)
+
+    // get counts User Mail Collection
+    let userMails = await Contact.findOne().where({ creator: user[0]._id }).select('mails')
+    // - throw an error if userMedias not found
+    if(!userMails) return res.status(400).json({
+      success: false,
+      error: `Failed to get all user mails from Contact Collection`,
+      data: {}
+    })
+    
+    // get counts User Media Collection
+    let userMedias = await Media.find().where({ creator: user[0]._id }).select('_id')
+    // - throw an error if userMedias not found
+    if(!userMedias) return res.status(400).json({
+      success: false,
+      error: `Failed to get all user data from Media Collection`,
+      data: {}
+    })
+
     // get counts User Technology Collection
     let userTechs = await Technology.find().where({ creator: user[0]._id }).select('_id')
     // - throw an error if userTechs not found
@@ -40,25 +58,7 @@ exports.getPrivateDashboard = async(req, res, next) => {
       error: `Failed to get all user data from Tech Collection`,
       data: {}
     })
-    // console.log(userTechs); console.log(userTechs.length)
-    // get counts User Collection
-    let users = await User.find().select('_id')
-    // - throw an error if users not found
-    if(!user) return res.status(400).json({
-      success: false,
-      error: `Failed to get all data from User Collection`,
-      data: {}
-    })
-    // console.log(users); console.log(users.length)
-    // get counts Home Collection
-    let homes = await Home.find().select('_id')
-    // - throw an error if homes not found
-    if(!homes) return res.status(400).json({
-      success: false,
-      error: `Failed to get all data from Home Collection`,
-      data: {}
-    })
-    // console.log(homes); console.log(homes.length)
+
     // get counts About Collection
     let abouts = await About.find().select('_id')
     // - throw an error if abouts not found
@@ -67,16 +67,16 @@ exports.getPrivateDashboard = async(req, res, next) => {
       error: `Failed to get all data from About Collection`,
       data: {}
     })
-    // console.log(abouts); console.log(abouts.length)
-    // get counts Socialmedia Collection
-    let socialMedias = await Socialmedia.find().select('_id')
-    // - throw an error if socialMedias not found
-    if(!socialMedias) return res.status(400).json({
+    
+    // get counts Home Collection
+    let homes = await Home.find().select('_id')
+    // - throw an error if homes not found
+    if(!homes) return res.status(400).json({
       success: false,
-      error: `Failed to get all data from Socialmedia Collection`,
+      error: `Failed to get all data from Home Collection`,
       data: {}
     })
-    // console.log(socialMedias); console.log(socialMedias.length)
+
     // get counts Job Collection
     let jobs = await Job.find().select('_id')
     // - throw an error if jobs not found
@@ -85,34 +85,25 @@ exports.getPrivateDashboard = async(req, res, next) => {
       error: `Failed to get all data from Job Collection`,
       data: {}
     })
-    // console.log(jobs); console.log(jobs.length)
-    // get counts Skill Collection
-    let skills = await Skill.find().select('_id')
-    // - throw an error if skills not found
-    if(!skills) return res.status(400).json({
+
+    // get counts Mail Collection
+    let mails = await Mail.find().select('_id')
+    // - throw an error if mails not found
+    if(!mails) return res.status(400).json({
       success: false,
-      error: `Failed to get all data from Skill Collection`,
+      error: `Failed to get all data from Mail Collection`,
       data: {}
     })
-    // console.log(skills); console.log(skills.length)
-    // get counts Technology Collection
-    let techs = await Technology.find().select('_id')
-    // - throw an error if techs not found
-    if(!techs) return res.status(400).json({
+
+    // get counts Media Collection
+    let medias = await Media.find().select('_id')
+    // - throw an error if medias not found
+    if(!medias) return res.status(400).json({
       success: false,
-      error: `Failed to get all data from Tech Collection`,
+      error: `Failed to get all data from Media Collection`,
       data: {}
     })
-    // console.log(techs); console.log(techs.length)
-    // get counts Project Collection
-    let projects = await Project.find().select('_id')
-    // - throw an error if projects not found
-    if(!projects) return res.status(400).json({
-      success: false,
-      error: `Failed to get all data from Project Collection`,
-      data: {}
-    })
-    // console.log(projects); console.log(projects.length)
+    
     // get counts Post Collection
     let posts = await Post.find().select('_id')
     // - throw an error if posts not found
@@ -121,31 +112,80 @@ exports.getPrivateDashboard = async(req, res, next) => {
       error: `Failed to get all data from Post Collection`,
       data: {}
     })
-    // console.log(posts); console.log(posts.length)
+
+    // get counts Project Collection
+    let projects = await Project.find().select('_id')
+    // - throw an error if projects not found
+    if(!projects) return res.status(400).json({
+      success: false,
+      error: `Failed to get all data from Project Collection`,
+      data: {}
+    })
+
+    // get counts Skill Collection
+    let skills = await Skill.find().select('_id')
+    // - throw an error if skills not found
+    if(!skills) return res.status(400).json({
+      success: false,
+      error: `Failed to get all data from Skill Collection`,
+      data: {}
+    })
+
+    // get counts Socialmedia Collection
+    let socialMedias = await Socialmedia.find().select('_id')
+    // - throw an error if socialMedias not found
+    if(!socialMedias) return res.status(400).json({
+      success: false,
+      error: `Failed to get all data from Socialmedia Collection`,
+      data: {}
+    })
+    
+    // get counts Technology Collection
+    let techs = await Technology.find().select('_id')
+    // - throw an error if techs not found
+    if(!techs) return res.status(400).json({
+      success: false,
+      error: `Failed to get all data from Tech Collection`,
+      data: {}
+    })
+
+    // get counts User Collection
+    let users = await User.find().select('_id')
+    // - throw an error if users not found
+    if(!user) return res.status(400).json({
+      success: false,
+      error: `Failed to get all data from User Collection`,
+      data: {}
+    })
+    
     return res.status(200).json({
       success: true,
       count: user.length,
       data: {
         user: {
           _id: user[0]._id,
-          homes: user[0].homes,
           abouts: user[0].abouts,
-          socialMedias: user[0].socialMedias,
+          homes: user[0].homes,
           jobs: user[0].jobs,
-          skills: user[0].skills,
-          techs: userTechs.length,
+          mails: userMails.mails.length,
+          medias: userMedias.length,
+          posts: user[0].posts,
           projects: user[0].projects,
-          posts: user[0].posts
+          skills: user[0].skills,
+          socialMedias: user[0].socialMedias,
+          techs: userTechs.length
         },
-        usersCount: users.length,
-        homesCount: homes.length,
         aboutsCount: abouts.length,
-        socialMediasCount: socialMedias.length,
+        homesCount: homes.length,
         jobsCount: jobs.length,
-        skillsCount: skills.length,
-        techsCount: techs.length,
+        mailsCount: mails.length,
+        mediasCount: medias.length,
+        postsCount: posts.length,
         projectsCount: projects.length,
-        postsCount: posts.length
+        skillsCount: skills.length,
+        socialMediasCount: socialMedias.length,
+        techsCount: techs.length,
+        usersCount: users.length
       }
     })
   } catch(err) { console.log(err)

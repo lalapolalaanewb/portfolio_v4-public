@@ -1,6 +1,7 @@
 import axios from 'axios'
-import { config } from '../../../Utils/headers/header'
-import { getCookie } from '../../../services/Cookie'
+import { configPrivate } from '../../../Utils/headers/header'
+
+const baseUrl = '/api/v1/users/private'
 
 // Set Loading
 export const setLoading = (dispatch, status) => dispatch({ type: 'SET_LOADING', payload: status })
@@ -15,13 +16,9 @@ export const setSuccess = (dispatch, success) => dispatch({ type: 'SET_SUCCESS',
 export const getUsers = async(dispatch) => {
   setLoading(dispatch, true)
 
-  // get current user cookie
-  // let uid = getCookie('uid')
-
-  await axios.post('/api/v1/users/private/get', { uid: 'uid' }, config)
+  await axios.get(baseUrl + '/get', configPrivate)
   .then(async res => {
     const result = await res.data.data
-    console.log(result)
     
     // set users
     dispatch({
@@ -44,7 +41,7 @@ export const getUsers = async(dispatch) => {
 export const addUser = async (dispatch, user) => {
   setLoading(dispatch, true)
   
-  await axios.post('/api/v1/users/private/add/', user, config)
+  await axios.post(baseUrl + '/add', user, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -75,7 +72,7 @@ export const addUser = async (dispatch, user) => {
 export const updateUserActive = async (dispatch, userId, intention) => {
   setLoading(dispatch, true)
 
-  await axios.post(`/api/v1/users/private/update/active`, { userId, intention }, config)
+  await axios.post(baseUrl + `/update/active`, { userId, intention }, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -110,7 +107,7 @@ export const updateUserActive = async (dispatch, userId, intention) => {
 export const updateUser = async (dispatch, userId, user) => {
   setLoading(dispatch, true)
 
-  await axios.post(`/api/v1/users/private/update/${userId}`, user, config)
+  await axios.post(baseUrl + `/update/${userId}`, user, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -145,7 +142,7 @@ export const updateUser = async (dispatch, userId, user) => {
 export const deleteUser = async (dispatch, userId) => {
   setLoading(dispatch, true)
 
-  await axios.delete(`/api/v1/users/private/delete/${userId}`, config)
+  await axios.delete(baseUrl + `/delete/${userId}`, configPrivate)
   .then(async res => {
     const result = await res.data.data
 

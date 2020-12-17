@@ -1,6 +1,7 @@
 import axios from 'axios'
-import { config } from '../../Utils/headers/header'
-import { getCookie } from '../../services/Cookie'
+import { configPrivate } from '../../Utils/headers/header'
+
+const baseUrl = '/api/v1/techs/private'
 
 // Set Loading
 export const setLoading = (dispatch, status) => dispatch({ type: 'SET_LOADING', payload: status })
@@ -18,7 +19,7 @@ export const getTechs = async(dispatch) => {
   // get current user cookie
   // let uid = getCookie('uid')
 
-  await axios.post('/api/v1/techs/private/get', { uid: 'uid' }, config)
+  await axios.get(baseUrl + '/get', configPrivate)
   .then(async res => {
     const result = await res.data.data
     // console.log(result)
@@ -43,7 +44,7 @@ export const getTechs = async(dispatch) => {
 export const addTech = async (dispatch, tech) => {
   setLoading(dispatch, true)
   
-  await axios.post('/api/v1/techs/private/add/', tech, config)
+  await axios.post(baseUrl + '/add', tech, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -74,7 +75,7 @@ export const addTech = async (dispatch, tech) => {
 export const updateTech = async (dispatch, techId, tech) => {
   setLoading(dispatch, true)
 
-  await axios.post(`/api/v1/techs/private/update/${techId}`, tech, config)
+  await axios.post(baseUrl + `/update/${techId}`, tech, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -109,7 +110,7 @@ export const updateTech = async (dispatch, techId, tech) => {
 export const deleteTech = async (dispatch, techId) => {
   setLoading(dispatch, true)
 
-  await axios.delete(`/api/v1/techs/private/delete/${techId}`, config)
+  await axios.delete(baseUrl + `/delete/${techId}`, configPrivate)
   .then(async res => {
     const result = await res.data.data
 

@@ -1,6 +1,4 @@
 /** Dependencies */
-// Bcrypt
-const bcrypt = require('bcryptjs')
 // Model - User
 const {
   Policy
@@ -66,14 +64,14 @@ exports.addPrivatePolicy = async(req, res, next) => {
     name, privacy, comment
   } = req.body
   // console.log(req.body)
-  const policy = new Policy({ 
+  const newPolicy = new Policy({ 
     name: handleNoneInput(name), 
     privacy: handleNoneInput(privacy),
     comment: handleNoneInput(comment),
-    creator: '5f8fc26c6a103b243428bec1' // add current logged-in user ID 
+    creator: req.session.userid // add current logged-in user ID 
   })
   
-  policy.save()
+  newPolicy.save()
   .then(async data => {
     let policy = await data.populate('creator').execPopulate()
 

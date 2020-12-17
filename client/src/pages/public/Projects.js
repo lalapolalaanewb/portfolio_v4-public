@@ -34,8 +34,8 @@ const Projects = () => {
     if(!statusRegister && message !== null) {
       return setError(projectsDispatch, { status: true, message: message })
     } else {
-      console.log('Status:' + statusRegister)
-      console.log('Uid:' + uid)
+      // console.log('Status:' + statusRegister)
+      // console.log('Uid:' + uid)
       setIsRegister(statusRegister)
       setGuestId(uid)
     }
@@ -48,8 +48,8 @@ const Projects = () => {
     if(!statusRegister) {
       return setError(projectsDispatch, { status: true, message: message })
     } else {
-      console.log('Status:' + statusRegister)
-      console.log('Uid:' + uid)
+      // console.log('Status:' + statusRegister)
+      // console.log('Uid:' + uid)
       setIsRegister(statusRegister)
       setGuestId(uid)
     }
@@ -61,7 +61,7 @@ const Projects = () => {
       // fetch projects & techList
       await getProjects(projectsDispatch)
       // check if user exists
-      await checkUserExistance()
+      // await checkUserExistance()
 
       setLoading(projectsDispatch, false)
     })();

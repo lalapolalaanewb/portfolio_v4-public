@@ -3,9 +3,8 @@
 const {
   Post, Likestatus, User
 } = require('../models')
-const { post } = require('../routes/auth')
 // Controllers
-const { imgFolderLocation, handleImgRemove } = require('../controllers')
+const { handleImgRemove } = require('../controllers')
 
 /** Page Specific Functions */
 // handle 'none' input
@@ -152,13 +151,13 @@ exports.addPrivatePost = async(req, res, next) => {
     description: handleNoneInput(description),
     // publishedAt: new Date('October 3, 2020').toISOString(),
     publishedAt: new Date(Date.now()).toISOString(),
-    creator: '5f8fc26c6a103b243428bec1' // add current logged-in user ID
+    creator: req.session.userId // add current logged-in user ID
   })
   
   post.save()
   .then(async data => {
     await User.updateOne(
-      { _id: '5f8fc26c6a103b243428bec1' },
+      { _id: req.session.userId },
       { $push: { posts: data._id } },
     )
     
@@ -248,17 +247,12 @@ exports.updatePrivatePostPublish = async(req, res, next) => {
 // @access  Private (Require sessionId & uid)
 exports.updatePrivatePost = async(req, res, next) => {
   let {
-    title,
-    excerpt,
-    description,
-    tech,
-    // like,
-    creator
+    title, excerpt, description, tech, creator
   } = req.body
   
   let shouldCreatorUpdate
   creator.current === creator.new ? shouldCreatorUpdate = 'no' : shouldCreatorUpdate = 'yes'
-  console.log(creator); console.log(shouldCreatorUpdate)
+  
   await Post.findByIdAndUpdate(
     { _id: req.params.id },
     { $set: {

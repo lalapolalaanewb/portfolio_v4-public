@@ -1,6 +1,7 @@
 import axios from 'axios'
-import { config } from '../../Utils/headers/header'
-import { getCookie } from '../../services/Cookie'
+import { configPrivate } from '../../Utils/headers/header'
+
+const baseUrl = '/api/v1/mediasocials/private'
 
 // Set Loading
 export const setLoading = (dispatch, status) => dispatch({ type: 'SET_LOADING', payload: status })
@@ -15,10 +16,7 @@ export const setSuccess = (dispatch, success) => dispatch({ type: 'SET_SUCCESS',
 export const getMediaSocials = async(dispatch) => {
   setLoading(dispatch, true)
 
-  // get current user cookie
-  // let uid = getCookie('uid')
-
-  await axios.post('/api/v1/mediasocials/private/get', { uid: 'uid' }, config)
+  await axios.get(baseUrl + '/get', configPrivate)
   .then(async res => {
     const result = await res.data.data
     // console.log(result)
@@ -43,7 +41,7 @@ export const getMediaSocials = async(dispatch) => {
 export const addMediaSocial = async (dispatch, mediaSocial) => {
   setLoading(dispatch, true)
   
-  await axios.post('/api/v1/mediasocials/private/add/', mediaSocial, config)
+  await axios.post(baseUrl + '/add', mediaSocial, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -74,7 +72,7 @@ export const addMediaSocial = async (dispatch, mediaSocial) => {
 export const updateMediaSocial = async (dispatch, mediaSocialId, mediaSocial) => {
   setLoading(dispatch, true)
 
-  await axios.post(`/api/v1/mediasocials/private/update/${mediaSocialId}`, mediaSocial, config)
+  await axios.post(baseUrl + `/update/${mediaSocialId}`, mediaSocial, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -109,7 +107,7 @@ export const updateMediaSocial = async (dispatch, mediaSocialId, mediaSocial) =>
 export const deleteMediaSocial = async (dispatch, mediaSocialId) => {
   setLoading(dispatch, true)
 
-  await axios.delete(`/api/v1/mediasocials/private/delete/${mediaSocialId}`, config)
+  await axios.delete(`/delete/${mediaSocialId}`, configPrivate)
   .then(async res => {
     const result = await res.data.data
 

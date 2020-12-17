@@ -1,7 +1,5 @@
 import axios from 'axios'
-import { config, configMultiPart } from '../../../../Utils/headers/header'
-import { getCookie, setCookie } from "../../../../services/Cookie"
-import { ipv4 } from '../../../../Utils/ipv4/ipv4'
+import { configPrivate, configMultiPartPrivate } from '../../../../Utils/headers/header'
 
 const baseUrl = '/api/v1/users/private/profile/home'
 
@@ -19,7 +17,7 @@ export const getHomes = async (dispatch) => {
   setLoading(dispatch, true)
 
   // do fetch
-  await axios.post(baseUrl + '/get', { uid: '' }, config)
+  await axios.get(baseUrl + '/get', configPrivate)
   .then(async res => {
     const result = await res.data.data
     
@@ -58,7 +56,7 @@ export const addHome = async (dispatch, home) => {
   formData.append('creator', home.creator)
   formData.append('file', home.img)
 
-  await axios.post(baseUrl + '/add', formData, configMultiPart)
+  await axios.post(baseUrl + '/add', formData, configMultiPartPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -89,7 +87,7 @@ export const addHome = async (dispatch, home) => {
 export const updateHome = async (dispatch, homeId, home) => {
   setLoading(dispatch, true)
 
-  await axios.post(baseUrl + `/update`, { homeId, home }, config)
+  await axios.post(baseUrl + `/update`, { homeId, home }, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -129,7 +127,7 @@ export const updateHomeImg = async (dispatch, homeId, img) => {
   formData.append('imgSrc', img.old)
   formData.append('file', img.new)
 
-  await axios.post(baseUrl + `/update/image`, formData, configMultiPart)
+  await axios.post(baseUrl + `/update/image`, formData, configMultiPartPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -164,7 +162,7 @@ export const updateHomeImg = async (dispatch, homeId, img) => {
 export const updateHomePublish = async (dispatch, homeId, intention) => {
   setLoading(dispatch, true)
 
-  await axios.post(baseUrl + `/update/publish`, { homeId, intention }, config)
+  await axios.post(baseUrl + `/update/publish`, { homeId, intention }, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -199,7 +197,7 @@ export const updateHomePublish = async (dispatch, homeId, intention) => {
 export const deleteHome = async (dispatch, homeId, creator) => {
   setLoading(dispatch, true)
 
-  await axios.post(baseUrl + `/delete`, { homeId, creator }, config)
+  await axios.post(baseUrl + `/delete`, { homeId, creator }, configPrivate)
   .then(async res => {
     const result = await res.data.data
 

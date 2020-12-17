@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useDashboard } from '../../contexts/Dashboard/DashboardState'
 import { setLoading, setError, setSuccess, getDashboard } from '../../contexts/Dashboard/DashboardAction'
 import AlertMessage from '../../components/global/Alert'
 import Headline from '../../components/global/Headline'
 import { DividerBlank } from '../../components/global/Divider'
-import { makeStyles, useTheme } from '@material-ui/core/styles'
+import { makeStyles } from '@material-ui/core/styles'
 import { Typography } from '@material-ui/core'
 import { AiFillProject, AiOutlineShareAlt } from 'react-icons/ai'
 import { CgUserList } from 'react-icons/cg'
 import { BiFile, BiListUl } from 'react-icons/bi'
 import { BsFilePost } from 'react-icons/bs'
-import { FaTimes } from 'react-icons/fa'
+import { GoMailRead } from 'react-icons/go'
 import { HiBriefcase, HiHome, HiUser } from 'react-icons/hi'
+import { MdPhotoAlbum } from 'react-icons/md'
 
 const Dashboard = () => {
   const [dashboardState, dashboardDispatch] = useDashboard()
@@ -19,7 +20,6 @@ const Dashboard = () => {
 
   /** theme - states */
   const classes = useStyles()
-  const theme = useTheme()
 
   /** dashboard get - function */
   useEffect(() => {
@@ -52,15 +52,6 @@ const Dashboard = () => {
         <div className={classes.cards}>
           <div className={classes.card}>
             <div className={classes.iconContainer}>
-              <HiHome size={'100%'} />
-            </div>
-            <div>
-              <Typography variant="h5" className={classes.title}>Home</Typography>
-              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.homesCount}</Typography>
-            </div>
-          </div>
-          <div className={classes.card}>
-            <div className={classes.iconContainer}>
               <BiFile size={'100%'} />
             </div>
             <div>
@@ -70,11 +61,11 @@ const Dashboard = () => {
           </div>
           <div className={classes.card}>
             <div className={classes.iconContainer}>
-              <AiOutlineShareAlt size={'100%'} />
+              <HiHome size={'100%'} />
             </div>
             <div>
-              <Typography variant="h5" className={classes.title}>Social Media</Typography>
-              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.socialMediasCount}</Typography>
+              <Typography variant="h5" className={classes.title}>Home</Typography>
+              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.homesCount}</Typography>
             </div>
           </div>
           <div className={classes.card}>
@@ -88,20 +79,29 @@ const Dashboard = () => {
           </div>
           <div className={classes.card}>
             <div className={classes.iconContainer}>
-              <CgUserList size={'100%'} />
+              <GoMailRead size={'100%'} />
             </div>
             <div>
-              <Typography variant="h5" className={classes.title}>Skill</Typography>
-              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.skillsCount}</Typography>
+              <Typography variant="h5" className={classes.title}>Mails</Typography>
+              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.mailsCount}</Typography>
             </div>
           </div>
           <div className={classes.card}>
             <div className={classes.iconContainer}>
-              <BiListUl size={'100%'} />
+              <MdPhotoAlbum size={'100%'} />
             </div>
             <div>
-              <Typography variant="h5" className={classes.title}>Tech</Typography>
-              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.techsCount}</Typography>
+              <Typography variant="h5" className={classes.title}>Medias</Typography>
+              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.mediasCount}</Typography>
+            </div>
+          </div>
+          <div className={classes.card}>
+            <div className={classes.iconContainer}>
+              <BsFilePost size={'100%'} />
+            </div>
+            <div>
+              <Typography variant="h5" className={classes.title}>Posts</Typography>
+              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.postsCount}</Typography>
             </div>
           </div>
           <div className={classes.card}>
@@ -115,11 +115,29 @@ const Dashboard = () => {
           </div>
           <div className={classes.card}>
             <div className={classes.iconContainer}>
-              <BsFilePost size={'100%'} />
+              <CgUserList size={'100%'} />
             </div>
             <div>
-              <Typography variant="h5" className={classes.title}>Posts</Typography>
-              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.postsCount}</Typography>
+              <Typography variant="h5" className={classes.title}>Skill</Typography>
+              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.skillsCount}</Typography>
+            </div>
+          </div>
+          <div className={classes.card}>
+            <div className={classes.iconContainer}>
+              <AiOutlineShareAlt size={'100%'} />
+            </div>
+            <div>
+              <Typography variant="h5" className={classes.title}>Social Media</Typography>
+              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.socialMediasCount}</Typography>
+            </div>
+          </div>
+          <div className={classes.card}>
+            <div className={classes.iconContainer}>
+              <BiListUl size={'100%'} />
+            </div>
+            <div>
+              <Typography variant="h5" className={classes.title}>Tech</Typography>
+              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.techsCount}</Typography>
             </div>
           </div>
           <div className={classes.card}>
@@ -139,15 +157,6 @@ const Dashboard = () => {
         <div className={classes.cards}>
           <div className={classes.card}>
             <div className={classes.iconContainer}>
-              <HiHome size={'100%'} />
-            </div>
-            <div>
-              <Typography variant="h5" className={classes.title}>Home</Typography>
-              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.user.homes}</Typography>
-            </div>
-          </div>
-          <div className={classes.card}>
-            <div className={classes.iconContainer}>
               <BiFile size={'100%'} />
             </div>
             <div>
@@ -157,11 +166,11 @@ const Dashboard = () => {
           </div>
           <div className={classes.card}>
             <div className={classes.iconContainer}>
-              <AiOutlineShareAlt size={'100%'} />
+              <HiHome size={'100%'} />
             </div>
             <div>
-              <Typography variant="h5" className={classes.title}>Social Media</Typography>
-              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.user.socialMedias}</Typography>
+              <Typography variant="h5" className={classes.title}>Home</Typography>
+              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.user.homes}</Typography>
             </div>
           </div>
           <div className={classes.card}>
@@ -175,20 +184,29 @@ const Dashboard = () => {
           </div>
           <div className={classes.card}>
             <div className={classes.iconContainer}>
-              <CgUserList size={'100%'} />
+              <GoMailRead size={'100%'} />
             </div>
             <div>
-              <Typography variant="h5" className={classes.title}>Skill</Typography>
-              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.user.skills}</Typography>
+              <Typography variant="h5" className={classes.title}>Mails</Typography>
+              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.user.mails}</Typography>
             </div>
           </div>
           <div className={classes.card}>
             <div className={classes.iconContainer}>
-              <BiListUl size={'100%'} />
+              <MdPhotoAlbum size={'100%'} />
             </div>
             <div>
-              <Typography variant="h5" className={classes.title}>Tech</Typography>
-              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.user.techs}</Typography>
+              <Typography variant="h5" className={classes.title}>Medias</Typography>
+              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.user.medias}</Typography>
+            </div>
+          </div>
+          <div className={classes.card}>
+            <div className={classes.iconContainer}>
+              <BsFilePost size={'100%'} />
+            </div>
+            <div>
+              <Typography variant="h5" className={classes.title}>Posts</Typography>
+              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.user.posts}</Typography>
             </div>
           </div>
           <div className={classes.card}>
@@ -202,11 +220,29 @@ const Dashboard = () => {
           </div>
           <div className={classes.card}>
             <div className={classes.iconContainer}>
-              <BsFilePost size={'100%'} />
+              <CgUserList size={'100%'} />
             </div>
             <div>
-              <Typography variant="h5" className={classes.title}>Posts</Typography>
-              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.user.posts}</Typography>
+              <Typography variant="h5" className={classes.title}>Skill</Typography>
+              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.user.skills}</Typography>
+            </div>
+          </div>
+          <div className={classes.card}>
+            <div className={classes.iconContainer}>
+              <AiOutlineShareAlt size={'100%'} />
+            </div>
+            <div>
+              <Typography variant="h5" className={classes.title}>Social Media</Typography>
+              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.user.socialMedias}</Typography>
+            </div>
+          </div>
+          <div className={classes.card}>
+            <div className={classes.iconContainer}>
+              <BiListUl size={'100%'} />
+            </div>
+            <div>
+              <Typography variant="h5" className={classes.title}>Tech</Typography>
+              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.user.techs}</Typography>
             </div>
           </div>
         </div>

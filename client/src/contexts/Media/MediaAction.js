@@ -1,7 +1,5 @@
 import axios from 'axios'
-import { config, configMultiPart } from '../../Utils/headers/header'
-import { getCookie, setCookie } from "../../services/Cookie"
-import { ipv4 } from '../../Utils/ipv4/ipv4'
+import { configPrivate, configMultiPartPrivate } from '../../Utils/headers/header'
 
 const baseUrl = '/api/v1/medias/private'
 
@@ -19,7 +17,7 @@ export const getMedias = async (dispatch) => {
   setLoading(dispatch, true)
 
   // do fetch
-  await axios.post(baseUrl + '/get', { uid: '' }, config)
+  await axios.get(baseUrl + '/get', configPrivate)
   .then(async res => {
     const result = await res.data.data
     
@@ -47,7 +45,7 @@ export const addMedias = async (dispatch, { images }) => {
     formData.append('files', image);
   });
   
-  await axios.post(baseUrl + '/add', formData, configMultiPart)
+  await axios.post(baseUrl + '/add', formData, configMultiPartPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -78,7 +76,7 @@ export const addMedias = async (dispatch, { images }) => {
 export const updateMediaPublish = async (dispatch, mediaId, intention) => {
   setLoading(dispatch, true) 
   
-  await axios.post(baseUrl + `/update/publish`, { mediaId, intention }, config)
+  await axios.post(baseUrl + `/update/publish`, { mediaId, intention }, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -113,7 +111,7 @@ export const updateMediaPublish = async (dispatch, mediaId, intention) => {
 export const updateMedia = async (dispatch, mediaId, media) => {
   setLoading(dispatch, true)
 
-  await axios.post(baseUrl + `/update/${mediaId}`, media, config)
+  await axios.post(baseUrl + `/update/${mediaId}`, media, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -148,7 +146,7 @@ export const updateMedia = async (dispatch, mediaId, media) => {
 export const deleteMedia = async (dispatch, mediaId) => {
   setLoading(dispatch, true)
   
-  await axios.delete(baseUrl + `/delete/${mediaId}`, config)
+  await axios.delete(baseUrl + `/delete/${mediaId}`, configPrivate)
   .then(async res => {
     const result = await res.data.data
 

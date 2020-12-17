@@ -1,9 +1,8 @@
 import axios from 'axios'
-import { config, configMultiPart } from '../../../Utils/headers/header'
-import { getCookie, setCookie } from "../../../services/Cookie"
-import { ipv4 } from '../../../Utils/ipv4/ipv4'
+import { configPrivate } from '../../../Utils/headers/header'
 
 const baseUrl = '/api/v1/mails/private'
+// let uid = getCookie('uid')
 
 // Set Loading
 export const setLoading = (dispatch, status) => dispatch({ type: 'SET_LOADING', payload: status })
@@ -19,7 +18,7 @@ export const getMails = async (dispatch) => {
   setLoading(dispatch, true)
 
   // do fetch
-  await axios.post(baseUrl + '/get', { uid: '' }, config)
+  await axios.get(baseUrl + '/get', configPrivate)
   .then(async res => {
     const result = await res.data.data
     
@@ -47,7 +46,7 @@ export const getMails = async (dispatch) => {
 export const updateMailNoty = async (dispatch, contactId, mailId, mail, intention) => {
   setLoading(dispatch, true) 
   
-  await axios.post(baseUrl + `/update/noty`, { contactId, mailId, mail, intention }, config)
+  await axios.post(baseUrl + `/update/noty`, { contactId, mailId, mail, intention }, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -82,7 +81,7 @@ export const updateMailNoty = async (dispatch, contactId, mailId, mail, intentio
 export const updateMailRead = async (dispatch, mailId, intention) => {
   setLoading(dispatch, true) 
   
-  await axios.post(baseUrl + `/update/read`, { mailId, intention }, config)
+  await axios.post(baseUrl + `/update/read`, { mailId, intention }, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -117,7 +116,7 @@ export const updateMailRead = async (dispatch, mailId, intention) => {
 export const updateMailReply = async (dispatch, mailId, intention) => {
   setLoading(dispatch, true) 
   
-  await axios.post(baseUrl + `/update/reply`, { mailId, intention }, config)
+  await axios.post(baseUrl + `/update/reply`, { mailId, intention }, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -152,7 +151,7 @@ export const updateMailReply = async (dispatch, mailId, intention) => {
 export const deleteMail = async (dispatch, mailId, contact) => {
   setLoading(dispatch, true)
   
-  await axios.post(baseUrl + `/delete/${mailId}`, { contact }, config)
+  await axios.post(baseUrl + `/delete/${mailId}`, { contact }, configPrivate)
   .then(async res => {
     const result = await res.data.data
 

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory, NavLink } from 'react-router-dom'
 import { useAuth } from '../../contexts/Auth/AuthState';
-import { isLogout, setLoading } from '../../contexts/Auth/AuthAction'
-import useAuthentication from '../../hooks/useAuthentication'
+import { isLogout, setLoading, isAuthenticated } from '../../contexts/Auth/AuthAction'
 import { UserState } from '../../contexts/User/Public/UserState'
+import { MailState } from '../../contexts/Mail/Private/MailState'
 import classNames from 'classnames'
 import { makeStyles, useTheme } from '@material-ui/core/styles'
 import {
@@ -39,9 +39,7 @@ import FooterPrivate from '../Footer/Private/Footer'
 
 const Navbar = ({ isDarkMode, setIsDarkMode, children }) => {
   const [authState, authDispatch] = useAuth()
-
-  // determine user authentication
-  const { isAuth } = useAuthentication(authDispatch)
+  const { authenticated } = authState
 
   const classes = useStyles()
   const theme = useTheme()
@@ -135,17 +133,26 @@ const Navbar = ({ isDarkMode, setIsDarkMode, children }) => {
     history.push(pathUrl)
   }
 
+  // check user auth
+  useEffect(() => {
+    (async() => {
+      await isAuthenticated(authDispatch)
+      
+      setLoading(authDispatch, false)
+    })()
+  }, [])
+
   // handle logout
   useEffect(() => {
     (async() => {
-      if(logout) {
+      if(logout) { console.log('logout')
         await isLogout(authDispatch)
 
         setLoading(authDispatch, false)
         setLogout(false)
       }
     })();
-  }, [isLogout])
+  }, [logout])
   
   return (
     <div className={classes.root}>
@@ -155,8 +162,10 @@ const Navbar = ({ isDarkMode, setIsDarkMode, children }) => {
         className={classNames(classes.appBar, {[classes.appBarShift]: open})}
       >
         <Toolbar className={classes.toolBarSpacing}>
-          {!isAuth ? (
-            <ToolBarPrivate classesGlobal={classes} logo={logo} goToPage={goToPage} setLogout={setLogout} open={open} setOpen={setOpen} />
+          {authenticated ? (
+            <MailState>
+              <ToolBarPrivate classesGlobal={classes} logo={logo} goToPage={goToPage} setLogout={setLogout} open={open} setOpen={setOpen} />
+            </MailState>
           ) : (
             <ToolbarPublic classesGlobal={classes} logo={logo} menuPublic={menuPublic} menuPublicListItem={menuPublicListItem} buttonResume={buttonResume} open={open} setOpen={setOpen} darkModeToggle={darkModeToggle} />
           )}
@@ -176,7 +185,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode, children }) => {
             {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           </IconButton>
         </div>
-        {!isAuth ? (
+        {authenticated ? (
           <DrawerPrivate classesGlobal={classes} darkModeSwitch={darkModeSwitch} />
         ) : (
           <DrawerPublic classesGlobal={classes} menuPublic={menuPublic} menuPublicListItem={menuPublicListItem} buttonResume={buttonResume} darkModeSwitch={darkModeSwitch} />
@@ -188,7 +197,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode, children }) => {
         {/* <Typography variant="h4" classes={{root: classes.contentHeader}}>
           Where is this?
         </Typography> */}
-        {!isAuth ? (
+        {authenticated ? (
           <>
             <ContentPrivateContainer>
               {children}

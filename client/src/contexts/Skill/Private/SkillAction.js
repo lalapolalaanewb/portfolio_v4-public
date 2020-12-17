@@ -1,7 +1,7 @@
 import axios from 'axios'
-import { config } from '../../../Utils/headers/header'
-import { getCookie, setCookie } from "../../../services/Cookie"
-import { ipv4 } from '../../../Utils/ipv4/ipv4'
+import { configPrivate } from '../../../Utils/headers/header'
+
+const baseUrl = '/api/v1/skills/private'
 
 // Set Loading
 export const setLoading = (dispatch, status) => dispatch({ type: 'SET_LOADING', payload: status })
@@ -17,7 +17,7 @@ export const getSkills = async (dispatch) => {
   setLoading(dispatch, true)
 
   // do fetch
-  await axios.post('/api/v1/skills/private/get', { uid: '' }, config)
+  await axios.get(baseUrl + '/get', configPrivate)
   .then(async res => {
     const result = await res.data.data
     
@@ -40,7 +40,7 @@ export const getSkills = async (dispatch) => {
 export const addSkill = async (dispatch, skill) => {
   setLoading(dispatch, true)
   
-  await axios.post('/api/v1/skills/private/add/', skill, config)
+  await axios.post(baseUrl + '/add', skill, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -71,7 +71,7 @@ export const addSkill = async (dispatch, skill) => {
 export const updateSkill = async (dispatch, skillId, skill) => {
   setLoading(dispatch, true)
 
-  await axios.post(`/api/v1/skills/private/update/${skillId}`, skill, config)
+  await axios.post(baseUrl + `/update/${skillId}`, skill, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -106,7 +106,7 @@ export const updateSkill = async (dispatch, skillId, skill) => {
 export const deleteSkill = async (dispatch, skillId, creator) => {
   setLoading(dispatch, true)
 
-  await axios.post(`/api/v1/skills/private/delete/${skillId}`, { creator }, config)
+  await axios.post(baseUrl + `/delete/${skillId}`, { creator }, configPrivate)
   .then(async res => {
     const result = await res.data.data
 

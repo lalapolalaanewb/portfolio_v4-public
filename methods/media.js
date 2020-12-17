@@ -4,7 +4,7 @@ const {
   Media
 } = require('../models')
 // Controllers
-const { imgFolderLocation, uploadMultiImgFile, handleImgRemove } = require('../controllers')
+const { uploadMultiImgFile, handleImgRemove } = require('../controllers')
 
 /** Page Specific Functions */
 // handle 'none' input
@@ -128,8 +128,7 @@ exports.updatePrivateMediaPublish = async (req, res, next) => {
 // @access  Private (Require sessionId & uid)
 exports.updatePrivateMedia = async (req, res, next) => {
   let {
-    imgAlt,
-    creator
+    imgAlt, creator
   } = req.body
 
   await Media.findByIdAndUpdate(

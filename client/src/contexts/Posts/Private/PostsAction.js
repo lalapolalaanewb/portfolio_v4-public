@@ -1,7 +1,7 @@
 import axios from 'axios'
-import { config, configMultiPart } from '../../../Utils/headers/header'
-import { getCookie, setCookie } from "../../../services/Cookie"
-import { ipv4 } from '../../../Utils/ipv4/ipv4'
+import { configPrivate, configMultiPartPrivate } from '../../../Utils/headers/header'
+
+const baseUrl = '/api/v1/posts/private'
 
 // Set Loading
 export const setLoading = (dispatch, status) => dispatch({ type: 'SET_LOADING', payload: status })
@@ -17,7 +17,7 @@ export const getPosts = async (dispatch) => {
   setLoading(dispatch, true)
 
   // do fetch
-  await axios.post('/api/v1/posts/private/get', { uid: '' }, config)
+  await axios.get(baseUrl + '/get', configPrivate)
   .then(async res => {
     const result = await res.data.data
     
@@ -64,7 +64,7 @@ export const addPost = async (dispatch, post) => {
   formData.append('description', post.desc)
   formData.append('file', post.img)
 
-  await axios.post('/api/v1/posts/private/add/', formData, configMultiPart)
+  await axios.post(baseUrl + '/add', formData, configMultiPartPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -100,7 +100,7 @@ export const updatePostImg = async (dispatch, postId, img, imgSrc) => {
   formData.append('imgSrc', imgSrc)
   formData.append('file', img)
 
-  await axios.post('/api/v1/posts/private/update/image', formData, configMultiPart)
+  await axios.post(baseUrl + '/update/image', formData, configMultiPartPrivate)
   .then(async res => {
     const result = await res.data.data
     
@@ -135,7 +135,7 @@ export const updatePostImg = async (dispatch, postId, img, imgSrc) => {
 export const updatePostPublish = async (dispatch, postId, intention) => {
   setLoading(dispatch, true) 
   
-  await axios.post(`/api/v1/posts/private/update/publish`, { postId, intention }, config)
+  await axios.post(baseUrl + `/update/publish`, { postId, intention }, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -170,7 +170,7 @@ export const updatePostPublish = async (dispatch, postId, intention) => {
 export const updatePost = async (dispatch, postId, post) => {
   setLoading(dispatch, true)
 
-  await axios.post(`/api/v1/posts/private/update/${postId}`, post, config)
+  await axios.post(baseUrl + `/update/${postId}`, post, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -205,7 +205,7 @@ export const updatePost = async (dispatch, postId, post) => {
 export const deletePost = async (dispatch, postId, creator) => {
   setLoading(dispatch, true)
   
-  await axios.post(`/api/v1/posts/private/delete/${postId}`, { creator }, config)
+  await axios.post(`/api/v1/posts/private/delete/${postId}`, { creator }, configPrivate)
   .then(async res => {
     const result = await res.data.data
 

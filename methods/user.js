@@ -61,7 +61,7 @@ exports.getPublicUserHome = async(req, res, next) => {
   .populate('homes')
   .where({ status: 1 })
   .select('homes')
-  .then(data => { console.log(data) 
+  .then(data => { 
     return res.status(200).json({
       success: true,
       count: data.length,
@@ -126,7 +126,7 @@ exports.getPublicUserResume = async(req, res, next) => {
     let resume = await Resume.findOne()
     .where({ creator: data._id, status: 1 })
     .populate('techs').populate('projects').populate('educations').populate('jobs')
-    console.log(resume)
+    
     return res.status(200).json({
       success: true,
       count: data.length,
@@ -138,7 +138,7 @@ exports.getPublicUserResume = async(req, res, next) => {
       }
     })
   })
-  .catch(err => { console.log(err)
+  .catch(err => { 
     return res.status(500).json({
       success: false,
       error: `Failed to get data (abouts, skills & jobs) from User Collection`,
@@ -213,7 +213,7 @@ exports.addPrivateUser = async(req, res, next) => {
   const passwordHashed = await bcrypt.hash(credentials.password, await bcrypt.genSalt(12))
   
   // create new user
-  const user = new User({
+  const newUser = new User({
     name: {
       firstName: handleNoneInput(name.firstName),
       lastName: handleNoneInput(name.lastName),
@@ -228,7 +228,7 @@ exports.addPrivateUser = async(req, res, next) => {
     }
   })
 
-  user.save()
+  newUser.save()
   .then(data => {
     return res.status(200).json({
       success: true,

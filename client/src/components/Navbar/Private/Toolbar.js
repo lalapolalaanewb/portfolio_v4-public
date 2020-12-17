@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useMail } from '../../../contexts/Mail/Private/MailState'
+import { setLoading, getMails } from '../../../contexts/Mail/Private/MailAction'
 import classNames from 'classnames'
 import { makeStyles } from '@material-ui/core/styles'
 import {
@@ -6,11 +8,11 @@ import {
   Badge,
   Menu, MenuItem,
 } from '@material-ui/core'
-import MoreIcon from '@material-ui/icons/MoreVert'
-import NotificationsIcon from '@material-ui/icons/Notifications'
 import AccountCircle from '@material-ui/icons/AccountCircle'
 import MailIcon from '@material-ui/icons/Mail'
 import MenuIcon from '@material-ui/icons/Menu'
+import MoreIcon from '@material-ui/icons/MoreVert'
+import NotificationsIcon from '@material-ui/icons/Notifications'
 
 const Toolbar = ({
   classesGlobal,
@@ -19,6 +21,12 @@ const Toolbar = ({
   setLogout,
   open, setOpen,
 }) => {
+  const [mailState, mailDispatch] = useMail()
+  const { mails } = mailState
+
+  const [unread, setUnread] = useState('10')
+
+  /** theme - state */
   const classes = useStyles()
 
   const [myAccountEl, setMyAccountEl] = useState(null)
@@ -67,20 +75,20 @@ const Toolbar = ({
     >
       <MenuItem>
         <IconButton aria-label="show 4 new mails" color="inherit">
-          <Badge badgeContent={4} classes={{ badge: classes.colorBadge }}>
+          <Badge badgeContent={unread} classes={{ badge: classes.colorBadge }}>
             <MailIcon />
           </Badge>
         </IconButton>
         <p>Messages</p>
       </MenuItem>
-      <MenuItem>
+      {/* <MenuItem>
         <IconButton aria-label="show 11 new notifications" color="inherit">
           <Badge badgeContent={11} classes={{ badge: classes.colorBadge }}>
             <NotificationsIcon />
           </Badge>
         </IconButton>
         <p>Notifications</p>
-      </MenuItem>
+      </MenuItem> */}
       <MenuItem onClick={(e) => setMyAccountEl(e.currentTarget)}>
         <IconButton
           aria-label="account of current user"
@@ -94,6 +102,23 @@ const Toolbar = ({
       </MenuItem>
     </Menu>
   )
+
+  /** mail get all - function */
+  useEffect(() => {
+    (async() => {
+      await getMails(mailDispatch)
+
+      setLoading(mailDispatch, false)
+    })()
+  }, [])
+
+  /** mail unread get count - function */
+  useEffect(() => {
+    setUnread(() => {
+      let unread = mails.filter(mail => mail.statusRead === 0)
+      return unread.length.toString()
+    })
+  }, [mails])
 
   return (
     <>
@@ -109,15 +134,15 @@ const Toolbar = ({
       {logo('/pfv4-admin/dashboard')}
       <div className={classesGlobal.sectionDesktop}>
         <IconButton aria-label="show 4 new mails" color="inherit">
-          <Badge badgeContent={4} classes={{ badge: classes.colorBadge }}>
+          <Badge badgeContent={unread} classes={{ badge: classes.colorBadge }}>
             <MailIcon />
           </Badge>
         </IconButton>
-        <IconButton aria-label="show 17 new notifications" color="inherit">
+        {/* <IconButton aria-label="show 17 new notifications" color="inherit">
           <Badge badgeContent={17} classes={{ badge: classes.colorBadge }}>
             <NotificationsIcon />
           </Badge>
-        </IconButton>
+        </IconButton> */}
         <IconButton
           edge="end"
           aria-label="account of current user"

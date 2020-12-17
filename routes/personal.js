@@ -4,7 +4,7 @@ const router = require("express").Router();
 // Controllers
 const {
   // Verification
-  redirect2Login, redirect2Home
+  redirect2Login, 
 } = require('../controllers')
 // Project Methods
 const { getPrivateUserPersonal, updatePrivateUserPersonal, updatePrivateUserPersonalPassword } = require('../methods')
@@ -14,22 +14,22 @@ const { getPrivateUserPersonal, updatePrivateUserPersonal, updatePrivateUserPers
 // @route   POST /api/v1/users/private/profile/personal/get
 // @access  Private (Require sessionId & uid)
 router.route('/get')
-  // .post(redirect2Login, getPrivateUserPersonal)
-  .post(getPrivateUserPersonal)
+  .get(redirect2Login, getPrivateUserPersonal)
+  // .get(getPrivateUserPersonal)
 
 // @desc    Portfolio V4 Users Profile (Update A User Personal)
 // @route   POST /api/v1/users/private/profile/personal/update
 // @access  Private (Require sessionId & uid)
 router.route('/update')
-  // .post(redirect2Login, updatePrivateUserPersonal)
-  .post(updatePrivateUserPersonal)
+  .post(redirect2Login, updatePrivateUserPersonal)
+  // .post(updatePrivateUserPersonal)
 
 // @desc    Portfolio V4 Users Profile (Update A User Personal Password)
 // @route   POST /api/v1/users/private/profile/personal/update/password
 // @access  Private (Require sessionId & uid)
 router.route('/update/password')
-  // .post(redirect2Login, updatePrivateUserPersonalPassword)
-  .post(updatePrivateUserPersonalPassword)
+  .post(redirect2Login, updatePrivateUserPersonalPassword)
+  // .post(updatePrivateUserPersonalPassword)
 
 /** Export */
 module.exports = router

@@ -36,13 +36,13 @@ exports.addPrivateMediaSocial = async(req, res, next) => {
     name, abbreviation
   } = req.body
 
-  const mediaSocial = new Mediasocial({
+  const newMediaSocial = new Mediasocial({
     name: name,
     abbreviation: abbreviation,
-    creator: '5f8fc26c6a103b243428bec1' // add current logged-in user ID
+    creator: req.session.userId // add current logged-in user ID
   })
 
-  mediaSocial.save()
+  newMediaSocial.save()
   .then(async data => {
     let mediaSocial = await data.populate('creator').execPopulate()
 

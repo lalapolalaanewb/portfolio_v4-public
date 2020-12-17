@@ -32,21 +32,21 @@ exports.getPrivateContact = async (req, res, next) => {
 // @access  Private (Require sessionId & uid)
 exports.addPrivateContact = async (req, res, next) => {
   let {
-    senderGmail, senderEmail, 
+    senderGmail, senderEmail,
     clientId, clientSecret, refreshToken
   } = req.body
 
-  const contact = new Contact({
+  const newContact = new Contact({
     senderGmail: senderGmail,
     senderEmail: senderEmail,
     clientId: clientId,
     clientSecret: clientSecret,
     refreshToken: refreshToken,
-    creator: '5f8fc26c6a103b243428bec1'
+    creator: req.session,userId
   })
 
   // save new contact
-  contact.save()
+  newContact.save()
   .then(async data => {
     let contact = await data.populate('mails').execPopulate()
 

@@ -1,6 +1,6 @@
 /** Verification Functions Handler */
 // Verify not loggeed-in user
-exports.redirect2Login = (req, res, next) => {
+exports.redirect2Login = async(req, res, next) => {
   if(!req.session.userId) {
     console.log('xde session server')
     return res.status(401).json({
@@ -10,8 +10,31 @@ exports.redirect2Login = (req, res, next) => {
     })
   }
 
+  // check if Authorization header send
+  const authHeader = await req.get('Authorization')
+  console.log(authHeader)
+  if(!authHeader) {
+    console.log('xde header Auth')
+    return res.status(401).json({
+      success: false,
+      error: `You are not logged-in. Please login to access the data.`,
+      data: {}
+    })
+  }
+
+  // check if uid exist
+  const uid = authHeader.split(' ')[1] // Eg- Authorization: Bearer ejyjdgjhdgfd
+  if(!uid || uid === '') {
+    console.log('xde token')
+    return res.status(401).json({
+      success: false,
+      error: `You are not logged-in. Please login to access the data.`,
+      data: {}
+    })
+  }
+
   // continue
-  if(req.session.userId === req.body.uid) return next()
+  if(req.session.userId === uid) return next()
   else {
     return res.status(401).json({
       success: false,
@@ -22,8 +45,31 @@ exports.redirect2Login = (req, res, next) => {
 }
 
 // Verify logged-in user
-exports.redirect2Home = (req, res, next) => {
+exports.redirect2Home = async(req, res, next) => {
   if(req.session.userId) {
+    // check if Authorization header send
+    const authHeader = await req.get('Authorization')
+    console.log(authHeader)
+    if(!authHeader) {
+      console.log('xde header Auth')
+      return res.status(401).json({
+        success: false,
+        error: `You are not logged-in. Please login to access the data.`,
+        data: {}
+      })
+    }
+
+    // check if uid exist
+    const uid = authHeader.split(' ')[1] // Eg- Authorization: Bearer ejyjdgjhdgfd
+    if(!uid || uid === '') {
+      console.log('xde token')
+      return res.status(401).json({
+        success: false,
+        error: `You are not logged-in. Please login to access the data.`,
+        data: {}
+      })
+    }
+
     if(req.session.userId === req.body.uid) return res.status(401).json({
       success: false,
       error: `You already logged-in. Cannot access said location/url.`,

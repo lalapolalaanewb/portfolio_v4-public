@@ -51,7 +51,7 @@ export const getUserOnHome = async (dispatch) => {
   await axios.post('/api/v1/users/gethome', { key: process.env.REACT_APP_ADMIN_ACCESS_PUBLIC }, config)
   .then(async res => { 
     const result = await res.data.data
-    console.log(result)
+    
     dispatch({
       type: 'SET_USERHOME',
       payload: {

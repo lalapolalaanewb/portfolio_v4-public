@@ -1,7 +1,5 @@
 import axios from 'axios'
-import { config, configMultiPart } from '../../../Utils/headers/header'
-import { getCookie, setCookie } from "../../../services/Cookie"
-import { ipv4 } from '../../../Utils/ipv4/ipv4'
+import { configPrivate } from '../../../Utils/headers/header'
 
 const baseUrl = '/api/v1/policies/private'
 
@@ -19,7 +17,7 @@ export const getPolicies = async (dispatch) => {
   setLoading(dispatch, true)
 
   // do fetch
-  await axios.post(baseUrl + '/get', { uid: '' }, config)
+  await axios.get(baseUrl + '/get', configPrivate)
   .then(async res => {
     const result = await res.data.data
     
@@ -42,7 +40,7 @@ export const getPolicies = async (dispatch) => {
 export const addPolicy = async (dispatch, policy) => {
   setLoading(dispatch, true)
   
-  await axios.post(baseUrl + '/add', policy, config)
+  await axios.post(baseUrl + '/add', policy, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -73,7 +71,7 @@ export const addPolicy = async (dispatch, policy) => {
 export const updatePolicy = async (dispatch, policyId, policy) => {
   setLoading(dispatch, true)
 
-  await axios.post(baseUrl + `/update`, { policyId, policy }, config)
+  await axios.post(baseUrl + `/update`, { policyId, policy }, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -108,7 +106,7 @@ export const updatePolicy = async (dispatch, policyId, policy) => {
 export const updatePolicyPublish = async (dispatch, policyId, intention) => {
   setLoading(dispatch, true)
 
-  await axios.post(baseUrl + `/update/publish`, { policyId, intention }, config)
+  await axios.post(baseUrl + `/update/publish`, { policyId, intention }, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -143,7 +141,7 @@ export const updatePolicyPublish = async (dispatch, policyId, intention) => {
 export const deletePolicy = async (dispatch, policyId) => {
   setLoading(dispatch, true)
 
-  await axios.delete(baseUrl + `/delete/${policyId}`, config)
+  await axios.delete(baseUrl + `/delete/${policyId}`, configPrivate)
   .then(async res => {
     const result = await res.data.data
 

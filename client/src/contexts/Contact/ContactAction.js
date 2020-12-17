@@ -1,7 +1,5 @@
 import axios from 'axios'
-import { config, configMultiPart } from '../../Utils/headers/header'
-import { getCookie, setCookie } from "../../services/Cookie"
-import { ipv4 } from '../../Utils/ipv4/ipv4'
+import { configPrivate } from '../../Utils/headers/header'
 
 const baseUrl = '/api/v1/contacts/private'
 
@@ -19,7 +17,7 @@ export const getContact = async (dispatch) => {
   setLoading(dispatch, true)
 
   // do fetch
-  await axios.post(baseUrl + '/get', { uid: '' }, config)
+  await axios.get(baseUrl + '/get', configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -58,7 +56,7 @@ export const getContact = async (dispatch) => {
 export const addContact = async (dispatch, contact) => {
   setLoading(dispatch, true)
   
-  await axios.post(baseUrl + '/add/', contact, config)
+  await axios.post(baseUrl + '/add/', contact, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -96,7 +94,7 @@ export const addContact = async (dispatch, contact) => {
 export const updateContactPublish = async (dispatch, contactId, intention) => {
   setLoading(dispatch, true) 
   
-  await axios.post(baseUrl + `/update/publish`, { contactId, intention }, config)
+  await axios.post(baseUrl + `/update/publish`, { contactId, intention }, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -134,7 +132,7 @@ export const updateContactPublish = async (dispatch, contactId, intention) => {
 export const updateContact = async (dispatch, contactId, contact) => {
   setLoading(dispatch, true)
 
-  await axios.post(baseUrl + `/update/${contactId}`, contact, config)
+  await axios.post(baseUrl + `/update/${contactId}`, contact, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -172,7 +170,7 @@ export const updateContact = async (dispatch, contactId, contact) => {
 export const deleteContact = async (dispatch, contactId) => {
   setLoading(dispatch, true)
   
-  await axios.delete(baseUrl + `/delete/${contactId}`, config)
+  await axios.delete(baseUrl + `/delete/${contactId}`, configPrivate)
   .then(async res => {
     const result = await res.data.data
 

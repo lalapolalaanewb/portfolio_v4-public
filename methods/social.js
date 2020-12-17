@@ -1,17 +1,8 @@
 /** Dependencies */
-// Bcrypt
-const bcrypt = require('bcryptjs')
 // Model - User
 const {
   User, Socialmedia
 } = require('../models')
-
-/** Page Specific Functions */
-// handle 'none' input
-const handleNoneInput = input => {
-  if(input === 'none') return ''
-  else return input
-}
 
 /** Methods */
 // @desc    Portfolio V4 User Profile (Get A User)
@@ -32,7 +23,7 @@ exports.getPrivateUserSocial = async(req, res, next) => {
       error: `Failed to get published social data  of user (${data.name.firstName}) from Social Media Collection`,
       data: {}
     })
-    console.log(data._id); console.log(socialMedias)
+    
     return res.status(200).json({
       success: true,
       count: socialMedias.length,
@@ -59,11 +50,14 @@ exports.addPrivateUserSocial = async(req, res, next) => {
     name, icon, url, creator
   } = req.body
   // console.log(req.body); return console.log(req.file)
-  const social = new Socialmedia({
-    name, icon, url, creator
+  const newSocial = new Socialmedia({
+    name: name, 
+    icon: icon, 
+    url: url, 
+    creator: creator
   })
   
-  social.save()
+  newSocial.save()
   .then(async data => {
     await User.findOneAndUpdate(
       { _id: creator },

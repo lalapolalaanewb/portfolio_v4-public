@@ -1,6 +1,4 @@
 /** Dependencies */
-// Bcrypt
-const bcrypt = require('bcryptjs')
 // Model - User
 const {
   User, Job
@@ -45,7 +43,7 @@ exports.addPrivateUserJob = async(req, res, next) => {
     name, abbreviation, desc, company, creator
   } = req.body
   // console.log(req.body)
-  const job = new Job({ 
+  const newJob = new Job({ 
     name: name, 
     abbreviation: handleNoneInput(abbreviation),
     description: handleNoneInput(desc),
@@ -53,7 +51,7 @@ exports.addPrivateUserJob = async(req, res, next) => {
     creator: creator 
   })
   
-  job.save()
+  newJob.save()
   .then(async data => {
     await User.findOneAndUpdate(
       { _id: creator },

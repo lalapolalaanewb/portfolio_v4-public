@@ -1,7 +1,5 @@
 import axios from 'axios'
-import { config, configMultiPart } from '../../../../Utils/headers/header'
-import { getCookie, setCookie } from "../../../../services/Cookie"
-import { ipv4 } from '../../../../Utils/ipv4/ipv4'
+import { configPrivate } from '../../../../Utils/headers/header'
 
 const baseUrl = '/api/v1/users/private/profile/education'
 
@@ -19,7 +17,7 @@ export const getEdus = async (dispatch) => {
   setLoading(dispatch, true)
 
   // do fetch
-  await axios.post(baseUrl + '/get', { uid: '' }, config)
+  await axios.get(baseUrl + '/get', configPrivate)
   .then(async res => {
     const result = await res.data.data
     
@@ -47,7 +45,7 @@ export const getEdus = async (dispatch) => {
 export const addEdu = async (dispatch, edu) => {
   setLoading(dispatch, true)
   
-  await axios.post(baseUrl + '/add', edu, config)
+  await axios.post(baseUrl + '/add', edu, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -78,7 +76,7 @@ export const addEdu = async (dispatch, edu) => {
 export const updateEdu = async (dispatch, eduId, edu) => {
   setLoading(dispatch, true)
 
-  await axios.post(baseUrl + `/update`, { eduId, edu }, config)
+  await axios.post(baseUrl + `/update`, { eduId, edu }, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -113,7 +111,7 @@ export const updateEdu = async (dispatch, eduId, edu) => {
 export const updateEduPublish = async (dispatch, eduId, intention) => {
   setLoading(dispatch, true)
 
-  await axios.post(baseUrl + `/update/publish`, { eduId, intention }, config)
+  await axios.post(baseUrl + `/update/publish`, { eduId, intention }, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -148,7 +146,7 @@ export const updateEduPublish = async (dispatch, eduId, intention) => {
 export const deleteEdu = async (dispatch, eduId, creator) => {
   setLoading(dispatch, true)
 
-  await axios.post(baseUrl + `/delete`, { eduId, creator }, config)
+  await axios.post(baseUrl + `/delete`, { eduId, creator }, configPrivate)
   .then(async res => {
     const result = await res.data.data
 

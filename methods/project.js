@@ -3,7 +3,7 @@ const {
   Project, Likestatus, Technology, User
 } = require('../models')
 // Controllers
-const { imgFolderLocation, handleImgRemove } = require('../controllers')
+const { handleImgRemove } = require('../controllers')
 
 /** Page Specific Functions */
 // handle 'none' input
@@ -240,13 +240,7 @@ exports.updatePrivateProjectPublish = async(req, res, next) => {
 // @access  Private (Require sessionId & uid)
 exports.updatePrivateProject = async(req, res, next) => {
   let {
-    name,
-    www, code,
-    techs,
-    description,
-    subDescription,
-    // like,
-    creator
+    name, www, code, description, subDescription, techs, creator
   } = req.body
   
   let techIds = await handleGetTechIds(techs)

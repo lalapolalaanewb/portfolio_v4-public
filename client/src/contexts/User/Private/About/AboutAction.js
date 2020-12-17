@@ -1,7 +1,7 @@
 import axios from 'axios'
-import { config, configMultiPart } from '../../../../Utils/headers/header'
-import { getCookie, setCookie } from "../../../../services/Cookie"
-import { ipv4 } from '../../../../Utils/ipv4/ipv4'
+import { configPrivate, configMultiPartPrivate } from '../../../../Utils/headers/header'
+
+const baseUrl = '/api/v1/users/private/profile/about'
 
 // Set Loading
 export const setLoading = (dispatch, status) => dispatch({ type: 'SET_LOADING', payload: status })
@@ -17,7 +17,7 @@ export const getAbouts = async (dispatch) => {
   setLoading(dispatch, true)
 
   // do fetch
-  await axios.post('/api/v1/users/private/profile/about/get', { uid: '' }, config)
+  await axios.get(baseUrl + '/get', configPrivate)
   .then(async res => {
     const result = await res.data.data
     
@@ -55,7 +55,7 @@ export const addAbout = async (dispatch, about) => {
   formData.append('creator', about.creator)
   formData.append('file', about.img)
 
-  await axios.post('/api/v1/users/private/profile/about/add', formData, configMultiPart)
+  await axios.post(baseUrl + '/add', formData, configMultiPartPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -86,7 +86,7 @@ export const addAbout = async (dispatch, about) => {
 export const updateAbout = async (dispatch, aboutId, about) => {
   setLoading(dispatch, true)
 
-  await axios.post(`/api/v1/users/private/profile/about/update`, { aboutId, about }, config)
+  await axios.post(baseUrl + `/update`, { aboutId, about }, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -126,7 +126,7 @@ export const updateAboutImg = async (dispatch, aboutId, img) => {
   formData.append('imgSrc', img.old)
   formData.append('file', img.new)
 
-  await axios.post(`/api/v1/users/private/profile/about/update/image`, formData, configMultiPart)
+  await axios.post(baseUrl + `/update/image`, formData, configMultiPartPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -161,7 +161,7 @@ export const updateAboutImg = async (dispatch, aboutId, img) => {
 export const updateAboutPublish = async (dispatch, aboutId, intention) => {
   setLoading(dispatch, true)
 
-  await axios.post(`/api/v1/users/private/profile/about/update/publish`, { aboutId, intention }, config)
+  await axios.post(baseUrl + `/update/publish`, { aboutId, intention }, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -196,7 +196,7 @@ export const updateAboutPublish = async (dispatch, aboutId, intention) => {
 export const deleteAbout = async (dispatch, aboutId, creator) => {
   setLoading(dispatch, true)
 
-  await axios.post(`/api/v1/users/private/profile/about/delete`, { aboutId, creator }, config)
+  await axios.post(baseUrl + `/delete`, { aboutId, creator }, configPrivate)
   .then(async res => {
     const result = await res.data.data
 

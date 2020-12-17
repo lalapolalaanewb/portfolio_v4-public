@@ -72,7 +72,7 @@ exports.updatePrivateUserPersonal = async(req, res, next) => {
     } },
     { new: true }
   ).select('name credentials.emails')
-  .then(data => { console.log(data)
+  .then(data => { 
     return res.status(200).json({
       success: true,
       count: data.length,

@@ -1,12 +1,10 @@
 /** Dependencies */
-// Bcrypt
-const bcrypt = require('bcryptjs')
 // Model - User
 const {
   User, About,
 } = require('../models')
 // Controllers
-const { imgFolderLocation, handleImgRemove } = require('../controllers')
+const { handleImgRemove } = require('../controllers')
 
 /** Page Specific Functions */
 // handle 'none' input

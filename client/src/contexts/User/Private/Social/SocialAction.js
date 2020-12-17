@@ -1,7 +1,7 @@
 import axios from 'axios'
-import { config } from '../../../../Utils/headers/header'
-import { getCookie, setCookie } from "../../../../services/Cookie"
-import { ipv4 } from '../../../../Utils/ipv4/ipv4'
+import { configPrivate } from '../../../../Utils/headers/header'
+
+const baseUrl = '/api/v1/users/private/profile/social'
 
 // Set Loading
 export const setLoading = (dispatch, status) => dispatch({ type: 'SET_LOADING', payload: status })
@@ -17,7 +17,7 @@ export const getSocials = async (dispatch) => {
   setLoading(dispatch, true)
 
   // do fetch
-  await axios.post('/api/v1/users/private/profile/social/get', { uid: '' }, config)
+  await axios.get(baseUrl + '/get', configPrivate)
   .then(async res => {
     const result = await res.data.data
     
@@ -45,7 +45,7 @@ export const getSocials = async (dispatch) => {
 export const addSocial = async (dispatch, social) => {
   setLoading(dispatch, true)
 
-  await axios.post('/api/v1/users/private/profile/social/add', social, config)
+  await axios.post(baseUrl + '/add', social, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -76,7 +76,7 @@ export const addSocial = async (dispatch, social) => {
 export const updateSocial = async (dispatch, socialId, social) => {
   setLoading(dispatch, true)
 
-  await axios.post(`/api/v1/users/private/profile/social/update`, { socialId, social }, config)
+  await axios.post(baseUrl + `/update`, { socialId, social }, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -111,7 +111,7 @@ export const updateSocial = async (dispatch, socialId, social) => {
 export const updateSocialPublish = async (dispatch, socialId, intention) => {
   setLoading(dispatch, true)
 
-  await axios.post(`/api/v1/users/private/profile/social/update/publish`, { socialId, intention }, config)
+  await axios.post(baseUrl + `/update/publish`, { socialId, intention }, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -146,7 +146,7 @@ export const updateSocialPublish = async (dispatch, socialId, intention) => {
 export const deleteSocial = async (dispatch, socialId, creator) => {
   setLoading(dispatch, true)
 
-  await axios.post(`/api/v1/users/private/profile/social/delete`, { socialId, creator }, config)
+  await axios.post(baseUrl + `/delete`, { socialId, creator }, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
