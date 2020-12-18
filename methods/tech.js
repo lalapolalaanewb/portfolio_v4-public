@@ -1,10 +1,32 @@
 /** Dependencies */
 // Model - Project
 const {
-  Technology, Skill, Project, Post
+  Technology
 } = require('../models')
+// Controllers
+const {
+  // Redis Data
+  getDefaultAllData,
+  // Redis Promises
+  setAsync
+} = require('../controllers')
 
 /** Page Specific Functions */
+// get all required data from redis
+const getAllData = async() => {
+  const redisAllData = await getDefaultAllData()
+  return {
+    posts: redisAllData.postsRedis,
+    projects: redisAllData.projectsRedis,
+    skills: redisAllData.skillsRedis,
+    techs: redisAllData.techsRedis,
+    users: redisAllData.usersRedis
+  }
+}
+// set new techs redis data
+const setAllTech = async(redisAllTech) => {
+  await setAsync(`pfv4_techs`, JSON.stringify(redisAllTech))
+}
 // handle extract techs info
 const handleTechExtract = (datas, id2Compare) => {
   let datas2Compare = []
@@ -12,10 +34,10 @@ const handleTechExtract = (datas, id2Compare) => {
   datas.forEach(data => {
     data.techs.forEach(tech => {
       // save the tech if categoriesProject array still empty
-      if(datas2Compare.length === 0) datas2Compare.push(tech._id.toString())
+      if(datas2Compare.length === 0) datas2Compare.push(tech.toString())
       else {
         // check if category already exist in the array, if not , then save
-        if(datas2Compare.map(cat => cat).indexOf(tech._id.toString()) === -1) datas2Compare.push(tech._id.toString())
+        if(datas2Compare.map(cat => cat).indexOf(tech.toString()) === -1) datas2Compare.push(tech.toString())
       }
     })
   })
@@ -31,21 +53,24 @@ const handleTechExtract = (datas, id2Compare) => {
 // @route   POST /api/v1/techs/private/get
 // @access  Private (Require sessionId & uid)
 exports.getPrivateTechs = async(req, res, next) => {
-  return await Technology.find().sort({ name: 1 })
-  .populate('creator')
-  .then(data => {
-    return res.status(200).json({
-      success: true,
-      count: data.length,
-      data: data
+  // get user data from redis
+  let redisAllData = await getAllData()
+  let users = redisAllData.users
+
+  // get tech data from redis
+  let redisAllTech = redisAllData.techs
+
+  // get populated tech data (with creator data)
+  redisAllTech.forEach(tech => {
+    users.forEach(user => {
+      if(user._id === tech.creator) tech.creator = user
     })
   })
-  .catch(err => {
-    return res.status(500).json({
-      success: false,
-      error: `Failed to get data from Techs Collection`,
-      data: err
-    })
+
+  return res.status(200).json({
+    success: true,
+    count: redisAllTech.length,
+    data: redisAllTech.sort((a, b) => a.name < b.name ? -1 : 1)
   })
 }
 
@@ -56,6 +81,10 @@ exports.addPrivateTech = async(req, res, next) => {
   let {
     name, abbreviation
   } = req.body
+
+  // get techs data from redis
+  let redisAllData = await getAllData()
+  let redisAllTech = redisAllData.techs
   
   const newTech = new Technology({
     name: name,
@@ -65,6 +94,12 @@ exports.addPrivateTech = async(req, res, next) => {
 
   newTech.save()
   .then(async data => {
+    /** update techs redis */
+    // add new added data to techs redis
+    redisAllTech.push(data)
+    // set new techs redis
+    await setAllTech(redisAllTech)
+
     let tech = await data.populate('creator').execPopulate()
 
     return res.status(200).json({
@@ -90,6 +125,10 @@ exports.updatePrivateTech = async(req, res, next) => {
     name, abbreviation, creator
   } = req.body
 
+  // get techs data from redis
+  let redisAllData = await getAllData()
+  let redisAllTech = redisAllData.techs
+
   return await Technology.findByIdAndUpdate(
     { _id: req.params.id },
     { $set: {
@@ -100,6 +139,18 @@ exports.updatePrivateTech = async(req, res, next) => {
     { new: true }
   )
   .then(async data => {
+    /** update techs redis */
+    // update tech info
+    redisAllTech.forEach(state => {
+      if(state._id === req.params.id) {
+        state.name = name
+        state.abbreviation = abbreviation
+        state.creator = creator
+      }
+    })
+    // set new techs redis
+    await setAllTech(redisAllTech)
+
     let tech = await data.populate('creator').execPopulate()
 
     return res.status(200).json({
@@ -122,37 +173,27 @@ exports.updatePrivateTech = async(req, res, next) => {
 // @access  Private (Require sessionId & uid)
 exports.deletePrivateTech = async(req, res, next) => {
   try {
+    // get techs data from redis
+    let redisAllData = await getAllData()
+    let redisAllTech = redisAllData.techs
+
     // check if tech being used in Skill Collection
-    let skills = await Skill.find().populate('techs')
-    // skills.map(skill => {
-    //   skill.techs.map(tech => console.log(tech.name))
-    // })
-    if(!skills) return res.status(400).json({
-      success: false,
-      error: `Error while getting skills data from Skill Collection`,
-      data: {}
-    })
-    if(handleTechExtract(skills, req.params.id) === 'exist') return res.status(400).json({
+    if(handleTechExtract(redisAllData.skills, req.params.id) === 'exist') return res.status(400).json({
       success: false,
       error: `Please delete tech data from Skill Collection first`,
       data: {}
     })
 
     // check if tech being used in Project Collection
-    let projects = await Project.find().populate('techs')
-    if(!projects) return res.status(400).json({
-      success: false,
-      error: `Error while getting projects data from Project Collection`,
-      data: {}
-    })
-    if(handleTechExtract(projects, req.params.id) === 'exist') return res.status(400).json({
+    if(handleTechExtract(redisAllData.projects, req.params.id) === 'exist') return res.status(400).json({
       success: false,
       error: `Please delete tech data from Project Collection first`,
       data: {}
     })
 
     // check if tech being used in Post Collection
-    let posts = await Post.find().where({ tech: req.params.id })
+    // let posts = await Post.find().where({ tech: req.params.id })
+    let posts = redisAllData.posts.filter(state => state.tech === req.params.id)
     if(posts.length > 0) return res.status(400).json({
       success: false,
       error: `Please delete tech data from Post Collection first`,
@@ -162,12 +203,18 @@ exports.deletePrivateTech = async(req, res, next) => {
     // delete tech
     await Technology.findByIdAndDelete(req.params.id)
 
+    /** update techs redis */
+    // delete tech
+    let filtered = redisAllTech.filter(state => state._id !== req.params.id)
+    // set new contacts redis
+    await setAllTech(filtered)
+
     return res.status(200).json({
       success: true,
       count: 0,
       data: {}
     })
-  } catch(err) {
+  } catch(err) { console.log(err)
     return res.status(500).json({
       success: false,
       error: `Failed to delete tech data from Tech Collection`,

@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { Redirect, Route } from 'react-router-dom'
 import { useAuth } from '../../../contexts/Auth/AuthState'
 import { isAuthenticated, setLoading } from '../../../contexts/Auth/AuthAction'
+import { setCookie } from '../../../services/Cookie'
 
 const ProtectedRouteChild = ({ component: Component, ...rest }) => {
   const [authState, authDispatch] = useAuth()
@@ -20,7 +21,11 @@ const ProtectedRouteChild = ({ component: Component, ...rest }) => {
       {...rest} render={
         props => {
           if(loading) return <div className="lds-hourglass"></div>
-          if(authenticated) return <Component {...props} />
+          if(authenticated) {
+            // save last page seen address (url)
+            setCookie('onRefresh', props.location.pathname, { path: '/' }) 
+            return <Component {...props} />
+          }
           else return <Redirect to={
             {
               pathname: "/pfv4-admin",

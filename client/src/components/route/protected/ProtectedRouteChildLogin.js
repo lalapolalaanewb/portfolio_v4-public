@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { Redirect, Route } from 'react-router-dom'
 import { useAuth } from '../../../contexts/Auth/AuthState'
 import { isAuthenticated, setLoading } from '../../../contexts/Auth/AuthAction'
+import { getCookie } from '../../../services/Cookie'
 
 const ProtectedRouteChildLogin = ({ component: Component, ...rest }) => {
   const [authState, authDispatch] = useAuth()
@@ -21,10 +22,14 @@ const ProtectedRouteChildLogin = ({ component: Component, ...rest }) => {
         props => {
           if(loading) return <div className="lds-hourglass"></div>
           if(!authenticated) return <Component {...props} />
-          else return <Redirect exact to={{
-            pathname: "/pfv4-admin/dashboard",
-            state: { from: props.location }
-          }} />
+          else {
+            let url = getCookie('onRefresh')
+            
+            return <Redirect exact to={{
+              pathname: url !== '' ? url : '/pfv4-admin/dashboard',
+              state: { from: props.location }
+            }} />
+          }
         }
       } 
     />

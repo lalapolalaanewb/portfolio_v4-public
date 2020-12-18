@@ -19,6 +19,8 @@ export const isLogin = async(dispatch, { email, password }) => {
     
     // set uid cookie to res.data.data.uid & options of expires to res.data.data.sato & options of path to /pfv4-admin
     setCookie('uid', result.uid, { path: '/', expires: new Date(result.sato) })
+    // for page refresh
+    setCookie('onRefresh', '', { path: '/' })
 
     dispatch({
       type: 'SET_ISAUTHENTICATED',
@@ -52,6 +54,7 @@ export const isLogout = async(dispatch) => {
     if(result.success) {
       // remove cookie
       removeCookie('uid', { path: '/' })
+      removeCookie('onRefresh', { path: '/' })
     }
 
     dispatch({
@@ -95,25 +98,6 @@ export const isAuthenticated = async(dispatch) => {
 
     return false
   }
-  // return true
-  /** Server Checking Style */
-  // await axios.post('/api/v1/auth/isauth', { uid: uid }, config)
-  // .then(res => {
-  //   // update state
-  //   dispatch({
-  //     type: 'GET_RESPONSE_ISAUTHENTICATED',
-  //     payload: res.data.data
-  //   })
-  // }).catch(error => {
-  //   // update state
-  //   dispatch({
-  //     type: 'SET_ERROR',
-  //     payload: {
-  //       error: true,
-  //       message: error.response.data.error
-  //     }
-  //   })
-  // })
 }
 
 // check user existence (for post like)

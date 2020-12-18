@@ -9,6 +9,8 @@ const {
 } = require('../models')
 // Controllers
 const {
+  // Redis Data
+  setDefaultAllData,
   // Session
   SESS_ABSOULTE_TIMEOUT,
   // Verification
@@ -43,6 +45,9 @@ exports.userLogin = async(req, res, next) => {
   
   // assign new session data for user
   await logIn(req, userExist._id)
+
+  // set all available data to redis
+  await setDefaultAllData()
 
   // return with success message
   return res.status(200).json({

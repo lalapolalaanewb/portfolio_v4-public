@@ -14,6 +14,14 @@ const {
 } = require('./gmail')
 // Redis
 const { RedisStore, redisClient, session } = require('./redis')
+// Redis Data
+const {
+  getDefaultAllData, setDefaultAllData
+} = require('./data-session')
+// Redis Promises
+const {
+  getAsync, setAsync, delAsync
+} = require('./redis-promises')
 // Session
 const { SESS_NAME, SESS_ABSOULTE_TIMEOUT, SESS_OPTIONS } = require('./session')
 // Verification
@@ -34,6 +42,10 @@ module.exports = {
   contactAutoReplyAdminNoty,
   // Redis
   RedisStore, redisClient, session,
+  // Redis data
+  getDefaultAllData, setDefaultAllData,
+  // Redis Promises
+  getAsync, setAsync, delAsync,
   // Session
   SESS_NAME, SESS_ABSOULTE_TIMEOUT, SESS_OPTIONS,
   // Verification

@@ -26,7 +26,7 @@ const Login = () => {
         await isLogin(authDispatch, { email: username, password: password })
 
         setLoading(authDispatch, false)
-        history.push('/pfv4-admin/dashboard')
+        // history.push('/pfv4-admin/dashboard')
       })();
 
       // empty out placeholders
