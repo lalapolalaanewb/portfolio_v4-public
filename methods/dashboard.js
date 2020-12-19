@@ -35,6 +35,7 @@ exports.getPrivateDashboard = async(req, res, next) => {
         homes: { $size: '$homes' },
         abouts: { $size: '$abouts' },
         socialMedias: { $size: '$socialMedias' },
+        educations: { $size: '$educations' },
         jobs: { $size: '$jobs' },
         skills: { $size: '$skills' },
         projects: { $size: '$projects' },
@@ -82,6 +83,7 @@ exports.getPrivateDashboard = async(req, res, next) => {
         user: {
           _id: user[0]._id,
           abouts: user[0].abouts,
+          edus: user[0].educations,
           homes: user[0].homes,
           jobs: user[0].jobs,
           mails: userMails.mails.length,
@@ -93,6 +95,7 @@ exports.getPrivateDashboard = async(req, res, next) => {
           techs: userTechs.length
         },
         aboutsCount: redisAllData.aboutsRedis.length,
+        edusCount: redisAllData.educationsRedis.length,
         homesCount: redisAllData.homesRedis.length,
         jobsCount: redisAllData.jobsRedis.length,
         mailsCount: redisAllData.mailsRedis.length,

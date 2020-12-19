@@ -3,8 +3,31 @@
 const {
   User, Job
 } = require('../models')
+// Controllers
+const {
+  // Redis Data
+  getDefaultAllData,
+  // Redis Promises
+  setAsync 
+} = require('../controllers')
 
 /** Page Specific Functions */
+// get all required data from redis
+const getAllData = async() => {
+  const redisAllData = await getDefaultAllData()
+  return {
+    jobs: redisAllData.jobsRedis,
+    users: redisAllData.usersRedis
+  }
+}
+// set new jobs redis data
+const setAllJob = async(redisAllJob) => {
+  await setAsync(`pfv4_jobs`, JSON.stringify(redisAllJob))
+}
+// set new users redis data
+const setAllUser = async(redisAllUser) => {
+  await setAsync(`pfv4_users`, JSON.stringify(redisAllUser))
+}
 // handle 'none' input
 const handleNoneInput = input => {
   if(input === 'none') return ''
@@ -16,22 +39,24 @@ const handleNoneInput = input => {
 // @route   POST /api/v1/users/private/profile/job/get
 // @access  Private (Require sessionId & uid)
 exports.getPrivateUserJob = async(req, res, next) => {
-  await User.findOne().where({ status: 1 })
-  .select('jobs')
-  .populate('jobs')
-  .then(data => {
-    return res.status(200).json({
-      success: true,
-      count: data.length,
-      data: data
-    })
-  })
-  .catch(err => {
-    return res.status(500).json({
-      success: false,
-      error: `Failed to get job data from User Collection`,
-      data: err
-    })
+  // get users & jobs data from redis
+  let redisAllData = await getAllData()
+  let jobs = redisAllData.jobs
+  let users = redisAllData.users
+
+  // get active user info
+  let user = users.find(user => user.status === 1)
+  
+  // get all user jobs
+  let userJobs = jobs.filter(state => user.jobs.includes(state._id))
+
+  return res.status(200).json({
+    success: true,
+    count: userJobs.length,
+    data: {
+      _id: user._id,
+      jobs: userJobs.sort((a, b) => a.name < b.name ? -1: 1)
+    }
   })
 }
 
@@ -42,7 +67,12 @@ exports.addPrivateUserJob = async(req, res, next) => {
   let {
     name, abbreviation, desc, company, creator
   } = req.body
-  // console.log(req.body)
+  
+  // get users & jobs data from redis
+  let redisAllData = await getAllData()
+  let jobs = redisAllData.jobs
+  let users = redisAllData.users
+
   const newJob = new Job({ 
     name: name, 
     abbreviation: handleNoneInput(abbreviation),
@@ -57,6 +87,18 @@ exports.addPrivateUserJob = async(req, res, next) => {
       { _id: creator },
       { $push: { jobs: data._id } },
     )
+
+    /** update jobs & users redis */
+    // add new added data to jobs redis
+    jobs.push(data)
+    // set new jobs redis
+    await setAllJob(jobs)
+    // add & update new job id to user/creator data
+    users.forEach(user => {
+      if(user._id === creator) user.jobs.push(data._id)
+    })
+    // set new users redis
+    await setAllUser(users)
     
     return res.status(200).json({
       success: true,
@@ -81,6 +123,10 @@ exports.updatePrivateUserJob = async(req, res, next) => {
     jobId, job
   } = req.body
 
+  // get users & jobs data from redis
+  let redisAllData = await getAllData()
+  let jobs = redisAllData.jobs
+
   await Job.findByIdAndUpdate(
     { _id: jobId },
     { $set: {
@@ -91,14 +137,27 @@ exports.updatePrivateUserJob = async(req, res, next) => {
     } },
     { new: true }
   )
-  .then(data => {
+  .then(async data => {
+    /** update jobs redis */
+    // update job info
+    jobs.forEach(state => {
+      if(state._id === jobId) {
+        state.name = job.name
+        state.abbreviation = handleNoneInput(job.abbreviation)
+        state.description = handleNoneInput(job.description)
+        state.company = handleNoneInput(job.company)
+      }
+    })
+    // set new jobs redis
+    await setAllJob(jobs)
+
     return res.status(200).json({
       success: true,
       count: data.length,
       data: data
     })
   })
-  .catch(err => {
+  .catch(err => { 
     return res.status(500).json({
       success: false,
       error: `Failed to update job from Job Collection`,
@@ -113,6 +172,10 @@ exports.updatePrivateUserJob = async(req, res, next) => {
 exports.updatePrivateUserJobPublish = async(req, res, next) => {
   let { jobId, intention } = req.body
   
+  // get jobs data from redis
+  let redisAllData = await getAllData()
+  let jobs = redisAllData.jobs
+
   await Job.findByIdAndUpdate(
     { _id: jobId },
     { $set: {
@@ -120,7 +183,15 @@ exports.updatePrivateUserJobPublish = async(req, res, next) => {
     } },
     { new: true }
   )
-  .then(data => {
+  .then(async data => {
+    /** update jobs redis */
+    // update job info
+    jobs.forEach(state => {
+      if(state._id === jobId) state.status = intention === 'publish' ? 1 : 0
+    })
+    // set new jobs redis
+    await setAllJob(jobs)
+
     return res.status(200).json({
       success: true,
       count: data.length,
@@ -141,8 +212,13 @@ exports.updatePrivateUserJobPublish = async(req, res, next) => {
 // @access  Private (Require sessionId & uid)
 exports.deletePrivateUserJob = async(req, res, next) => {
   try {
+    // get users & jobs data from redis
+    let redisAllData = await getAllData()
+    let jobs = redisAllData.jobs
+    let users = redisAllData.users
+
     // check if job is published first
-    let job = await Job.findById(req.body.jobId)
+    let job = jobs.find(state => state._id === req.body.jobId)
     if(job) {
       if(job.status === 1) return res.status(400).json({
         success: false,
@@ -158,7 +234,22 @@ exports.deletePrivateUserJob = async(req, res, next) => {
     )
 
     // delete job
-    job.remove()
+    await Job.deleteOne({ _id: req.body.jobId })
+
+    /** update jobs redis */
+    // delete job
+    let filtered = jobs.filter(state => state._id !== req.body.jobId)
+    // set new jobs redis
+    await setAllJob(filtered)
+    // remove deleted job from users
+    users.forEach(user => {
+      if(user._id === req.body.creator) {
+        let filtered = user.jobs.filter(state => state !== req.body.jobId)
+        user.jobs = filtered
+      }
+    })
+    // set new users redis
+    await setAllUser(users)
 
     return res.status(200).json({
       success: true,

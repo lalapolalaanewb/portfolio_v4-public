@@ -50,7 +50,7 @@ exports.getPrivateUserAbout = async(req, res, next) => {
   let user = users.find(user => user.status === 1)
   
   // get all user abouts
-  let userAbouts = abouts.filter(about => user.abouts.includes(about._id))
+  let userAbouts = abouts.filter(state => user.abouts.includes(state._id))
 
   return res.status(200).json({
     success: true,
@@ -99,8 +99,8 @@ exports.addPrivateUserAbout = async(req, res, next) => {
     // set new abouts redis
     await setAllAbout(abouts)
     // add & update new about id to user/creator data
-    users.forEach(state => {
-      if(state._id === creator) state.abouts.push(data._id)
+    users.forEach(user => {
+      if(user._id === creator) user.abouts.push(data._id)
     })
     // set new users redis
     await setAllUser(users)
@@ -269,7 +269,7 @@ exports.deletePrivateUserAbout = async(req, res, next) => {
     let users = redisAllData.users
 
     // check if about is published first
-    let about = abouts.find(about => about._id === req.body.aboutId)
+    let about = abouts.find(state => state._id === req.body.aboutId)
     if(about) {
       if(about.status === 1) return res.status(400).json({
         success: false,

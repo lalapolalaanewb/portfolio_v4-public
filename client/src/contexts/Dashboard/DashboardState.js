@@ -13,6 +13,7 @@ export const DashboardState = ({ children }) => {
       user: {
         _id: '',
         abouts: 0,
+        edus: 0,
         homes: 0,
         jobs: 0,
         mails: 0,
@@ -24,6 +25,7 @@ export const DashboardState = ({ children }) => {
         techs: 0
       },
       aboutsCount: 0,
+      edusCount: 0,
       homesCount: 0,
       jobsCount: 0,
       mailsCount: 0,

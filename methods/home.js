@@ -4,9 +4,32 @@ const {
   User, Home,
 } = require('../models')
 // Controllers
-const { handleImgRemove } = require('../controllers')
+const { 
+  // File Upload 
+  handleImgRemove,
+  // Redis Data
+  getDefaultAllData,
+  // Redis Promises
+  setAsync 
+} = require('../controllers')
 
 /** Page Specific Functions */
+// get all required data from redis
+const getAllData = async() => {
+  const redisAllData = await getDefaultAllData()
+  return {
+    homes: redisAllData.homesRedis,
+    users: redisAllData.usersRedis
+  }
+}
+// set new homes redis data
+const setAllHome = async(redisAllHome) => {
+  await setAsync(`pfv4_homes`, JSON.stringify(redisAllHome))
+}
+// set new users redis data
+const setAllUser = async(redisAllUser) => {
+  await setAsync(`pfv4_users`, JSON.stringify(redisAllUser))
+}
 // handle 'none' input
 const handleNoneInput = input => {
   if(input === 'none') return ''
@@ -18,22 +41,24 @@ const handleNoneInput = input => {
 // @route   POST /api/v1/users/private/profile/home/get
 // @access  Private (Require sessionId & uid)
 exports.getPrivateUserHome = async(req, res, next) => {
-  await User.findOne().where({ status: 1 })
-  .select('homes')
-  .populate('homes')
-  .then(data => { // console.log(data)
-    return res.status(200).json({
-      success: true,
-      count: data.length,
-      data: data
-    })
-  })
-  .catch(err => {
-    return res.status(500).json({
-      success: false,
-      error: `Failed to get about data from User Collection`,
-      data: err
-    })
+  // get users & homes data from redis
+  let redisAllData = await getAllData()
+  let users = redisAllData.users
+  let homes = redisAllData.homes
+
+  // get active user info
+  let user = users.find(user => user.status === 1)
+  
+  // get all user homes
+  let userHomes = homes.filter(state => user.homes.includes(state._id))
+
+  return res.status(200).json({
+    success: true,
+    count: userHomes.length,
+    data: {
+      _id: user._id,
+      homes: userHomes
+    }
   })
 }
 
@@ -44,7 +69,12 @@ exports.addPrivateUserHome = async(req, res, next) => {
   let {
     topline, headline, description, btnPurpose, btnLabel, btnLink, imgPosition, creator
   } = req.body
-  // console.log(req.body); return console.log(req.file)
+  
+  // get users & homes data from redis
+  let redisAllData = await getAllData()
+  let users = redisAllData.users
+  let homes = redisAllData.homes
+
   const home = new Home({
     topline: topline,
     headline: headline,
@@ -63,6 +93,18 @@ exports.addPrivateUserHome = async(req, res, next) => {
       { _id: creator },
       { $push: { homes: data._id } },
     )
+
+    /** update homes & users redis */
+    // add new added data to homes redis
+    homes.push(data)
+    // set new homes redis
+    await setAllHome(homes)
+    // add & update new home id to user/creator data
+    users.forEach(user => {
+      if(user._id === creator) user.homes.push(data._id)
+    })
+    // set new users redis
+    await setAllUser(users)
     
     return res.status(200).json({
       success: true,
@@ -87,6 +129,10 @@ exports.updatePrivateUserHome = async(req, res, next) => {
     homeId, home
   } = req.body
 
+  // get users & homes data from redis
+  let redisAllData = await getAllData()
+  let homes = redisAllData.homes
+
   await Home.findByIdAndUpdate(
     { _id: homeId },
     { $set: {
@@ -100,7 +146,23 @@ exports.updatePrivateUserHome = async(req, res, next) => {
     } },
     { new: true }
   )
-  .then(data => {
+  .then(async data => {
+    /** update homes redis */
+    // update home info
+    homes.forEach(state => {
+      if(state._id === homeId) {
+        state.topline = home.topline
+        state.headline = home.headline
+        state.description = handleNoneInput(home.description)
+        state.btnPurpose = home.btnPurpose
+        state.btnLabel = home.btnLabel
+        state.btnLink = home.btnLink
+        state.imgPosition = home.imgPosition
+      }
+    })
+    // set new homes redis
+    await setAllHome(homes)
+
     return res.status(200).json({
       success: true,
       count: data.length,
@@ -125,12 +187,24 @@ exports.updatePrivateUserHomeImg = async(req, res, next) => {
   // - remove image from server images folder
   handleImgRemove(res, imgSrc)
 
+  // get users & homes data from redis
+  let redisAllData = await getAllData()
+  let homes = redisAllData.homes
+
   await Home.findByIdAndUpdate(
     { _id: homeId },
     { $set: { imgSrc: req.file.originalname } },
     { new: true }
   )
-  .then(data => {
+  .then(async data => {
+    /** update homes redis */
+    // update home info
+    homes.forEach(state => {
+      if(state._id === homeId) state.imgSrc = req.file.originalname
+    })
+    // set new homes redis
+    await setAllHome(homes)
+
     return res.status(200).json({
       success: true,
       count: data.length,
@@ -152,6 +226,10 @@ exports.updatePrivateUserHomeImg = async(req, res, next) => {
 exports.updatePrivateUserHomePublish = async(req, res, next) => {
   let { homeId, intention } = req.body
   
+  // get users & homes data from redis
+  let redisAllData = await getAllData()
+  let homes = redisAllData.homes
+
   await Home.findByIdAndUpdate(
     { _id: homeId },
     { $set: {
@@ -159,7 +237,15 @@ exports.updatePrivateUserHomePublish = async(req, res, next) => {
     } },
     { new: true }
   )
-  .then(data => {
+  .then(async data => {
+    /** update homes redis */
+    // update home info
+    homes.forEach(state => {
+      if(state._id === homeId) state.status = intention === 'publish' ? 1 : 0
+    })
+    // set new homes redis
+    await setAllHome(homes)
+
     return res.status(200).json({
       success: true,
       count: data.length,
@@ -180,8 +266,13 @@ exports.updatePrivateUserHomePublish = async(req, res, next) => {
 // @access  Private (Require sessionId & uid)
 exports.deletePrivateUserHome = async(req, res, next) => {
   try {
+    // get users & homes data from redis
+    let redisAllData = await getAllData()
+    let homes = redisAllData.homes
+    let users = redisAllData.users
+
     // check if home is published first
-    let home = await Home.findById(req.body.homeId)
+    let home = homes.find(state => state._id === req.body.homeId)
     if(home) {
       if(home.status === 1) return res.status(400).json({
         success: false,
@@ -200,7 +291,22 @@ exports.deletePrivateUserHome = async(req, res, next) => {
     handleImgRemove(res, home.imgSrc)
 
     // delete home
-    home.remove()
+    await Home.deleteOne({ _id: req.body.homeId })
+
+    /** update homes redis */
+    // delete home
+    let filtered = homes.filter(state => state._id !== req.body.homeId)
+    // set new homes redis
+    await setAllHome(filtered)
+    // remove deleted home from users
+    users.forEach(user => {
+      if(user._id === req.body.creator) {
+        let filtered = user.homes.filter(state => state !== req.body.homeId)
+        user.homes = filtered
+      }
+    })
+    // set new users redis
+    await setAllUser(users)
 
     return res.status(200).json({
       success: true,

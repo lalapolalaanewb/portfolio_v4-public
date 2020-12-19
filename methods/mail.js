@@ -7,35 +7,55 @@ const {
 const {
   // Gmail
   contactAutoReplyClientNoty,
-  contactAutoReplyAdminNoty
+  contactAutoReplyAdminNoty,
+  // Redis Data
+  getDefaultAllData,
+  // Redis Promises
+  setAsync
 } = require('../controllers')
+
+/** Page Specific Functions */
+// get all required data from redis
+const getAllData = async() => {
+  const redisAllData = await getDefaultAllData()
+  return {
+    contacts: redisAllData.contactsRedis,
+    mails: redisAllData.mailsRedis,
+    users: redisAllData.usersRedis
+  }
+}
+// set new contacts redis data
+const setAllContact = async(redisAllContact) => {
+  await setAsync(`pfv4_contacts`, JSON.stringify(redisAllContact))
+}
+// set new mails redis data
+const setAllMail = async(redisAllMail) => {
+  await setAsync(`pfv4_mails`, JSON.stringify(redisAllMail))
+}
 
 /** Methods */
 // @desc    Portfolio V4 Posts (Get All Posts)
 // @route   POST /api/v1/mails/public/get/status
 // @access  Public (Only need Admin Public Access Key)
 exports.getPublicContactStatus = async (req, res, next) => {
-  // get active user
-  await User.findOne().where({ status: 1 })
-  .then(async data => {
-    // get contact id of active user
-    let contact = await Contact.findOne().where({ creator: data._id })
+  // get users & jobs data from redis
+  let redisAllData = await getAllData()
+  let contacts = redisAllData.contacts
+  let users = redisAllData.users
 
-    return res.status(200).json({
-      success: true,
-      count: 1,
-      data: {
-        _id: contact._id,
-        status: contact.status
-      }
-    })
-  })
-  .catch(err => { 
-    return res.status(500).json({
-      success: false,
-      error: `Failed to get contact status data from Contact Collection`,
-      data: err
-    })
+  // get active user info
+  let user = users.find(user => user.status === 1)
+  
+  // get active contact info
+  let contact = contacts.find(state => state.creator === user._id)
+
+  return res.status(200).json({
+    success: true,
+    count: 1,
+    data: {
+      _id: contact._id,
+      status: contact.status
+    }
   })
 }
 
@@ -46,12 +66,19 @@ exports.addPublicMail = async (req, res, next) => {
   let {
     mail, contactId
   } = req.body
+
+  // get contacts & mails data from redis
+  let redisAllData = await getAllData()
+  let contacts = redisAllData.contacts
+  let mails = redisAllData.mails
+  let users = redisAllData.users
   
   // return message
   let clientResMsg = '', adminResMsg = ''
 
   // get contact info (active user)
-  let contact = await Contact.findById(contactId).populate('creator')
+  let contact = contacts.find(state => state._id === contactId)
+  let creator = users.find(user => user._id === contact.creator)
 
   // send noty to client (from)
   let clientMailResponse = await contactAutoReplyClientNoty(
@@ -83,8 +110,8 @@ exports.addPublicMail = async (req, res, next) => {
       refreshToken: contact.refreshToken
     },
     {
-      name: contact.creator.name.firstName + ' ' + contact.creator.name.lastName,
-      email: contact.creator.credentials.emails.main
+      name: creator.name.firstName + ' ' + creator.name.lastName,
+      email: creator.credentials.emails.main
     },
     {
       name: mail.fromWho,
@@ -115,13 +142,25 @@ exports.addPublicMail = async (req, res, next) => {
       { $push: { mails: data._id } },
     )
 
+    /** update contacts & mails redis */
+    // add new added data to mails redis
+    mails.push(data)
+    // set new mails redis
+    await setAllMail(mails)
+    // add & update new mail id to contact data
+    contacts.forEach(state => {
+      if(state._id === contactId) state.mails.push(data._id)
+    })
+    // set new contacts redis
+    await setAllContact(contacts)
+
     return res.status(200).json({
       success: true,
       count: 1,
       data: 'Successfully send the mail.' + clientResMsg + adminResMsg
     })
   })
-  .catch(err => { 
+  .catch(err => { console.log(err)
     return res.status(500).json({
       success: false,
       error: `Mail sending failed. Please try again later.`,
@@ -134,21 +173,27 @@ exports.addPublicMail = async (req, res, next) => {
 // @route   POST /api/v1/mails/private/get
 // @access  Private (Require sessionId & uid)
 exports.getPrivateMails = async (req, res, next) => {
-  await Contact.findOne().where({ creator: '5f8fc26c6a103b243428bec1' })
-  .populate('mails')
-  .then(data => { 
-    return res.status(200).json({
-      success: true,
-      count: data.length,
-      data: data
+  // get users & jobs data from redis
+  let redisAllData = await getAllData()
+  let contacts = redisAllData.contacts
+  let mails = redisAllData.mails
+
+  // get user contact info
+  let contact = contacts.find(state => state.creator === req.session.userId)
+
+  // get populated contact with mails
+  let populatedMails = []
+  contact.mails.forEach(mailInContact => {
+    mails.forEach(mail => {
+      if(mail._id === mailInContact) populatedMails.push({...mail}) 
     })
   })
-  .catch(err => { 
-    return res.status(500).json({
-      success: false,
-      error: `Failed to get data from Contact Collection`,
-      data: err
-    })
+  contact.mails = populatedMails
+  
+  return res.status(200).json({
+    success: true,
+    count: 1,
+    data: contact
   })
 }
 
@@ -157,12 +202,19 @@ exports.getPrivateMails = async (req, res, next) => {
 // @access  Private (Require sessionId & uid)
 exports.updatePrivateMailNoty = async (req, res, next) => {
   let { contactId, mailId, mail, intention } = req.body
+
+  // get contacts & mails data from redis
+  let redisAllData = await getAllData()
+  let contacts = redisAllData.contacts
+  let mails = redisAllData.mails
+  let users = redisAllData.users
   
   // return message
   let clientResMsg = '', adminResMsg = ''
 
   // get contact info (active user)
-  let contact = await Contact.findById(contactId).populate('creator')
+  let contact = contacts.find(state => state._id === contactId)
+  let creator = users.find(user => user._id === contact.creator)
   
   // send noty to client (from)
   let clientMailResponse = await contactAutoReplyClientNoty(
@@ -194,8 +246,8 @@ exports.updatePrivateMailNoty = async (req, res, next) => {
       refreshToken: contact.refreshToken
     },
     {
-      name: contact.creator.name.firstName + ' ' + contact.creator.name.lastName,
-      email: contact.creator.credentials.emails.main
+      name: creator.name.firstName + ' ' + creator.name.lastName,
+      email: creator.credentials.emails.main
     },
     {
       name: mail.fromWho,
@@ -217,7 +269,15 @@ exports.updatePrivateMailNoty = async (req, res, next) => {
     },
     { new: true }
   )
-  .then(data => {
+  .then(async data => {
+    /** update mails redis */
+    // update mail info
+    mails.forEach(state => {
+      if(state._id === mailId) state.statusNoty = clientMailResponse === 'Unsuccessful!' ? 0 : 1
+    })
+    // set new mails redis
+    await setAllMail(mails)
+
     return res.status(200).json({
       success: true,
       count: data.length,
@@ -227,7 +287,7 @@ exports.updatePrivateMailNoty = async (req, res, next) => {
       }
     })
   })
-  .catch(err => { 
+  .catch(err => { console.log(err)
     return res.status(500).json({
       success: false,
       error: `Failed to update mail status noty from Mail Collection`,
@@ -241,6 +301,10 @@ exports.updatePrivateMailNoty = async (req, res, next) => {
 // @access  Private (Require sessionId & uid)
 exports.updatePrivateMailRead = async (req, res, next) => {
   let { mailId, intention } = req.body
+
+  // get mails data from redis
+  let redisAllData = await getAllData()
+  let mails = redisAllData.mails
   
   await Mail.findByIdAndUpdate(
     { _id: mailId },
@@ -251,14 +315,22 @@ exports.updatePrivateMailRead = async (req, res, next) => {
     },
     { new: true }
   )
-  .then(data => {
+  .then(async data => {
+    /** update mails redis */
+    // update mail info
+    mails.forEach(state => {
+      if(state._id === mailId) state.statusRead = intention === 'read' ? 1 : 0
+    })
+    // set new mails redis
+    await setAllMail(mails)
+
     return res.status(200).json({
       success: true,
       count: data.length,
       data: data
     })
   })
-  .catch(err => { 
+  .catch(err => { console.log(err)
     return res.status(500).json({
       success: false,
       error: `Failed to update mail status read from Mail Collection`,
@@ -273,6 +345,10 @@ exports.updatePrivateMailRead = async (req, res, next) => {
 exports.updatePrivateMailReply = async (req, res, next) => {
   let { mailId, intention } = req.body
   
+  // get mails data from redis
+  let redisAllData = await getAllData()
+  let mails = redisAllData.mails
+
   await Mail.findByIdAndUpdate(
     { _id: mailId },
     {
@@ -282,14 +358,22 @@ exports.updatePrivateMailReply = async (req, res, next) => {
     },
     { new: true }
   )
-  .then(data => {
+  .then(async data => {
+    /** update mails redis */
+    // update mail info
+    mails.forEach(state => {
+      if(state._id === mailId) state.statusReply = intention === 'reply' ? 1 : 0
+    })
+    // set new mails redis
+    await setAllMail(mails)
+
     return res.status(200).json({
       success: true,
       count: data.length,
       data: data
     })
   })
-  .catch(err => { 
+  .catch(err => { console.log(err)
     return res.status(500).json({
       success: false,
       error: `Failed to update mail status reply from Mail Collection`,
@@ -303,8 +387,13 @@ exports.updatePrivateMailReply = async (req, res, next) => {
 // @access  Private (Require sessionId & uid)
 exports.deletePrivateMail = async (req, res, next) => {
   try {
+    // get contacts & mails data from redis
+    let redisAllData = await getAllData()
+    let contacts = redisAllData.contacts
+    let mails = redisAllData.mails
+
     // check if mail is reply first
-    let mail = await Mail.findById(req.params.id)
+    let mail = mails.find(state => state._id === req.params.id)
     if (mail) {
       if (mail.statusNoty === 0 || mail.statusRead === 0 || mail.statusReply === 0) return res.status(400).json({
         success: false,
@@ -320,14 +409,29 @@ exports.deletePrivateMail = async (req, res, next) => {
     )
 
     // delete mail
-    mail.remove()
+    await Mail.deleteOne({ _id: req.params.id })
+
+    /** update mails redis */
+    // delete mail
+    let filtered = mails.filter(state => state._id !== req.params.id)
+    // set new mails redis
+    await setAllMail(filtered)
+    // remove deleted mail from contacts
+    contacts.forEach(contact => {
+      if(contact._id === req.body.contact) {
+        let filtered = contact.mails.filter(state => state !== req.params.id)
+        contact.mails = filtered
+      }
+    })
+    // set new contacts redis
+    await setAllContact(contacts)
 
     return res.status(200).json({
       success: true,
       count: 0,
       data: {}
     })
-  } catch (err) {
+  } catch (err) { 
     return res.status(500).json({
       success: false,
       error: `Failed to delete mail data from Mail Collection`,

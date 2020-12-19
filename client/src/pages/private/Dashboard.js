@@ -12,7 +12,7 @@ import { BiFile, BiListUl } from 'react-icons/bi'
 import { BsFilePost } from 'react-icons/bs'
 import { GoMailRead } from 'react-icons/go'
 import { HiBriefcase, HiHome, HiUser } from 'react-icons/hi'
-import { MdPhotoAlbum } from 'react-icons/md'
+import { MdPhotoAlbum, MdSchool } from 'react-icons/md'
 
 const Dashboard = () => {
   const [dashboardState, dashboardDispatch] = useDashboard()
@@ -57,6 +57,15 @@ const Dashboard = () => {
             <div>
               <Typography variant="h5" className={classes.title}>About</Typography>
               <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.aboutsCount}</Typography>
+            </div>
+          </div>
+          <div className={classes.card}>
+            <div className={classes.iconContainer}>
+              <MdSchool size={'100%'} />
+            </div>
+            <div>
+              <Typography variant="h5" className={classes.title}>Education</Typography>
+              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.edusCount}</Typography>
             </div>
           </div>
           <div className={classes.card}>
@@ -162,6 +171,15 @@ const Dashboard = () => {
             <div>
               <Typography variant="h5" className={classes.title}>About</Typography>
               <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.user.abouts}</Typography>
+            </div>
+          </div>
+          <div className={classes.card}>
+            <div className={classes.iconContainer}>
+              <MdSchool size={'100%'} />
+            </div>
+            <div>
+              <Typography variant="h5" className={classes.title}>Education</Typography>
+              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.user.edus}</Typography>
             </div>
           </div>
           <div className={classes.card}>

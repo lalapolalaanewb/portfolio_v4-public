@@ -36,7 +36,6 @@ exports.getPrivateContact = async (req, res, next) => {
     count: 1,
     data: userContact
   })
-
 }
 
 // @desc    Portfolio V4 Contact Dashboard (Add Contact)

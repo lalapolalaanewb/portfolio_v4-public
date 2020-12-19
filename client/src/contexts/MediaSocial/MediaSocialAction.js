@@ -107,7 +107,7 @@ export const updateMediaSocial = async (dispatch, mediaSocialId, mediaSocial) =>
 export const deleteMediaSocial = async (dispatch, mediaSocialId) => {
   setLoading(dispatch, true)
 
-  await axios.delete(`/delete/${mediaSocialId}`, configPrivate)
+  await axios.delete(baseUrl + `/delete/${mediaSocialId}`, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
@@ -122,7 +122,7 @@ export const deleteMediaSocial = async (dispatch, mediaSocialId) => {
       message: 'Successfully delete the media social.'
     })
   })
-  .catch(async error => {
+  .catch(async error => { console.log(error.response)
     const result = await error.response.data
 
     // update state

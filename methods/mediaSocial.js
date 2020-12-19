@@ -3,6 +3,28 @@
 const {
   Mediasocial, Socialmedia
 } = require('../models')
+// Controllers
+const { 
+  // Redis Data
+  getDefaultAllData,
+  // Redis Promises
+  setAsync 
+} = require('../controllers')
+
+/** Page Specific Functions */
+// get all required data from redis
+const getAllData = async() => {
+  const redisAllData = await getDefaultAllData()
+  return {
+    mediaSocials: redisAllData.mediaSocialsRedis,
+    socialMedias: redisAllData.socialMediasRedis,
+    users: redisAllData.usersRedis
+  }
+}
+// set new mediaSocials redis data
+const setAllMediaSocial = async(redisAllMediaSocial) => {
+  await setAsync(`pfv4_mediaSocials`, JSON.stringify(redisAllMediaSocial))
+}
 
 /** Methods */
 
@@ -10,21 +32,21 @@ const {
 // @route   POST /api/v1/mediasocials/private/get
 // @access  Private (Require sessionId & uid)
 exports.getPrivateMediaSocials = async(req, res, next) => {
-  await Mediasocial.find().sort({ name: 1 })
-  .populate('creator')
-  .then(data => {
-    return res.status(200).json({
-      success: true,
-      count: data.length,
-      data: data
+  // get mediaSocials & users data from redis
+  let redisAllData = await getAllData()
+  let mediaSocials = redisAllData.mediaSocials
+  let users = redisAllData.users
+  
+  mediaSocials.forEach(mediaSocial => {
+    users.forEach(user => {
+      if(user._id === mediaSocial.creator) mediaSocial.creator = {...user}
     })
   })
-  .catch(err => {
-    return res.status(500).json({
-      success: false,
-      error: `Failed to get data from Mediasocial Collection`,
-      data: err
-    })
+  
+  return res.status(200).json({
+    success: true,
+    count: mediaSocials.length,
+    data: mediaSocials.sort((a, b) => a.name < b.name ? -1 : 1)
   })
 }
 
@@ -36,6 +58,10 @@ exports.addPrivateMediaSocial = async(req, res, next) => {
     name, abbreviation
   } = req.body
 
+  // get mediaSocials data from redis
+  let redisAllData = await getAllData()
+  let mediaSocials = redisAllData.mediaSocials
+
   const newMediaSocial = new Mediasocial({
     name: name,
     abbreviation: abbreviation,
@@ -44,6 +70,12 @@ exports.addPrivateMediaSocial = async(req, res, next) => {
 
   newMediaSocial.save()
   .then(async data => {
+    /** update mediaSocials redis */
+    // add new added data to mediaSocials redis
+    mediaSocials.push(data)
+    // set new mediaSocials redis
+    await setAllMediaSocial(mediaSocials)
+
     let mediaSocial = await data.populate('creator').execPopulate()
 
     return res.status(200).json({
@@ -69,6 +101,10 @@ exports.updatePrivateMediaSocial = async(req, res, next) => {
     name, abbreviation, creator
   } = req.body
 
+  // get mediaSocials data from redis
+  let redisAllData = await getAllData()
+  let mediaSocials = redisAllData.mediaSocials
+
   await Mediasocial.findByIdAndUpdate(
     { _id: req.params.id },
     { $set: {
@@ -79,6 +115,18 @@ exports.updatePrivateMediaSocial = async(req, res, next) => {
     { new: true }
   )
   .then(async data => {
+    /** update medias redis */
+    // update media info
+    mediaSocials.forEach(state => {
+      if(state._id === req.params.id) {
+        state.name = name
+        state.abbreviation = abbreviation
+        state.creator = creator
+      }
+    })
+    // set new mediaSocials redis
+    await setAllMediaSocial(mediaSocials)
+
     let mediaSocial = await data.populate('creator').execPopulate()
 
     return res.status(200).json({
@@ -101,16 +149,28 @@ exports.updatePrivateMediaSocial = async(req, res, next) => {
 // @access  Private (Require sessionId & uid)
 exports.deletePrivateMediaSocial = async(req, res, next) => {
   try {
+    // get mediaSocials data from redis
+    let redisAllData = await getAllData()
+    let mediaSocials = redisAllData.mediaSocials
+    let socialMedias = redisAllData.socialMedias
+
     // check if data being use in Socialmedia Model
-    let socialMedias = await Socialmedia.find().where({ icon: req.params.id })
-    if(socialMedias.length > 0) return res.status(400).json({
+    // let socialMedias = await Socialmedia.find().where({ icon: req.params.id })
+    let socialMediasUsed = socialMedias.filter(socialMedia => socialMedia.icon === req.params.id)
+    if(socialMediasUsed.length > 0) return res.status(400).json({
       success: false,
       error: `Please delete data from Socialmedia Collection first`,
       data: {}
     })
 
     // delete mediaSocial
-    await Mediasocial.findByIdAndDelete(req.params.id)
+    await Mediasocial.deleteOne({ _id: req.params.id })
+
+    /** update mediaSocials redis */
+    // delete mediaSocial
+    let filtered = mediaSocials.filter(state => state._id !== req.params.id)
+    // set new mediaSOcials redis
+    await setAllMediaSocial(filtered)
 
     return res.status(200).json({
       success: true,
