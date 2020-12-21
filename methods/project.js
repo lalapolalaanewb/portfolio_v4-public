@@ -3,18 +3,43 @@ const {
   Project, Likestatus, Technology, User
 } = require('../models')
 // Controllers
-const { handleImgRemove } = require('../controllers')
+const {
+  // File Upload 
+  handleImgRemove,
+  // Redis Data
+  getDefaultAllData,
+  // Redis Promises
+  setAsync
+} = require('../controllers')
 
 /** Page Specific Functions */
+// get all required data from redis
+const getAllData = async() => {
+  const redisAllData = await getDefaultAllData()
+  return {
+    projects: redisAllData.projectsRedis,
+    techs: redisAllData.techsRedis,
+    users: redisAllData.usersRedis
+  }
+}
+// set new projects redis data
+const setAllProject = async(redisAllProject) => {
+  await setAsync(`pfv4_projects`, JSON.stringify(redisAllProject))
+}
+// set new users redis data
+const setAllUser = async(redisAllUser) => {
+  await setAsync(`pfv4_users`, JSON.stringify(redisAllUser))
+}
 // handle 'none' input
 const handleNoneInput = input => {
   if(input === 'none') return ''
   else return input
 }
 // handle getting techIds
-const handleGetTechIds = async (techNames) => {
+const handleGetTechIds = async (techs, techNames) => {
 
-  let techObjIds = await Technology.find().select('_id').where('name').in(techNames).exec()
+  // let techObjIds = await Technology.find().select('_id').where('name').in(techNames).exec()
+  let techObjIds = techs.filter(tech => techNames.includes(tech.name))
   if(!techObjIds) return res.status(500).json({
     success: false,
     error: `No tech found or match with Technology Collection`,
@@ -32,22 +57,35 @@ const handleGetTechIds = async (techNames) => {
 // @route   POST /api/v1/projects
 // @access  Public (Only need Admin Public Access Key)
 exports.getPublicProjects = async(req, res, next) => {
-  return await Project.find().where({ status: 1 }).sort({ publishedAt: 1 })
-  .populate('techs')
-  .populate('creator')
-  .then(data => {
-    return res.status(200).json({
-      success: true,
-      count: data.length,
-      data: data
+  // get projects, techs, users data from redis
+  let redisAllData = await getAllData()
+  let projects = redisAllData.projects
+  let techs = redisAllData.techs
+  let users = redisAllData.users
+
+  // get active projects info
+  let projectsActive = projects.filter(project => project.status === 1)
+  // get populated projects (with creator)
+  projectsActive.forEach(project => {
+    users.forEach(user => {
+      if(user._id === project.creator) project.creator = {...user}
     })
   })
-  .catch(err => {
-    return res.status(500).json({
-      success: false,
-      error: `Failed to get data from Projects Collection`,
-      data: err
+  // get populated projects (with techs)
+  projectsActive.forEach(project => {
+    let techsPopulated = []
+    project.techs.forEach(state => {
+      techs.forEach(tech => {
+        if(tech._id === state) techsPopulated.push({...tech})
+      })
     })
+    project.techs = techsPopulated
+  })
+  
+  return res.status(200).json({
+    success: true,
+    count: projectsActive.length,
+    data: projectsActive.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt))
   })
 }
 
@@ -99,22 +137,33 @@ exports.updatePublicProject = async(req, res, next) => {
 // @route   POST /api/v1/projects/private/get
 // @access  Private (Require sessionId & uid)
 exports.getPrivateProjects = async(req, res, next) => {
-  return await Project.find().sort({ publishedAt: -1 })
-  .populate('techs')
-  .populate('creator')
-  .then(data => {
-    return res.status(200).json({
-      success: true,
-      count: data.length,
-      data: data
+  // get projects, techs, users data from redis
+  let redisAllData = await getAllData()
+  let projects = redisAllData.projects
+  let techs = redisAllData.techs
+  let users = redisAllData.users
+
+  // get populated projects (with creator)
+  projects.forEach(project => {
+    users.forEach(user => {
+      if(user._id === project.creator) project.creator = {...user}
     })
   })
-  .catch(err => {
-    return res.status(500).json({
-      success: false,
-      error: `Failed to get data from Projects Collection`,
-      data: err
+  // get populated projects (with techs)
+  projects.forEach(project => {
+    let techsPopulated = []
+    project.techs.forEach(state => {
+      techs.forEach(tech => {
+        if(tech._id === state) techsPopulated.push({...tech})
+      })
     })
+    project.techs = techsPopulated
+  })
+  
+  return res.status(200).json({
+    success: true,
+    count: projects.length,
+    data: projects.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt))
   })
 }
 
@@ -130,9 +179,15 @@ exports.addPrivateProject = async(req, res, next) => {
     subDescription,
   } = req.body
 
-  let techNames = techs.split(',')
-  let techIds = await handleGetTechIds(techNames)
+  // get projects, techs, users data from redis
+  let redisAllData = await getAllData()
+  let projects = redisAllData.projects
+  let techsRedis = redisAllData.techs
+  let users = redisAllData.users
 
+  let techNames = techs.split(',')
+  let techIds = await handleGetTechIds(techsRedis, techNames)
+  
   const project = new Project({
     name: name,
     imgSrc: req.file.originalname,
@@ -144,17 +199,29 @@ exports.addPrivateProject = async(req, res, next) => {
     },
     techs: techIds,
     publishedAt: new Date(Date.now()).toISOString(),
-    creator: '5f8fc26c6a103b243428bec1' // add current logged-in user ID
+    creator: req.session.userId // add current logged-in user ID
   })
 
   project.save()
-  .then(async project => {
+  .then(async data => {
     await User.updateOne(
-      { _id: '5f8fc26c6a103b243428bec1' },
-      { $push: { projects: project._id } },
+      { _id: req.session.userId },
+      { $push: { projects: data._id } },
     )
+
+    /** update projects & users redis */
+    // add new added data to projects redis
+    projects.push(data)
+    // set new projects redis
+    await setAllProject(projects)
+    // add & update new project id to user/creator data
+    users.forEach(user => {
+      if(user._id === req.session.userId) user.projects.push(data._id)
+    })
+    // set new users redis
+    await setAllUser(users)
     
-    project = await project.populate('techs').populate('creator').execPopulate()
+    let project = await data.populate('techs').populate('creator').execPopulate()
     
     return res.status(200).json({
       success: true,
@@ -162,7 +229,7 @@ exports.addPrivateProject = async(req, res, next) => {
       data: project
     })
   })
-  .catch(err => {
+  .catch(err => { 
     return res.status(500).json({
       success: false,
       error: `Failed to add new project data from Projects Collection`,
@@ -180,13 +247,24 @@ exports.updatePrivateProjectimg = async(req, res, next) => {
   // - remove image from server images folder
   handleImgRemove(res, imgSrc)
 
+  // get projects data from redis
+  let redisAllData = await getAllData()
+  let projects = redisAllData.projects
+
   await Project.findByIdAndUpdate(
     { _id: projectId },
     { $set: { imgSrc: req.file.originalname } },
     { new: true }
   )
   .then(async data => {
-    
+    /** update projects redis */
+    // update project info
+    projects.forEach(state => {
+      if(state._id === projectId) state.imgSrc = req.file.originalname
+    })
+    // set new projects redis
+    await setAllProject(projects)
+
     let project = await data.populate('techs').populate('creator').execPopulate()
     
     return res.status(200).json({
@@ -195,7 +273,7 @@ exports.updatePrivateProjectimg = async(req, res, next) => {
       data: project
     })
   })
-  .catch(err => {
+  .catch(err => { 
     return res.status(500).json({
       success: false,
       error: `Failed to update project image from Projects Collection`,
@@ -209,6 +287,10 @@ exports.updatePrivateProjectimg = async(req, res, next) => {
 // @access  Private (Require sessionId & uid)
 exports.updatePrivateProjectPublish = async(req, res, next) => {
   let { projectId, intention } = req.body
+
+  // get projects data from redis
+  let redisAllData = await getAllData()
+  let projects = redisAllData.projects
   
   await Project.findByIdAndUpdate(
     { _id: projectId },
@@ -218,6 +300,14 @@ exports.updatePrivateProjectPublish = async(req, res, next) => {
     { new: true }
   )
   .then(async data => {
+    /** update projects redis */
+    // update project info
+    projects.forEach(state => {
+      if(state._id === projectId) state.status = intention === 'publish' ? 1 : 0
+    })
+    // set new projects redis
+    await setAllProject(projects)
+
     let project = await data.populate('techs').populate('creator').execPopulate()
 
     return res.status(200).json({
@@ -226,7 +316,7 @@ exports.updatePrivateProjectPublish = async(req, res, next) => {
       data: project
     })
   })
-  .catch(err => {
+  .catch(err => { 
     return res.status(500).json({
       success: false,
       error: `Failed to update project publish from Projects Collection`,
@@ -242,8 +332,14 @@ exports.updatePrivateProject = async(req, res, next) => {
   let {
     name, www, code, description, subDescription, techs, creator
   } = req.body
+
+  // get projects, techs, users data from redis
+  let redisAllData = await getAllData()
+  let projects = redisAllData.projects
+  let techsRedis = redisAllData.techs
+  let users = redisAllData.users
   
-  let techIds = await handleGetTechIds(techs)
+  let techIds = await handleGetTechIds(techsRedis, techs)
   let shouldCreatorUpdate
   creator.current === creator.new ? shouldCreatorUpdate = 'no' : shouldCreatorUpdate = 'yes'
   
@@ -275,7 +371,38 @@ exports.updatePrivateProject = async(req, res, next) => {
         { _id: creator.new },
         { $push: { projects: req.params.id } },
       )
+
+      /** update users redis */
+      // remove from user before
+      users.forEach(user => {
+        if(user._id === creator.current) {
+          let filtered = user.projects.filter(state => state !== req.params.id)
+          user.projects = filtered
+        }
+      })
+      // add to new user
+      users.forEach(user => {
+        if(user._id === creator.new) user.projects.push(req.params.id)
+      })
+      // set new users redis
+      await setAllUser(users)
     }
+
+    /** update projects redis */
+    // update project info
+    projects.forEach(state => {
+      if(state._id === req.params.id) {
+        state.name = name
+        state.liveUrls.www = handleNoneInput(www)
+        state.liveUrls.code = handleNoneInput(code)
+        state.techs = techIds
+        state.description = handleNoneInput(description)
+        state.subDescription = handleNoneInput(subDescription)
+        state.creator = shouldCreatorUpdate === 'no' ? creator.current : creator.new
+      }
+    })
+    // set new projects redis
+    await setAllProject(projects)
 
     let project = await data.populate('techs').populate('creator').execPopulate()
 
@@ -285,7 +412,7 @@ exports.updatePrivateProject = async(req, res, next) => {
       data: project
     })
   })
-  .catch(err => {
+  .catch(err => { 
     return res.status(500).json({
       success: false,
       error: `Failed to update project data from Projects Collection`,
@@ -299,8 +426,13 @@ exports.updatePrivateProject = async(req, res, next) => {
 // @access  Private (Require sessionId & uid)
 exports.deletePrivateProject = async(req, res, next) => {
   try {
+    // get projects, techs, users data from redis
+    let redisAllData = await getAllData()
+    let projects = redisAllData.projects
+    let users = redisAllData.users
+
     // check if project is published first
-    let project = await Project.findById(req.params.id)
+    let project = projects.find(state => state._id === req.params.id)
     if(project) {
       if(project.status === 1) return res.status(400).json({
         success: false,
@@ -318,15 +450,30 @@ exports.deletePrivateProject = async(req, res, next) => {
     // - remove image from server images folder
     handleImgRemove(res, project.imgSrc)
 
-    // delete post
-    project.remove()
+    // delete project
+    await Project.deleteOne({ _id: req.params.id })
+
+    /** update projects redis */
+    // delete project
+    let filtered = projects.filter(state => state._id !== req.params.id)
+    // set new projects redis
+    await setAllProject(filtered)
+    // remove deleted project from users
+    users.forEach(user => {
+      if(user._id === req.body.creator) {
+        let filtered = user.projects.filter(state => state !== req.params.id)
+        user.projects = filtered
+      }
+    })
+    // set new users redis
+    await setAllUser(users)
 
     return res.status(200).json({
       success: true,
       count: 0,
       data: {}
     })
-  } catch(err) {
+  } catch(err) { 
     return res.status(500).json({
       success: false,
       error: `Failed to delete project data from Project Collection`,

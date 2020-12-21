@@ -4,18 +4,42 @@ const {
   User, Technology, Resume
 } = require('../models')
 // Controllers
-const { handlePdfRemove } = require('../controllers')
+const {
+  // File Upload 
+  handlePdfRemove,
+  // Redis Data
+  getDefaultAllData,
+  // Redis Promises
+  setAsync  
+} = require('../controllers')
 
 /** Page Specific Functions */
+// get all required data from redis
+const getAllData = async() => {
+  const redisAllData = await getDefaultAllData()
+  return {
+    resumes: redisAllData.resumesRedis,
+    users: redisAllData.usersRedis
+  }
+}
+// set new resumes redis data
+const setAllResume = async(redisAllResume) => {
+  await setAsync(`pfv4_resumes`, JSON.stringify(redisAllResume))
+}
+// set new users redis data
+const setAllUser = async(redisAllUser) => {
+  await setAsync(`pfv4_users`, JSON.stringify(redisAllUser))
+}
 // handle 'none' input
 const handleNoneInput = input => {
   if(input === 'none') return ''
   else return input
 }
 // handle getting techIds
-const handleGetTechIds = async (techNames) => {
+const handleGetTechIds = async (techs, techNames) => {
 
-  let techObjIds = await Technology.find().select('_id').where('name').in(techNames).exec()
+  // let techObjIds = await Technology.find().select('_id').where('name').in(techNames).exec()
+  let techObjIds = techs.filter(tech => techNames.includes(tech.name))
   if(!techObjIds) return res.status(500).json({
     success: false,
     error: `No tech found or match with Technology Collection`,

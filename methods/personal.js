@@ -5,8 +5,24 @@ const bcrypt = require('bcryptjs')
 const {
   User
 } = require('../models')
+// Controllers
+const {
+  // Redis Data
+  getDefaultAllData,
+  // Redis Promises
+  setAsync 
+} = require('../controllers')
 
 /** Page Specific Functions */
+// get all required data from redis
+const getAllUser = async() => {
+  const redisAllData = await getDefaultAllData()
+  return redisAllData.usersRedis
+}
+// set new users redis data
+const setAllUser = async(redisAllUser) => {
+  await setAsync(`pfv4_users`, JSON.stringify(redisAllUser))
+}
 // handle 'none' input
 const handleNoneInput = input => {
   if(input === 'none') return ''
@@ -24,21 +40,23 @@ const handleEmailRegex = email => {
 // @route   POST /api/v1/users/private/profile/get/personal
 // @access  Private (Require sessionId & uid)
 exports.getPrivateUserPersonal = async(req, res, next) => {
-  await User.findOne().where({ status: 1 })
-  .select('name credentials.emails')
-  .then(data => {
-    return res.status(200).json({
-      success: true,
-      count: data.length,
-      data: data
-    })
-  })
-  .catch(err => {
-    return res.status(500).json({
-      success: false,
-      error: `Failed to get data from User Collection`,
-      data: err
-    })
+  // get users data from redis
+  let users = await getAllUser()
+
+  // get active user info
+  let user = users.find(user => user.status === 1)
+  
+  // get all user jobs
+  return res.status(200).json({
+    success: true,
+    count: 1,
+    data: {
+      _id: user._id,
+      name: user.name,
+      credentials: {
+        emails: user.credentials.emails
+      }
+    }
   })
 }
 
@@ -49,6 +67,9 @@ exports.updatePrivateUserPersonal = async(req, res, next) => {
   let {
     userId, personal
   } = req.body
+
+  // get users data from redis
+  let users = await getAllUser()
   
   if(personal.emails.backup !== 'none') {
     // check if email (backup) regex correct
@@ -72,14 +93,27 @@ exports.updatePrivateUserPersonal = async(req, res, next) => {
     } },
     { new: true }
   ).select('name credentials.emails')
-  .then(data => { 
+  .then(async data => { 
+    /** update users redis */
+    // update user info
+    users.forEach(state => {
+      if(state._id === userId) {
+        state.name.firstName = handleNoneInput(personal.name.firstName)
+        state.name.lastName = handleNoneInput(personal.name.lastName)
+        state.name.nickName = handleNoneInput(personal.name.nickName)
+        state.credentials.emails.backup = handleNoneInput(personal.emails.backup)
+      }
+    })
+    // set new users redis
+    await setAllUser(users)
+
     return res.status(200).json({
       success: true,
       count: data.length,
       data: data
     })
   })
-  .catch(err => {
+  .catch(err => { console.log(err)
     return res.status(500).json({
       success: false,
       error: `Failed to update user data from User Collection`,
@@ -95,10 +129,13 @@ exports.updatePrivateUserPersonalPassword = async(req, res, next) => {
   let {
     userId, password
   } = req.body
+
+  // get users data from redis
+  let users = await getAllUser()
   
   try {
     // check if user exist
-    let userExist = await User.findById(userId)
+    let userExist = users.find(user => user._id === userId)
     if(!userExist) return res.status(400).json({
       success: false,
       error: `User doesn't exist!`,
@@ -136,6 +173,14 @@ exports.updatePrivateUserPersonalPassword = async(req, res, next) => {
       error: `Error while getting updated data! Please try again later.`,
       data: {}
     })
+
+    /** update users redis */
+    // update user info
+    users.forEach(state => {
+      if(state._id === userId) state.credentials.password = passwordHashed
+    })
+    // set new users redis
+    await setAllUser(users)
 
     return res.status(200).json({
       success: true,
