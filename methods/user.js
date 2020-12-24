@@ -5,8 +5,38 @@ const bcrypt = require('bcryptjs')
 const {
  Media, Mediasocial, Policy,  Resume, Skill, Socialmedia, Technology, User
 } = require('../models')
+// Controllers
+const {
+  // Redis Data
+  getDefaultAllData,
+  // Redis Promises
+  setAsync
+} = require('../controllers')
 
 /** Page Specific Functions */
+// get all required data from redis
+const getAllData = async() => {
+  const redisAllData = await getDefaultAllData()
+  return {
+    abouts: redisAllData.aboutsRedis,
+    edus: redisAllData.educationsRedis,
+    homes: redisAllData.homesRedis,
+    jobs: redisAllData.jobsRedis,
+    medias: redisAllData.mediasRedis,
+    mediaSocials: redisAllData.mediaSocialsRedis,
+    policies: redisAllData.policiesRedis,
+    projects: redisAllData.projectsRedis,
+    resumes: redisAllData.resumesRedis,
+    skills: redisAllData.skillsRedis,
+    socialMedias: redisAllData.socialMediasRedis,
+    techs: redisAllData.techsRedis,
+    users: redisAllData.usersRedis
+  }
+}
+// set new users redis data
+const setAllUser = async(redisAllUser) => {
+  await setAsync(`pfv4_users`, JSON.stringify(redisAllUser))
+}
 // handle 'none' input
 const handleNoneInput = input => {
   if(input === 'none') return ''
@@ -25,31 +55,43 @@ const handleEmailRegex = email => {
 // @route   POST /api/v1/users/getfooterpublic
 // @access  Public (Only need Admin Public Access Key)
 exports.getPublicUserFooterPublic = async(req, res, next) => {
-  await User.findOne()
-  .populate('socialMedias')
-  .where({ status: 1 })
-  .select('socialMedias')
-  .then(async data => { 
-    // get populated Tech in Skill
-    let socialMediaIds = []
-    data.socialMedias.forEach(socialMedia => socialMediaIds.push(socialMedia._id))
-    let socialMedias = await Socialmedia.find({ _id: { $in: socialMediaIds } }).populate('icon')
+  // get mediaSocials, socialMedias & users data from redis
+  let redisAllData = await getAllData()
+  let mediaSocials = redisAllData.mediaSocials
+  let socialMedias = redisAllData.socialMedias
+  let users = redisAllData.users
 
-    return res.status(200).json({
-      success: true,
-      count: data.length,
-      data: {
-        _id: data._id,
-        socialMedias: socialMedias
-      }
+  // get active user
+  let user = users.find(user => user.status === 1)
+  if(!user) return res.status(400).json({
+    success: false,
+    error: `No active user found from User Collection`,
+    data: {}
+  })
+
+  // get populated user (socialMedias)
+  let socialsPopulated = []
+  user.socialMedias.forEach(state => {
+  socialMedias.forEach(social => {
+      if(social._id === state) socialsPopulated.push({...social})
     })
   })
-  .catch(err => {
-    return res.status(500).json({
-      success: false,
-      error: `Failed to get data (socialMedias) from User Collection`,
-      data: err
+  user.socialMedias = socialsPopulated
+
+  // get populated user's socialMedias (icon - mediaSocials)
+  user.socialMedias.forEach(social => {
+    mediaSocials.forEach(media => {
+      if(media._id === social.icon) social.icon = {...media}
     })
+  })
+
+  return res.status(200).json({
+    success: true,
+    count: 1,
+    data: {
+      _id: user._id,
+      socialMedias: user.socialMedias
+    }
   })
 }
 
@@ -57,23 +99,35 @@ exports.getPublicUserFooterPublic = async(req, res, next) => {
 // @route   POST /api/v1/users/gethome
 // @access  Public (Only need Admin Public Access Key)
 exports.getPublicUserHome = async(req, res, next) => {
-  await User.findOne()
-  .populate('homes')
-  .where({ status: 1 })
-  .select('homes')
-  .then(data => { 
-    return res.status(200).json({
-      success: true,
-      count: data.length,
-      data: data
+  // get homes & users data from redis
+  let redisAllData = await getAllData()
+  let homes = redisAllData.homes
+  let users = redisAllData.users
+
+  // get active user
+  let user = users.find(user => user.status === 1)
+  if(!user) return res.status(400).json({
+    success: false,
+    error: `No active user found from User Collection`,
+    data: {}
+  })
+
+  // get populated user (homes)
+  let homesPopulated = []
+  user.homes.forEach(state => {
+  homes.forEach(home => {
+      if(home._id === state) homesPopulated.push({...home})
     })
   })
-  .catch(err => {
-    return res.status(500).json({
-      success: false,
-      error: `Failed to get data (homes) from User Collection`,
-      data: err
-    })
+  user.homes = homesPopulated
+  
+  return res.status(200).json({
+    success: true,
+    count: 1,
+    data: {
+      _id: user._id,
+      homes: user.homes
+    }
   })
 }
 
@@ -81,36 +135,70 @@ exports.getPublicUserHome = async(req, res, next) => {
 // @route   POST /api/v1/users/getabout
 // @access  Public (Only need Admin Public Access Key)
 exports.getPublicUserAbout = async(req, res, next) => {
-  await User.findOne()
-  .populate('abouts')
-  .populate('jobs')
-  .populate('skills')
-  .where({ status: 1 })
-  .select('name abouts jobs skills')
-  .then(async data => { 
-    // get populated Tech in Skill
-    let skillIds = []
-    data.skills.forEach(skill => skillIds.push(skill._id))
-    let skills = await Skill.find({ _id: { $in: skillIds } }).populate('techs')
+  // get abouts, jobs, skills, techs, & users data from redis
+  let redisAllData = await getAllData()
+  let abouts = redisAllData.abouts
+  let jobs = redisAllData.jobs
+  let skills = redisAllData.skills
+  let techs = redisAllData.techs
+  let users = redisAllData.users
 
-    return res.status(200).json({
-      success: true,
-      count: data.length,
-      data: {
-        _id: data._id,
-        name: data.name,
-        abouts: data.abouts,
-        jobs: data.jobs,
-        skills: skills
-      }
+  // get active user
+  let user = users.find(user => user.status === 1)
+  if(!user) return res.status(400).json({
+    success: false,
+    error: `No active user found from User Collection`,
+    data: {}
+  })
+
+  // get populated user (abouts)
+  let aboutsPopulated = []
+  user.abouts.forEach(state => {
+    abouts.forEach(about => {
+      if(about._id === state) aboutsPopulated.push({...about})
     })
   })
-  .catch(err => {
-    return res.status(500).json({
-      success: false,
-      error: `Failed to get data (abouts, skills & jobs) from User Collection`,
-      data: err
+  user.abouts = aboutsPopulated
+
+  // get populated user (jobs)
+  let jobsPopulated = []
+  user.jobs.forEach(state => {
+    jobs.forEach(job => {
+      if(job._id === state) jobsPopulated.push({...job})
     })
+  })
+  user.jobs = jobsPopulated
+
+  // get populated user (skills)
+  let skillsPopulated = []
+  user.skills.forEach(state => {
+    skills.forEach(skill => {
+      if(skill._id === state) skillsPopulated.push({...skill})
+    })
+  })
+  user.skills = skillsPopulated
+
+  // get populated user's skills (techs)
+  user.skills.forEach(skill => {
+    let techsPopulated = []
+    skill.techs.forEach(state => {
+      techs.forEach(tech => {
+        if(tech._id === state) techsPopulated.push({...tech})
+      })
+    })
+    skill.techs = techsPopulated
+  })
+  
+  return res.status(200).json({
+    success: true,
+    count: 1,
+    data: {
+      _id: user._id,
+      name: user.name,
+      abouts: user.abouts,
+      jobs: user.jobs,
+      skills: user.skills
+    }
   })
 }
 
@@ -118,32 +206,71 @@ exports.getPublicUserAbout = async(req, res, next) => {
 // @route   POST /api/v1/users/getresume
 // @access  Public (Only need Admin Public Access Key)
 exports.getPublicUserResume = async(req, res, next) => {
-  await User.findOne()
-  .where({ status: 1 })
-  .select('name credentials.emails.main')
-  .then(async data => { 
-    // get populated Resume
-    let resume = await Resume.findOne()
-    .where({ creator: data._id, status: 1 })
-    .populate('techs').populate('projects').populate('educations').populate('jobs')
-    
-    return res.status(200).json({
-      success: true,
-      count: data.length,
-      data: {
-        _id: data._id,
-        name: data.name,
-        email: data.credentials.emails.main,
-        resume: resume
-      }
+  // get edus, jobs, projects, techs, & users data from redis
+  let redisAllData = await getAllData()
+  let edus = redisAllData.edus
+  let jobs = redisAllData.jobs
+  let projects = redisAllData.projects
+  let resumes = redisAllData.resumes
+  let techs = redisAllData.techs
+  let users = redisAllData.users
+
+  // get active user
+  let user = users.find(user => user.status === 1)
+  if(!user) return res.status(400).json({
+    success: false,
+    error: `No active user found from User Collection`,
+    data: {}
+  })
+
+  // get active user resume
+  let resumesPopulated = resumes.find(resume => resume.creator === user._id)
+
+  // get populated user's resumes (edus)
+  let edusPopulated = []
+  resumesPopulated.educations.forEach(state => {
+    edus.forEach(edu => {
+      if(edu._id === state) edusPopulated.push({...edu})
     })
   })
-  .catch(err => { 
-    return res.status(500).json({
-      success: false,
-      error: `Failed to get data (abouts, skills & jobs) from User Collection`,
-      data: err
+  resumesPopulated.educations = edusPopulated
+
+  // get populated user's resumes (jobs)
+  let jobsPopulated = []
+  resumesPopulated.jobs.forEach(state => {
+    jobs.forEach(job => {
+      if(job._id === state) jobsPopulated.push({...job})
     })
+  })
+  resumesPopulated.jobs = jobsPopulated
+
+  // get populated user's resumes (projects)
+  let projectsPopulated = []
+  resumesPopulated.projects.forEach(state => {
+    projects.forEach(project => {
+      if(project._id === state) projectsPopulated.push({...project})
+    })
+  })
+  resumesPopulated.projects = projectsPopulated
+
+  // get populated user's resumes (techs)
+  let techsPopulated = []
+  resumesPopulated.techs.forEach(state => {
+    techs.forEach(tech => {
+      if(tech._id === state) techsPopulated.push({...tech})
+    })
+  })
+  resumesPopulated.techs = techsPopulated
+
+  return res.status(200).json({
+    success: true,
+    count: 1,
+    data: {
+      _id: user._id,
+      name: user.name,
+      email: user.credentials.emails.main,
+      resume: resumesPopulated
+    }
   })
 }
 
@@ -151,20 +278,14 @@ exports.getPublicUserResume = async(req, res, next) => {
 // @route   POST /api/v1/users/private/get
 // @access  Private (Require sessionId & uid)
 exports.getPrivateUsers = async(req, res, next) => {
-  return await User.find().sort({ 'name.firstName': 1 })
-  .then(data => {
-    return res.status(200).json({
-      success: true,
-      count: data.length,
-      data: data
-    })
-  })
-  .catch(err => {
-    return res.status(500).json({
-      success: false,
-      error: `Failed to get data from User Collection`,
-      data: err
-    })
+  // users data from redis
+  let redisAllData = await getAllData()
+  let users = redisAllData.users
+
+  return res.status(200).json({
+    success: true,
+    count: users.length,
+    data: users.sort((a, b) => a.name.firstName < b.name.firstName ? -1 : 1)
   })
 }
 
@@ -175,10 +296,14 @@ exports.addPrivateUser = async(req, res, next) => {
   let {
     name, credentials
   } = req.body 
+
+  // users data from redis
+  let redisAllData = await getAllData()
+  let users = redisAllData.users
   
   if(credentials.emails.main !== 'none') {
     // check if user already exist
-    const userExist = await User.findOne({ 'credentials.emails.main': credentials.emails.main })
+    const userExist = users.find(user => user.credentials.emails.main === credentials.emails.main)
     if(userExist) return res.status(400).json({
       success: false,
       error: `User already exists.`,
@@ -229,14 +354,20 @@ exports.addPrivateUser = async(req, res, next) => {
   })
 
   newUser.save()
-  .then(data => {
+  .then(async data => {
+    /** update users redis */
+    // add new added data to user redis
+    users.push(data)
+    // set new users redis
+    await setAllUser(users)
+
     return res.status(200).json({
       success: true,
       count: data.length,
       data: data
     })
   })
-  .catch(err => {
+  .catch(err => { console.log(err)
     return res.status(500).json({
       success: false,
       error: `Failed to add new user data to User Collection`,
@@ -250,10 +381,14 @@ exports.addPrivateUser = async(req, res, next) => {
 // @access  Private (Require sessionId & uid)
 exports.updatePrivateUserActive = async(req, res, next) => {
   let { userId, intention } = req.body
+
+  // users data from redis
+  let redisAllData = await getAllData()
+  let users = redisAllData.users
   
   try {
     // check if other user still active
-    let userActive = await User.findOne().select('name credentials.emails status').where({ status: 1 })
+    let userActive = users.find(user => user.status === 1)
     if(userActive) {
       if(userActive._id.toString() !== userId) return res.status(400).json({
         success: false,
@@ -277,12 +412,20 @@ exports.updatePrivateUserActive = async(req, res, next) => {
       data: {}
     })
 
+    /** update users redis */
+    // update user info
+    users.forEach(state => {
+      if(state._id === userId) state.status = intention === 'publish' ? 1 : 0
+    })
+    // set new users redis
+    await setAllUser(users)
+
     return res.status(200).json({
       success: true,
       count: user.length,
       data: user
     })
-  } catch(err) {
+  } catch(err) { console.log(err)
     return res.status(500).json({
       success: false,
       error: `Failed to update user active status from User Collection`,
@@ -299,9 +442,13 @@ exports.updatePrivateUser = async(req, res, next) => {
     name, credentials
   } = req.body
 
+  // users data from redis
+  let redisAllData = await getAllData()
+  let users = redisAllData.users
+
   if(credentials.emails.main !== 'none') {
     // check if user already exist
-    const userExist = await User.findOne({ _id: req.params.id })
+    const userExist = users.find(user => user._id === req.params.id)
     if(!userExist) return res.status(400).json({
       success: false,
       error: `User doesn't exists.`,
@@ -338,14 +485,28 @@ exports.updatePrivateUser = async(req, res, next) => {
     } },
     { new: true }
   )
-  .then(data => {
+  .then(async data => {
+    /** update users redis */
+    // update user info
+    users.forEach(state => {
+      if(state._id === req.params.id) {
+        state.name.firstName = handleNoneInput(name.firstName)
+        state.name.latName = handleNoneInput(name.lastName)
+        state.name.nickName = handleNoneInput(name.nickName)
+        state.credentials.emails.main = handleNoneInput(credentials.emails.main)
+        state.credentials.emails.backup = handleNoneInput(credentials.emails.backup)
+      }
+    })
+    // set new users redis
+    await setAllUser(users)
+
     return res.status(200).json({
       success: true,
       count: data.length,
       data: data
     })
   })
-  .catch(err => {
+  .catch(err => { console.log(err)
     return res.status(500).json({
       success: false,
       error: `Failed to update user data from User Collection`,
@@ -359,7 +520,15 @@ exports.updatePrivateUser = async(req, res, next) => {
 // @access  Private (Require sessionId & uid)
 exports.deletePrivateUser = async(req, res, next) => {
   try {
-    let data = await User.findById(req.params.id)
+    // users data from redis
+    let redisAllData = await getAllData()
+    let mediasRedis = redisAllData.medias
+    let mediaSocialsRedis = redisAllData.mediaSocials
+    let policiesRedis = redisAllData.policies
+    let techsRedis = redisAllData.techs
+    let users = redisAllData.users
+
+    let data = users.find(user => user._id === req.params.id)
 
     // check user data from abouts
     if(data.abouts.length > 0) return res.status(400).json({
@@ -383,7 +552,7 @@ exports.deletePrivateUser = async(req, res, next) => {
     })
 
     // check user data from media
-    let medias = await Media.find().where({ creator: req.params.id })
+    let medias = mediasRedis.filter(state => state.creator === req.params.id)
     if(medias.length > 0) return res.status(400).json({
       success: false,
       error: `Please delete data from Media Collection first`,
@@ -391,7 +560,7 @@ exports.deletePrivateUser = async(req, res, next) => {
     })
 
     // check user data from media socials
-    let mediaSocials = await Mediasocial.find().where({ creator: req.params.id })
+    let mediaSocials = mediaSocialsRedis.filter(state => state.creator === req.params.id)
     if(mediaSocials.length > 0) return res.status(400).json({
       success: false,
       error: `Please delete data from Media Social Collection first`,
@@ -399,7 +568,7 @@ exports.deletePrivateUser = async(req, res, next) => {
     })
 
     // check user data from policies
-    let policies = await Policy.find().where({ creator: req.params.id })
+    let policies = policiesRedis.filter(state => state.creator === req.params.id)
     if(policies.length > 0) return res.status(400).json({
       success: false,
       error: `Please delete data from Policy Collection first`,
@@ -435,14 +604,21 @@ exports.deletePrivateUser = async(req, res, next) => {
     })
 
     // check user data from techs
-    let techs = await Technology.find().where({ creator: req.params.id })
+    let techs = techsRedis.filter(state => state.creator === req.params.id)
     if(techs.length > 0) return res.status(400).json({
       success: false,
       error: `Please delete data from Tech Collection first`,
       data: {}
     })
 
-    data.remove()
+    // delete user
+    await User.deleteOne({ _id: req.params.id })
+
+    /** update users redis */
+    // delete user
+    let filtered = users.filter(state => state._id !== req.params.id)
+    // set new users redis
+    await setAllUser(filtered)
 
     return res.status(200).json({
       success: true,
@@ -450,27 +626,11 @@ exports.deletePrivateUser = async(req, res, next) => {
       data: {}
     })
 
-  } catch(err) {
+  } catch(err) { console.log(err)
     return res.status(500).json({
       success: false,
       error: `Failed to delete user data from User Collection`,
       data: err
     })
   }
-
-  await User.findByIdAndDelete(req.params.id)
-  .then(data => {
-    return res.status(200).json({
-      success: true,
-      count: 0,
-      data: {}
-    })
-  })
-  .catch(err => {
-    return res.status(500).json({
-      success: false,
-      error: `Failed to delete user data from User Collection`,
-      data: err
-    })
-  })
 }

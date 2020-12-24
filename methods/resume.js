@@ -18,7 +18,11 @@ const {
 const getAllData = async() => {
   const redisAllData = await getDefaultAllData()
   return {
+    edus: redisAllData.educationsRedis,
+    jobs: redisAllData.jobsRedis,
+    projects: redisAllData.projectsRedis,
     resumes: redisAllData.resumesRedis,
+    techs: redisAllData.techsRedis,
     users: redisAllData.usersRedis
   }
 }
@@ -59,41 +63,103 @@ const handleEmptyArray = array => array === '' ? [] : array.split(',')
 // @route   POST /api/v1/users/private/profile/resume/get
 // @access  Private (Require sessionId & uid)
 exports.getPrivateUserResume = async(req, res, next) => {
-  await User.findOne().where({ status: 1 })
-  .select('name.firstName resumes projects educations jobs')
-  .populate('resumes')
-  .populate('projects')
-  .populate('educations')
-  .populate('jobs')
-  .then(async data => {
-    // get all resumes created by user
-    let resumes = await Resume.find()
-    .populate('techs').populate('projects').populate('educations').populate('jobs')
-    .where({ creator: data._id })
-    if(!resumes) return res.status(400).json({
-      success: false,
-      error: `Failed to get resume data of user (${data.name.firstName}) from Resume Collection`,
-      data: {}
-    })
+  // get edus, jobs, projects, techs, resumes, users data from redis
+  let redisAllData = await getAllData()
+  let edus = redisAllData.edus
+  let jobs = redisAllData.jobs
+  let projects = redisAllData.projects
+  let resumes = redisAllData.resumes
+  let techs = redisAllData.techs
+  let users = redisAllData.users
 
-    return res.status(200).json({
-      success: true,
-      count: data.length,
-      data: {
-        _id: data._id,
-        resumes: resumes,
-        projects: data.projects,
-        educations: data.educations,
-        jobs: data.jobs
-      }
+  // get active user
+  let user = users.find(user => user.status === 1)
+
+  // get populated user (educations)
+  let edusPopulated = []
+  user.educations.forEach(state => {
+    edus.forEach(edu => {
+      if(edu._id === state) edusPopulated.push({...edu})
     })
   })
-  .catch(err => {
-    return res.status(500).json({
-      success: false,
-      error: `Failed to get resume data from User Collection`,
-      data: err
+  user.educations = edusPopulated
+
+  // get populated user (jobs)
+  let jobsPopulated = []
+  user.jobs.forEach(state => {
+    jobs.forEach(job => {
+      if(job._id === state) jobsPopulated.push({...job})
     })
+  })
+  user.jobs = jobsPopulated
+
+  // get populated user (projects)
+  let projectsPopulated = []
+  user.projects.forEach(state => {
+    projects.forEach(project => {
+      if(project._id === state) projectsPopulated.push({...project})
+    })
+  })
+  user.projects = projectsPopulated
+
+  // get populated user (resumes)
+  let resumesPopulated = []
+  user.resumes.forEach(state => {
+    resumes.forEach(resume => {
+      if(resume._id === state) resumesPopulated.push({...resume})
+    })
+  })
+  user.resumes = resumesPopulated
+
+  // get populated users' resumes
+  user.resumes.forEach(resume => {
+    // edus
+    let edusPopulated = []
+    resume.educations.forEach(state => {
+      edus.forEach(edu => {
+        if(edu._id === state) edusPopulated.push({...edu})
+      })
+    })
+    resume.educations = edusPopulated
+
+    // jobs
+    let jobsPopulated = []
+    resume.jobs.forEach(state => {
+      jobs.forEach(job => {
+        if(job._id === state) jobsPopulated.push({...job})
+      })
+    })
+    resume.jobs = jobsPopulated
+
+    // projects
+    let projectsPopulated = []
+    resume.projects.forEach(state => {
+      projects.forEach(project => {
+        if(project._id === state) projectsPopulated.push({...project})
+      })
+    })
+    resume.projects = projectsPopulated
+
+    // techs
+    let techsPopulated = []
+    resume.techs.forEach(state => {
+      techs.forEach(tech => {
+        if(tech._id === state) techsPopulated.push({...tech})
+      })
+    })
+    resume.techs = techsPopulated
+  })
+
+  return res.status(200).json({
+    success: true,
+    count: 1,
+    data: {
+      _id: user._id,
+      resumes: user.resumes,
+      projects: user.projects,
+      educations: user.educations,
+      jobs: user.jobs
+    }
   })
 }
 
@@ -104,9 +170,15 @@ exports.addPrivateUserResume = async(req, res, next) => {
   let {
     website, title, description, techs, projects, educations, jobs, creator
   } = req.body
+
+  // get resumes, techs, & users data from redis
+  let redisAllData = await getAllData()
+  let resumes = redisAllData.resumes
+  let techsRedis = redisAllData.techs
+  let users = redisAllData.users
   
   let techNames = techs.split(',')
-  let techIds = await handleGetTechIds(techNames)
+  let techIds = await handleGetTechIds(techsRedis, techNames)
 
   const resume = new Resume({ 
     pdfSrc: req.file.originalname,
@@ -128,6 +200,18 @@ exports.addPrivateUserResume = async(req, res, next) => {
       { _id: creator },
       { $push: { resumes: data._id } },
     )
+
+    /** update resumes & users redis */
+    // add new added data to resumes redis
+    resumes.push(data)
+    // set new resumes redis
+    await setAllResume(resumes)
+    // add & update new resume id to user/creator data
+    users.forEach(user => {
+      if(user._id === creator) user.resumes.push(data._id)
+    })
+    // set new users redis
+    await setAllUser(users)
 
     let resume = await data.populate('techs').populate('projects').populate('educations').populate('jobs').execPopulate()
     
@@ -156,8 +240,13 @@ exports.updatePrivateUserResume = async(req, res, next) => {
   let {
     resumeId, resume
   } = req.body
-  console.log(resume.educations); console.log(typeof resume.educations)
-  let techIds = await handleGetTechIds(resume.techs)
+  
+  // get resumes, techs data from redis
+  let redisAllData = await getAllData()
+  let resumes = redisAllData.resumes
+  let techsRedis = redisAllData.techs
+
+  let techIds = await handleGetTechIds(techsRedis, resume.techs)
 
   await Resume.findByIdAndUpdate(
     { _id: resumeId },
@@ -175,15 +264,31 @@ exports.updatePrivateUserResume = async(req, res, next) => {
     { new: true }
   )
   .then(async data => {
-    let resume = await data.populate('techs').populate('projects').populate('educations').populate('jobs').execPopulate()
+    /** update resumes redis */
+    // update resume info
+    resumes.forEach(state => {
+      if(state._id === resumeId) {
+        state.contactInfo.website = handleNoneInput(resume.website)
+        state.contactInfo.title = handleNoneInput(resume.title)
+        state.description = handleNoneInput(resume.description)
+        state.techs = techIds
+        state.projects = resume.projects
+        state.educations = resume.educations
+        state.jobs = resume.jobs
+      }
+    })
+    // set new resumes redis
+    await setAllResume(resumes)
+
+    let resumePopulated = await data.populate('techs').populate('projects').populate('educations').populate('jobs').execPopulate()
 
     return res.status(200).json({
       success: true,
-      count: resume.length,
-      data: resume
+      count: resumePopulated.length,
+      data: resumePopulated
     })
   })
-  .catch(err => {
+  .catch(err => { 
     return res.status(500).json({
       success: false,
       error: `Failed to update resume from Resume Collection`,
@@ -201,12 +306,24 @@ exports.updatePrivateUserResumePdf = async(req, res, next) => {
   // - remove image from server images folder
   handlePdfRemove(res, pdfSrc)
 
+  // get resumes, techs data from redis
+  let redisAllData = await getAllData()
+  let resumes = redisAllData.resumes
+
   await Resume.findByIdAndUpdate(
     { _id: resumeId },
     { $set: { pdfSrc: req.file.originalname } },
     { new: true }
   )
   .then(async data => {
+    /** update resumes redis */
+    // update resume info
+    resumes.forEach(state => {
+      if(state._id === resumeId) state.pdfSrc = req.file.originalname
+    })
+    // set new resumes redis
+    await setAllResume(resumes)
+
     let resume = await data.populate('techs').populate('projects').populate('educations').populate('jobs').execPopulate()
 
     return res.status(200).json({
@@ -215,7 +332,7 @@ exports.updatePrivateUserResumePdf = async(req, res, next) => {
       data: resume
     })
   })
-  .catch(err => {
+  .catch(err => { 
     return res.status(500).json({
       success: false,
       error: `Failed to update resume pdf from Resume Collection`,
@@ -229,10 +346,14 @@ exports.updatePrivateUserResumePdf = async(req, res, next) => {
 // @access  Private (Require sessionId & uid)
 exports.updatePrivateUserResumePublish = async(req, res, next) => {
   let { resumeId, intention } = req.body
+
+  // get resumes, techs data from redis
+  let redisAllData = await getAllData()
+  let resumes = redisAllData.resumes
   
   try {
     // check if other resume is published
-    let resumeActive = await Resume.findOne().where({ status: 1 }).select('contactInfo')
+    let resumeActive = resumes.find(resume => resume.status === 1)
     if(resumeActive) {
       if(resumeActive._id.toString() !== resumeId) return res.status(400).json({
         success: false,
@@ -248,6 +369,14 @@ exports.updatePrivateUserResumePublish = async(req, res, next) => {
       } },
       { new: true }
     )
+
+    /** update resumes redis */
+    // update resume info
+    resumes.forEach(state => {
+      if(state._id === resumeId) state.status = intention === 'publish' ? 1 : 0
+    })
+    // set new resumes redis
+    await setAllResume(resumes)
     
     let resume = await data.populate('techs').populate('projects').populate('educations').populate('jobs').execPopulate()
 
@@ -256,7 +385,7 @@ exports.updatePrivateUserResumePublish = async(req, res, next) => {
       count: resume.length,
       data: resume
     })
-  } catch(err) {
+  } catch(err) { 
     return res.status(500).json({
       success: false,
       error: `Failed to update resume publish from Resume Collection`,
@@ -270,8 +399,13 @@ exports.updatePrivateUserResumePublish = async(req, res, next) => {
 // @access  Private (Require sessionId & uid)
 exports.deletePrivateUserResume = async(req, res, next) => {
   try{
+    // get resumes & users data from redis
+    let redisAllData = await getAllData()
+    let resumes = redisAllData.resumes
+    let users = redisAllData.users
+
     // check if resume if ACTIVE
-    let resumeActive = await Resume.findOne().where({ status: 1 }).select('_id')
+    let resumeActive = resumes.find(resume => resume.status === 1)
     if(resumeActive) {
       if(resumeActive._id.toString() === req.body.resumeId) return res.status(400).json({
         success: false,
@@ -280,24 +414,41 @@ exports.deletePrivateUserResume = async(req, res, next) => {
       })
     }
 
-    // remove resume
-    let resumeDeleted = await Resume.findByIdAndDelete(req.body.resumeId)
-    
-    // - remove pdf from server files folder
-    handlePdfRemove(res, resumeDeleted.pdfSrc)
-
     // remove from user
     await User.updateOne(
       { _id: req.body.creator },
       { $pull: { resumes: req.body.resumeId } },
     )
 
+    let resumeDeleted = resumes.find(resume => resume._id === req.body.resumeId)
+    
+    // - remove pdf from server files folder
+    handlePdfRemove(res, resumeDeleted.pdfSrc)
+
+    // delete resume
+    await Resume.deleteOne({ _id: req.body.resumeId })
+
+    /** update resumes redis */
+    // delete resume
+    let filtered = resumes.filter(state => state._id !== req.body.resumeId)
+    // set new resumes redis
+    await setAllResume(filtered)
+    // remove deleted resume from users
+    users.forEach(user => {
+      if(user._id === req.body.creator) {
+        let filtered = user.resumes.filter(state => state !== req.body.resumeId)
+        user.resumes = filtered
+      }
+    })
+    // set new users redis
+    await setAllUser(users)
+
     return res.status(200).json({
       success: true,
       count: 0,
       data: {}
     })
-  } catch(err) {
+  } catch(err) { 
     return res.status(500).json({
       success: false,
       error: `Failed to delete resume data from Resume Collection`,
