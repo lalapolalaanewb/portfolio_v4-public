@@ -8,6 +8,7 @@ import ProtectedRouteParentPosts from './ProtectedRouteParentPosts'
 import ProtectedRouteParentProfile from './ProtectedRouteParentProfile'
 import ProtectedRouteParentProjects from './ProtectedRouteParentProjects'
 import ProtectedRouteParentSkills from './ProtectedRouteParentSkills'
+import ProtectedRouteParentSubscription from './ProtectedRouteParentSubscriptions'
 import ProtectedRouteParentTechs from './ProtectedRouteParentTechs'
 import ProtectedRouteParentUsers from './ProtectedRouteParentUsers'
 
@@ -22,6 +23,7 @@ export {
   ProtectedRouteParentProfile,
   ProtectedRouteParentProjects,
   ProtectedRouteParentSkills,
+  ProtectedRouteParentSubscription,
   ProtectedRouteParentTechs,
   ProtectedRouteParentUsers,
 }

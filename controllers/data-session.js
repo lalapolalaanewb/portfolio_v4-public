@@ -18,7 +18,8 @@ const {
   Project,
   Resume,
   Skill,
-  Socialmedia,  
+  Socialmedia,
+  Subscription,  
   Technology,
   User,
 } = require('../models')
@@ -124,6 +125,13 @@ async function setDefaultAllData() {
   const socialMediasRedisExist = await getAsync(`pfv4_socialMedias`)
   if(!socialMediasRedisExist) await setAsync(`pfv4_socialMedias`, JSON.stringify(socialMediasDB))
 
+  /** set subscription all redis */
+  // get all subscription
+  const subscriptionsDB = await Subscription.find().select('-__v')
+  // check if subscription all redis exist
+  const subscriptionsRedisExist = await getAsync(`pfv4_subscriptions`)
+  if(!subscriptionsRedisExist) await setAsync(`pfv4_subscriptions`, JSON.stringify(subscriptionsDB))
+
   /** set tech all redis */
   // get all tech
   const techsDB = await Technology.find().select('-__v')
@@ -169,6 +177,8 @@ async function getDefaultAllData() {
   const skillsRedis = JSON.parse(await getAsync(`pfv4_skills`))
   // get socialMedias
   const socialMediasRedis = JSON.parse(await getAsync(`pfv4_socialMedias`))
+  // get subscriptions
+  const subscriptionsRedis = JSON.parse(await getAsync(`pfv4_subscriptions`))
   // get techs
   const techsRedis = JSON.parse(await getAsync(`pfv4_techs`))
   // get users
@@ -189,13 +199,103 @@ async function getDefaultAllData() {
     resumesRedis,
     skillsRedis,
     socialMediasRedis,
+    subscriptionsRedis,
     techsRedis,
     usersRedis
   }
 }
 
+// Reset all data upon login success (use in dashboard.js)
+async function resetDefaultAllData() {
+  /** set about all redis */
+  // get all about
+  const aboutsDB = await About.find().select('-__v')
+  await setAsync(`pfv4_abouts`, JSON.stringify(aboutsDB))
+
+  /** set contact all redis */
+  // get all contact
+  const contactsDB = await Contact.find().select('-__v')
+  await setAsync(`pfv4_contacts`, JSON.stringify(contactsDB))
+
+  /** set education all redis */
+  // get all education
+  const educationsDB = await Education.find().select('-__v')
+  await setAsync(`pfv4_educations`, JSON.stringify(educationsDB))
+
+  /** set home all redis */
+  // get all home
+  const homesDB = await Home.find().select('-__v')
+  await setAsync(`pfv4_homes`, JSON.stringify(homesDB))
+
+  /** set job all redis */
+  // get all job
+  const jobsDB = await Job.find().select('-__v')
+  await setAsync(`pfv4_jobs`, JSON.stringify(jobsDB))
+
+  /** set mail all redis */
+  // get all mail
+  const mailsDB = await Mail.find().select('-__v')
+  await setAsync(`pfv4_mails`, JSON.stringify(mailsDB))
+
+  /** set media all redis */
+  // get all media
+  const mediasDB = await Media.find().select('-__v')
+  await setAsync(`pfv4_medias`, JSON.stringify(mediasDB))
+
+  /** set mediaSocial all redis */
+  // get all mediaSocial
+  const mediaSocialsDB = await Mediasocial.find().select('-__v')
+  await setAsync(`pfv4_mediaSocials`, JSON.stringify(mediaSocialsDB))
+
+  /** set policy all redis */
+  // get all policy
+  const policiesDB = await Policy.find().select('-__v')
+  await setAsync(`pfv4_policies`, JSON.stringify(policiesDB))
+
+  /** set post all redis */
+  // get all post
+  const postsDB = await Post.find().select('-__v')
+  await setAsync(`pfv4_posts`, JSON.stringify(postsDB))
+
+  /** set project all redis */
+  // get all project
+  const projectsDB = await Project.find().select('-__v')
+  await setAsync(`pfv4_projects`, JSON.stringify(projectsDB))
+
+  /** set resume all redis */
+  // get all resume
+  const resumesDB = await Resume.find().select('-__v')
+  await setAsync(`pfv4_resumes`, JSON.stringify(resumesDB))
+
+  /** set skill all redis */
+  // get all skill
+  const skillsDB = await Skill.find().select('-__v')
+  await setAsync(`pfv4_skills`, JSON.stringify(skillsDB))
+
+  /** set socialMedia all redis */
+  // get all socialMedia
+  const socialMediasDB = await Socialmedia.find().select('-__v')
+  await setAsync(`pfv4_socialMedias`, JSON.stringify(socialMediasDB))
+
+  /** set subscription all redis */
+  // get all subscription
+  const subscriptionsDB = await Subscription.find().select('-__v')
+  await setAsync(`pfv4_subscriptions`, JSON.stringify(subscriptionsDB))
+
+  /** set tech all redis */
+  // get all tech
+  const techsDB = await Technology.find().select('-__v')
+  await setAsync(`pfv4_techs`, JSON.stringify(techsDB))
+
+  /** set user all redis */
+  // get all user
+  const usersDB = await User.find().select('-__v')
+  await setAsync(`pfv4_users`, JSON.stringify(usersDB))
+}
+
 /** Export */
 module.exports = {
   getDefaultAllData, 
-  setDefaultAllData
+  setDefaultAllData,
+  resetDefaultAllData
 }

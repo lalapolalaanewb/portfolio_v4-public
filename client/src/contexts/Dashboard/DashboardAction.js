@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { configPrivate } from '../../Utils/headers/header'
+import forcedLogout from '../../Utils/forcedLogout'
 
 // Set Loading
 export const setLoading = (dispatch, status) => dispatch({ type: 'SET_LOADING', payload: status })
@@ -18,20 +19,56 @@ export const getDashboard = async(dispatch) => {
   .then(async res => {
     const result = await res.data.data
     
-    // set techs
+    // set states
     dispatch({
       type: 'SET_DASHBOARD',
       payload: result
     })
   })
-  .catch(async error => { 
-    if(error.response && error.response.status === 500) console.log(error.response.status)
-    const result = await error.response.data
-
+  .catch(async error => {
+    const result = await error.response
+    
+    // forced logout if user's server's session expired
+    // if(error.response.status === 401) forcedLogout()
+    
     // set error
     setError(dispatch, {
       status: true,
-      message: result.error
+      message: result.data.error
+    })
+  })
+}
+
+// Reset All Redis Data
+export const resetAllRedisData = async(dispatch) => {
+  setLoading(dispatch, true)
+  
+  await axios.get('/api/v1/dashboard/resetredis', configPrivate)
+  .then(async res => {
+    const result = await res.data.data
+    
+    // set states
+    dispatch({
+      type: 'SET_DASHBOARD',
+      payload: result
+    })
+
+    // set success
+    setSuccess(dispatch, {
+      status: true,
+      message: 'Successfully reset all redis data to the latest data in database.'
+    })
+  })
+  .catch(async error => {
+    const result = await error.response
+    
+    // forced logout if user's server's session expired
+    // if(error.response.status === 401) forcedLogout()
+    
+    // set error
+    setError(dispatch, {
+      status: true,
+      message: result.data.error
     })
   })
 }

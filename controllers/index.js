@@ -10,13 +10,15 @@ const {
 // Gmail
 const {
   contactAutoReplyClientNoty,
-  contactAutoReplyAdminNoty
+  contactAutoReplyAdminNoty,
+  subsAutoReplyClientNoty,
+  subsAutoReplyAdminNoty
 } = require('./gmail')
 // Redis
 const { RedisStore, redisClient, session } = require('./redis')
 // Redis Data
 const {
-  getDefaultAllData, setDefaultAllData
+  getDefaultAllData, setDefaultAllData, resetDefaultAllData
 } = require('./data-session')
 // Redis Promises
 const {
@@ -40,10 +42,12 @@ module.exports = {
   // Gmail
   contactAutoReplyClientNoty,
   contactAutoReplyAdminNoty,
+  subsAutoReplyClientNoty,
+  subsAutoReplyAdminNoty,
   // Redis
   RedisStore, redisClient, session,
   // Redis data
-  getDefaultAllData, setDefaultAllData,
+  getDefaultAllData, setDefaultAllData, resetDefaultAllData,
   // Redis Promises
   getAsync, setAsync, delAsync,
   // Session

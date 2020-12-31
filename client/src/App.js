@@ -4,7 +4,7 @@ import { AuthState } from './contexts/Auth/AuthState'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import Navbar from './components/Navbar/Navbar'
 import { About, Contact, Home, Login, PolicyComment, Post, Posts, Projects, Resume } from './pages/public'
-import { Dashboard, Medias, MediaSocials, Messages, Policies, PostsPrivate, Profile, ProjectsPrivate, SkillsPrivate, TechsPrivate, Users } from './pages/private'
+import { Dashboard, Medias, MediaSocials, Messages, Policies, PostsPrivate, Profile, ProjectsPrivate, SkillsPrivate, Subscriptions, TechsPrivate, Users } from './pages/private'
 import {
   UnprotectedRouteParentAbout,
   UnprotectedRouteParentHome,
@@ -26,6 +26,7 @@ import {
   ProtectedRouteParentProfile,
   ProtectedRouteParentProjects,
   ProtectedRouteParentSkills,
+  ProtectedRouteParentSubscription,
   ProtectedRouteParentTechs,
   ProtectedRouteParentUsers
 } from './components/route/protected'
@@ -114,6 +115,7 @@ function App() {
               <ProtectedRouteParentPosts exact path="/pfv4-admin/posts" component={PostsPrivate} />
               <ProtectedRouteParentProfile exact path="/pfv4-admin/profile" component={Profile} />
               <ProtectedRouteParentProjects exact path="/pfv4-admin/projects" component={ProjectsPrivate} />
+              <ProtectedRouteParentSubscription exact path="/pfv4-admin/subs" component={Subscriptions} />
               <Route path="*" component={() => "404 Not Found"} />
             </Switch>
           </Navbar>

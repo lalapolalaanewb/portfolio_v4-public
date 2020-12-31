@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { configPrivate, configMultiPartPrivate } from '../../../Utils/headers/header'
+import forcedLogout from '../../../Utils/forcedLogout'
 
 const baseUrl = '/api/v1/posts/private'
 
@@ -44,11 +45,15 @@ export const getPosts = async (dispatch) => {
     })
   })
   .catch(async error => { 
-    const result = await error.response.data
+    const result = await error.response
     
+    // forced logout if user's server's session expired
+    if(error.response.status === 401) forcedLogout()
+    
+    // set error
     setError(dispatch, {
       status: true,
-      message: result.error
+      message: result.data.error
     })
   })
 }

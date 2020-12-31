@@ -30,6 +30,8 @@ const Resume = require('./Resume')
 const { Skill } = require('./Skill')
 // Social Media Model
 const Socialmedia = require('./Socialmedia')
+// Subcription Model
+const Subscription = require('./Subscription')
 // Technology Model
 const Technology = require('./Technology')
 // User Model
@@ -52,7 +54,8 @@ module.exports = {
   Project,
   Resume,
   Skill,
-  Socialmedia,  
+  Socialmedia,
+  Subscription,  
   Technology,
   User,
 }

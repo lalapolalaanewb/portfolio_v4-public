@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useMail } from '../../../contexts/Mail/Private/MailState'
 import { setLoading, getMails } from '../../../contexts/Mail/Private/MailAction'
+import { useSubscription } from '../../../contexts/Subscription/Private/SubscriptionState'
+import { setLoading as setLoadingSub, getSubs } from '../../../contexts/Subscription/Private/SubscriptionAction'
 import classNames from 'classnames'
 import { makeStyles } from '@material-ui/core/styles'
 import {
@@ -13,6 +15,7 @@ import MailIcon from '@material-ui/icons/Mail'
 import MenuIcon from '@material-ui/icons/Menu'
 import MoreIcon from '@material-ui/icons/MoreVert'
 import NotificationsIcon from '@material-ui/icons/Notifications'
+import SubscriptionsIcon from '@material-ui/icons/Subscriptions'
 
 const Toolbar = ({
   classesGlobal,
@@ -21,10 +24,16 @@ const Toolbar = ({
   setLogout,
   open, setOpen,
 }) => {
+  /** mail - states*/
   const [mailState, mailDispatch] = useMail()
   const { mails } = mailState
 
-  const [unread, setUnread] = useState('10')
+  /** sub - states*/
+  const [subState, subDispatch] = useSubscription()
+  const { subs } = subState
+
+  const [unreadmails, setUnreadMails] = useState('10')
+  const [unreadsubs, setUnreadSubs] = useState('10')
 
   /** theme - state */
   const classes = useStyles()
@@ -73,13 +82,23 @@ const Toolbar = ({
       open={isMobileMenuNotyOpen}
       onClose={() => setMobileMenuNotyEl(null)}
     >
+      {unreadmails > 0 && (
+        <MenuItem>
+          <IconButton aria-label="show 4 new mails" color="inherit">
+            <Badge badgeContent={unreadmails} classes={{ badge: classes.colorBadge }}>
+              <MailIcon />
+            </Badge>
+          </IconButton>
+          <p>Messages</p>
+        </MenuItem>
+      )}
       <MenuItem>
-        <IconButton aria-label="show 4 new mails" color="inherit">
-          <Badge badgeContent={unread} classes={{ badge: classes.colorBadge }}>
-            <MailIcon />
+        <IconButton aria-label="show 4 new subs" color="inherit">
+          <Badge badgeContent={unreadsubs} classes={{ badge: classes.colorBadge }}>
+            <SubscriptionsIcon />
           </Badge>
         </IconButton>
-        <p>Messages</p>
+        <p>Subs</p>
       </MenuItem>
       {/* <MenuItem>
         <IconButton aria-label="show 11 new notifications" color="inherit">
@@ -112,13 +131,30 @@ const Toolbar = ({
     })()
   }, [])
 
+  /** sub get all - function */
+  useEffect(() => {
+    (async() => {
+      await getSubs(subDispatch)
+
+      setLoadingSub(subDispatch, false)
+    })()
+  }, [])
+
   /** mail unread get count - function */
   useEffect(() => {
-    setUnread(() => {
+    setUnreadMails(() => {
       let unread = mails.filter(mail => mail.statusRead === 0)
       return unread.length.toString()
     })
   }, [mails])
+
+  /** sub unread get count - function */
+  // useEffect(() => {
+  //   setUnreadSubs(() => {
+  //     let unread = subs.filter(sub => sub.statusRead === 0)
+  //     return unread.length.toString()
+  //   })
+  // }, [subs])
 
   return (
     <>
@@ -133,9 +169,16 @@ const Toolbar = ({
       </IconButton>
       {logo('/pfv4-admin/dashboard')}
       <div className={classesGlobal.sectionDesktop}>
-        <IconButton aria-label="show 4 new mails" color="inherit">
-          <Badge badgeContent={unread} classes={{ badge: classes.colorBadge }}>
-            <MailIcon />
+        {unreadmails > 0 && (
+          <IconButton aria-label="show 4 new mails" color="inherit">
+            <Badge badgeContent={unreadmails} classes={{ badge: classes.colorBadge }}>
+              <MailIcon />
+            </Badge>
+          </IconButton>
+        )}
+        <IconButton aria-label="show 4 new subs" color="inherit">
+          <Badge badgeContent={unreadsubs} classes={{ badge: classes.colorBadge }}>
+            <SubscriptionsIcon />
           </Badge>
         </IconButton>
         {/* <IconButton aria-label="show 17 new notifications" color="inherit">

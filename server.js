@@ -59,6 +59,7 @@ app.use('/api/v1/policies', require('./routes/policy'))
 app.use('/api/v1/posts', require('./routes/post'))
 app.use('/api/v1/projects', require('./routes/project'))
 app.use('/api/v1/skills', require('./routes/skill'))
+app.use('/api/v1/subscriptions', require('./routes/subscription'))
 app.use('/api/v1/techs', require('./routes/tech'))
 app.use('/api/v1/users', require('./routes/user'))
 

@@ -12,7 +12,10 @@ const {
   deletePrivateContact
 } = require('./contact')
 // Dashboard Methods
-const { getPrivateDashboard } = require('./dashboard')
+const { 
+  getPrivateDashboard,
+  updatePrivateDashboardRedisAllData 
+} = require('./dashboard')
 // Mail Methods
 const {
   getPublicContactStatus,
@@ -117,6 +120,13 @@ const {
   updatePrivateSkill, 
   deletePrivateSkill 
 } = require('./skill')
+// Subscription Methods
+const {
+  addPublicSubscription,
+  getPrivateSubscriptions,
+  updatePrivateSubscriptionNoty, updatePrivateSubscriptionRead, updatePrivateSubscriptionReply,
+  deletePrivateSubscription
+} = require('./subscription')
 // Technology Methods
 const { 
   getPrivateTechs, 
@@ -149,6 +159,7 @@ module.exports = {
   deletePrivateContact,
   // Dashboard
   getPrivateDashboard,
+  updatePrivateDashboardRedisAllData,
   // Mail
   getPublicContactStatus,
   addPublicMail,
@@ -225,6 +236,11 @@ module.exports = {
   addPrivateSkill, 
   updatePrivateSkill, 
   deletePrivateSkill,
+  // Subscription
+  addPublicSubscription,
+  getPrivateSubscriptions,
+  updatePrivateSubscriptionNoty, updatePrivateSubscriptionRead, updatePrivateSubscriptionReply,
+  deletePrivateSubscription,
   // Technology
   getPrivateTechs, 
   addPrivateTech, 

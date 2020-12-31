@@ -1,11 +1,12 @@
-import React, { useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useDashboard } from '../../contexts/Dashboard/DashboardState'
-import { setLoading, setError, setSuccess, getDashboard } from '../../contexts/Dashboard/DashboardAction'
+import { setLoading, setError, setSuccess, getDashboard, resetAllRedisData } from '../../contexts/Dashboard/DashboardAction'
 import AlertMessage from '../../components/global/Alert'
 import Headline from '../../components/global/Headline'
 import { DividerBlank } from '../../components/global/Divider'
 import { makeStyles } from '@material-ui/core/styles'
-import { Typography } from '@material-ui/core'
+import { Button, Typography } from '@material-ui/core'
+import ResetIcon from '@material-ui/icons/RotateLeft'
 import { AiFillProject, AiOutlineShareAlt } from 'react-icons/ai'
 import { CgUserList } from 'react-icons/cg'
 import { BiFile, BiListUl } from 'react-icons/bi'
@@ -21,6 +22,9 @@ const Dashboard = () => {
   /** theme - states */
   const classes = useStyles()
 
+  /** dashboard reset redis all data - state */
+  const [isResetRedis, setIsResetRedis] = useState(false)
+  
   /** dashboard get - function */
   useEffect(() => {
     (async() => {
@@ -29,6 +33,23 @@ const Dashboard = () => {
       setLoading(dashboardDispatch, false) 
     })()
   }, [])
+
+  /** dashboard reset redis all data - function */
+  const resetRedisAllData = async() => {
+    await resetAllRedisData(dashboardDispatch)
+
+    setLoading(dashboardDispatch, false)
+  }
+
+  useEffect(() => {
+    (async() => {
+      if(isResetRedis) {
+        await resetAllRedisData(dashboardDispatch)
+
+        setLoading(dashboardDispatch, false)
+      }
+    })()
+  }, [isResetRedis])
 
   return (
     <>
@@ -265,6 +286,23 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+      <DividerBlank />
+      <Headline headline="Reset" subHeadline="Redis Data" />
+      <div className={classes.buttonReset}>
+        <Button
+          variant="contained"
+          color="secondary"
+          className={classes.resetButton}
+          startIcon={<ResetIcon />}
+          onClick={() => resetRedisAllData()}
+          // onClick={e => {
+          //   e.preventDefault()
+          //   setIsResetRedis(true)
+          // }}
+        >
+          Reset Redis
+        </Button>
+      </div>
     </>
   )
 }
@@ -297,5 +335,14 @@ const useStyles = makeStyles(theme => ({
     display: '-webkit-box',
     WebkitBoxOrient: 'vertical',
     WebkitLineClamp: 1,
+  },
+  buttonReset: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'flex-start',
+    alignItems: 'center'
+  },
+  resetButton: {
+    color: theme.palette.common.white
   },
 }))

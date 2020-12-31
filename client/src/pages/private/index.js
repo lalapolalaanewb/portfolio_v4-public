@@ -7,6 +7,7 @@ import PostsPrivate from './Posts'
 import Profile from './Profile'
 import ProjectsPrivate from './Projects'
 import SkillsPrivate from './Skills'
+import Subscriptions from './Subscriptions'
 import TechsPrivate from './Techs'
 import Users from './Users'
 
@@ -20,6 +21,7 @@ export {
   Profile,
   ProjectsPrivate,
   SkillsPrivate,
+  Subscriptions,
   TechsPrivate,
   Users,
 }

@@ -1,8 +1,8 @@
 import axios from 'axios'
-import { configPrivate } from '../../../Utils/headers/header'
+import { config, configPrivate } from '../../../Utils/headers/header'
 import forcedLogout from '../../../Utils/forcedLogout'
 
-const baseUrl = '/api/v1/users/private'
+const baseUrl = '/api/v1/subscriptions/private'
 
 // Set Loading
 export const setLoading = (dispatch, status) => dispatch({ type: 'SET_LOADING', payload: status })
@@ -13,25 +13,25 @@ export const setError = (dispatch, error) => dispatch({ type: 'SET_ERROR', paylo
 // Set Success
 export const setSuccess = (dispatch, success) => dispatch({ type: 'SET_SUCCESS', payload: { status: success.status, message: success.message } })
 
-// Get All Users
-export const getUsers = async(dispatch) => {
+// Get Subs
+export const getSubs = async (dispatch) => {
   setLoading(dispatch, true)
 
+  // do fetch
   await axios.get(baseUrl + '/get', configPrivate)
   .then(async res => {
     const result = await res.data.data
     
-    // set users
     dispatch({
-      type: 'SET_USERS',
-      payload: result
+      type: 'SET_SUBS',
+      payload: result.subs 
     })
   })
-  .catch(async error => {
+  .catch(async error => { 
     const result = await error.response
     
     // forced logout if user's server's session expired
-    if(error.response.status === 401) forcedLogout()
+    // if(error.response.status === 401) forcedLogout()
     
     // set error
     setError(dispatch, {
@@ -41,29 +41,33 @@ export const getUsers = async(dispatch) => {
   })
 }
 
-// Add New User
-export const addUser = async (dispatch, user) => {
-  setLoading(dispatch, true)
+// Update A Sub Noty
+export const updateSubNoty = async (dispatch, subId, subscriber, intention) => {
+  setLoading(dispatch, true) 
   
-  await axios.post(baseUrl + '/add', user, configPrivate)
+  await axios.post(baseUrl + `/update/noty`, { subId, subscriber, intention }, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
     // update state
     dispatch({
-      type: 'ADD_USER',
-      payload: result
+      type: 'DELETE_SUB',
+      payload: subId
+    })
+    dispatch({
+      type: 'ADD_SUB',
+      payload: result.sub
     })
 
     // update success
     setSuccess(dispatch, {
       status: true,
-      message: 'Successfully added new user.'
+      message: result.message
     })
   })
   .catch(async error => {
     const result = await error.response.data
-
+    
     // update state
     setError(dispatch, {
       status: true,
@@ -72,96 +76,96 @@ export const addUser = async (dispatch, user) => {
   })
 }
 
-// Update A User
-export const updateUserActive = async (dispatch, userId, intention) => {
-  setLoading(dispatch, true)
-
-  await axios.post(baseUrl + `/update/active`, { userId, intention }, configPrivate)
+// Update A Sub Read
+export const updateSubRead = async (dispatch, subId, intention) => {
+  setLoading(dispatch, true) 
+  
+  await axios.post(baseUrl + `/update/read`, { subId, intention }, configPrivate)
   .then(async res => {
     const result = await res.data.data
 
-    // update users
+    // update state
     dispatch({
-      type: 'DELETE_USER',
-      payload: userId
+      type: 'DELETE_SUB',
+      payload: subId
     })
     dispatch({
-      type: 'ADD_USER',
+      type: 'ADD_SUB',
       payload: result
     })
 
     // update success
     setSuccess(dispatch, {
       status: true,
-      message: (() => intention === 'activate' ? `Successfully activate the post.` : `Successfully deactivate the post.`)()
+      message: (() => intention === 'read' ? `Successfully read the mail.` : `Successfully unread the mail.`)()
+    })
+  })
+  .catch(async error => {
+    const result = await error.response.data
+    
+    // update state
+    setError(dispatch, {
+      status: true,
+      message: result.error
+    })
+  })
+}
+
+// Update A Sub Reply
+export const updateSubReply = async (dispatch, subId, intention) => {
+  setLoading(dispatch, true) 
+  
+  await axios.post(baseUrl + `/update/reply`, { subId, intention }, configPrivate)
+  .then(async res => {
+    const result = await res.data.data
+
+    // update state
+    dispatch({
+      type: 'DELETE_SUB',
+      payload: subId
+    })
+    dispatch({
+      type: 'ADD_SUB',
+      payload: result
+    })
+
+    // update success
+    setSuccess(dispatch, {
+      status: true,
+      message: (() => intention === 'reply' ? `Successfully reply the mail.` : `Successfully unreply the mail.`)()
+    })
+  })
+  .catch(async error => {
+    const result = await error.response.data
+    
+    // update state
+    setError(dispatch, {
+      status: true,
+      message: result.error
+    })
+  })
+}
+
+// Delete A Sub
+export const deleteSub = async (dispatch, subId) => {
+  setLoading(dispatch, true)
+  
+  await axios.post(baseUrl + `/delete/${subId}`, configPrivate)
+  .then(async res => {
+    const result = await res.data.data
+
+    dispatch({
+      type: 'DELETE_SUB',
+      payload: subId
+    })
+
+    // update success
+    setSuccess(dispatch, {
+      status: true,
+      message: 'Successfully delete the mail.'
     })
   })
   .catch(async error => { 
-    const result = await error.response.data
-
-    // update state
-    setError(dispatch, {
-      status: true,
-      message: result.error
-    })
-  })
-}
-
-// Update A User
-export const updateUser = async (dispatch, userId, user) => {
-  setLoading(dispatch, true)
-
-  await axios.post(baseUrl + `/update/${userId}`, user, configPrivate)
-  .then(async res => {
-    const result = await res.data.data
-
-    // update users
-    dispatch({
-      type: 'DELETE_USER',
-      payload: userId
-    })
-    dispatch({
-      type: 'ADD_USER',
-      payload: result
-    })
-
-    // update success
-    setSuccess(dispatch, {
-      status: true,
-      message: 'Successfully update the user.'
-    })
-  })
-  .catch(async error => { console.log(error)
-    const result = await error.response.data
-
-    // update state
-    setError(dispatch, {
-      status: true,
-      message: result.error
-    })
-  })
-}
-
-// Delete A User
-export const deleteUser = async (dispatch, userId) => {
-  setLoading(dispatch, true)
-
-  await axios.delete(baseUrl + `/delete/${userId}`, configPrivate)
-  .then(async res => {
-    const result = await res.data.data
-
-    dispatch({
-      type: 'DELETE_USER',
-      payload: userId
-    })
-
-    // update success
-    setSuccess(dispatch, {
-      status: true,
-      message: 'Successfully delete the user.'
-    })
-  })
-  .catch(async error => {
     const result = await error.response.data
 
     // update state

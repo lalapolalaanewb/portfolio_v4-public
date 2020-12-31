@@ -63,7 +63,7 @@ export const isLogout = async(dispatch) => {
     })
   }).catch(async error => {
     const result = await error.response.data
-
+  
     // update state
     dispatch({
       type: 'SET_ERROR',

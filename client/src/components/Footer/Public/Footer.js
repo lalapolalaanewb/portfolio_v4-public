@@ -7,7 +7,6 @@ import { Button, TextField } from '@material-ui/core'
 import CodeIcon from '@material-ui/icons/Code'
 import { FaFacebook, FaGithub, FaInstagram, FaLinkedin, FaPodcast, FaReddit, FaTwitter, FaYoutube } from 'react-icons/fa'
 import { CgPokemon } from 'react-icons/cg'
-// import './Footer.css'
 
 const Footer = () => {
   const [userState, userDispatch] = useUser()

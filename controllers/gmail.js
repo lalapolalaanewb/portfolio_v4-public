@@ -152,9 +152,94 @@ async function contactAutoReplyAdminNoty(contact, admin, client) { console.log(c
     })
 }
 
+// Send a email copy to CLIENT (Send Auto Reply on Newsletter Subscription)
+async function subsAutoReplyClientNoty(contact, client) { console.log(contact); console.log(client)
+    // - Create Nodemailer TRANSPORT INFO
+    let transport = nodemailer.createTransport(transportData(contact))
+
+    // - body of Message
+    let mailBody = `
+        <div>
+            <p>Hi!</p>
+            <p>Thank you for subscribing to our newsletter at https://lalapolalaanewb.com</p>
+        </div>
+        <div>
+            <p>We will let you know of any future events.</p>
+            <p>Again, thank you for reaching us.</p>
+        </div>
+        <div>
+            <p>Sincerely,</p>
+            <p>LpNb [<b>Lalapolalaa Newb</b>]</p>
+        </div>
+    `
+
+    // - Create BODY of mail
+    let mailOptions = {
+        // Email should be SAME as USER EMAIL above     
+        from: `LpNb <${contact.userEmail}>`,
+        // ANY Email to send the mail (to send to many use ',' inside the single quote. Eg: 'xxx@gmail.com, xxx@yahoo.com')
+        to: client.email,
+        subject: `[Lalapolalaa Newb] Newsletter Subscriptions`,
+        // TEXT cannot apply any HTML Elements (use either TEXT or HTML)
+        // text: 'Hey there, it’s our first message sent with Nodemailer ',
+        // HTML can apply any HTML Elements (use either TEXT or HTML)
+        html: mailBody
+    }
+
+    // send email
+    return await transport.sendMail(mailOptions)
+    .then(success => 'Successful!')
+    .catch(err => {
+        console.log(err)
+        return 'Unsuccesful!'
+    })
+}
+
+// Send a email copy to ADMIN (Send Auto Reply on Subscription)
+async function subsAutoReplyAdminNoty(contact, admin, client) { console.log(contact); console.log(admin); console.log(client)
+    // - Create Nodemailer TRANSPORT INFO
+    let transport = nodemailer.createTransport(transportData(contact))
+
+    // - body of Message
+    let mailBody = `
+        <div>
+            <p>Hi! <b>${admin.name}</b></p>
+        </div>
+        <div>
+            <p>${client.email} just subscribed to our newsletter!</p>
+        </div>
+        <div>
+            <p>Email Notification from [<a href="https://www.lalapolalaanewb.com" target="_blank"><b>Lalapolalaa Newb Website</b></a>]</p>
+        </div>
+    `
+
+    // - Create BODY of mail
+    let mailOptions = {
+        // Email should be SAME as USER EMAIL above     
+        from: `LpNb <${contact.senderEmail}>`,
+        // ANY Email to send the mail (to send to many use ',' inside the single quote. Eg: 'xxx@gmail.com, xxx@yahoo.com')
+        to: admin.email,
+        subject: `[Lalapolalaa Newb] Newsletter Subscroption Noty`,
+        // TEXT cannot apply any HTML Elements (use either TEXT or HTML)
+        // text: 'Hey there, it’s our first message sent with Nodemailer ',
+        // HTML can apply any HTML Elements (use either TEXT or HTML)
+        html: mailBody
+    }
+
+    // send email
+    return await transport.sendMail(mailOptions)
+    .then(success => 'Successful!')
+    .catch(err => {
+        console.log(err)
+        return 'Unsuccesful!'
+    })
+}
+
 /* GMAIL Configuration Setup Export                                    ***/
 
 module.exports = {
     contactAutoReplyClientNoty,
-    contactAutoReplyAdminNoty
+    contactAutoReplyAdminNoty,
+    subsAutoReplyClientNoty,
+    subsAutoReplyAdminNoty
 } 

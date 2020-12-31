@@ -4,6 +4,7 @@ import { useAuth } from '../../contexts/Auth/AuthState';
 import { isLogout, setLoading, isAuthenticated } from '../../contexts/Auth/AuthAction'
 import { UserState } from '../../contexts/User/Public/UserState'
 import { MailState } from '../../contexts/Mail/Private/MailState'
+import { SubscriptionState } from '../../contexts/Subscription/Private/SubscriptionState'
 import classNames from 'classnames'
 import { makeStyles, useTheme } from '@material-ui/core/styles'
 import {
@@ -164,7 +165,9 @@ const Navbar = ({ isDarkMode, setIsDarkMode, children }) => {
         <Toolbar className={classes.toolBarSpacing}>
           {authenticated ? (
             <MailState>
-              <ToolBarPrivate classesGlobal={classes} logo={logo} goToPage={goToPage} setLogout={setLogout} open={open} setOpen={setOpen} />
+              <SubscriptionState>
+                <ToolBarPrivate classesGlobal={classes} logo={logo} goToPage={goToPage} setLogout={setLogout} open={open} setOpen={setOpen} />
+              </SubscriptionState>
             </MailState>
           ) : (
             <ToolbarPublic classesGlobal={classes} logo={logo} menuPublic={menuPublic} menuPublicListItem={menuPublicListItem} buttonResume={buttonResume} open={open} setOpen={setOpen} darkModeToggle={darkModeToggle} />
