@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import './App.css'
 import { AuthState } from './contexts/Auth/AuthState'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
@@ -32,6 +32,7 @@ import {
 } from './components/route/protected'
 import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import Colors from './components/global/Colors'
+import { getCookie, setCookie } from './services/Cookie'
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false)
@@ -88,6 +89,15 @@ function App() {
       ...typography
     }
   })
+
+  /** theme mode default - function */
+  useEffect(() => {
+    (() => {
+      let themeMode = getCookie('themeMode')
+      if(themeMode) themeMode === 'light' ? setIsDarkMode(false) : setIsDarkMode(true)
+      else setCookie('themeMode', 'light', { path: '/' })
+    })()
+  }, [])
 
   return (
     <AuthState>

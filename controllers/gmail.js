@@ -219,7 +219,7 @@ async function subsAutoReplyAdminNoty(contact, admin, client) { console.log(cont
         from: `LpNb <${contact.senderEmail}>`,
         // ANY Email to send the mail (to send to many use ',' inside the single quote. Eg: 'xxx@gmail.com, xxx@yahoo.com')
         to: admin.email,
-        subject: `[Lalapolalaa Newb] Newsletter Subscroption Noty`,
+        subject: `[Lalapolalaa Newb] Newsletter Subscription Noty`,
         // TEXT cannot apply any HTML Elements (use either TEXT or HTML)
         // text: 'Hey there, it’s our first message sent with Nodemailer ',
         // HTML can apply any HTML Elements (use either TEXT or HTML)

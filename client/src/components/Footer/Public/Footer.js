@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useUser } from '../../../contexts/User/Public/UserState'
 import { setLoading, getUserOnFooterPublic } from '../../../contexts/User/Public/UserAction'
+import { useSubscription } from '../../../contexts/Subscription/Public/SubscriptionState'
+import { setLoading as setLoadingSub, setError, setSuccess, addSubMail } from '../../../contexts/Subscription/Public/SubscriptionAction'
+import AlertMessage from '../../global/Alert'
+import { DividerBlank } from '../../global/Divider'
 import { makeStyles, useTheme } from '@material-ui/core/styles'
 import { Button, TextField } from '@material-ui/core'
 import CodeIcon from '@material-ui/icons/Code'
@@ -9,8 +13,13 @@ import { FaFacebook, FaGithub, FaInstagram, FaLinkedin, FaPodcast, FaReddit, FaT
 import { CgPokemon } from 'react-icons/cg'
 
 const Footer = () => {
+  /** user - states */
   const [userState, userDispatch] = useUser()
   const { userFooterPublic } = userState
+
+  /** sub - states */
+  const [subState, subDispatch] = useSubscription()
+  const { error, success, message } = subState
 
   const classes = useStyles()
   const theme = useTheme()
@@ -32,7 +41,9 @@ const Footer = () => {
     (async() => {
       if(submit) {
         // do fetch
+        await addSubMail(subDispatch, email)
 
+        setLoadingSub(subDispatch, false)
         setEmail('')
         setSubmit(false)
       }
@@ -61,6 +72,26 @@ const Footer = () => {
         <p className={classes.subscriptionText}>
           You can unsubscribe at any time
         </p>
+        {error && (
+          <>
+            <AlertMessage
+              severity="warning" title="Warning"
+              dispatch={subDispatch} message={message} 
+              setStatus={setError}
+            />
+            <DividerBlank />
+          </>
+        )}
+        {success && (
+          <>
+            <AlertMessage
+              severity="success" title="Success"
+              dispatch={subDispatch} message={message} 
+              setStatus={setSuccess}
+            />
+            <DividerBlank />
+          </>
+        )}
         <form className={classes.form} 
           onSubmit={e => {
             e.preventDefault()

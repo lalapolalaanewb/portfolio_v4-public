@@ -84,7 +84,7 @@ const Toolbar = ({
     >
       {unreadmails > 0 && (
         <MenuItem>
-          <IconButton aria-label="show 4 new mails" color="inherit">
+          <IconButton aria-label="show 4 new mails" color="inherit" onClick={() => goToPage('/pfv4-admin/messages')}>
             <Badge badgeContent={unreadmails} classes={{ badge: classes.colorBadge }}>
               <MailIcon />
             </Badge>
@@ -92,14 +92,16 @@ const Toolbar = ({
           <p>Messages</p>
         </MenuItem>
       )}
-      <MenuItem>
-        <IconButton aria-label="show 4 new subs" color="inherit">
-          <Badge badgeContent={unreadsubs} classes={{ badge: classes.colorBadge }}>
-            <SubscriptionsIcon />
-          </Badge>
-        </IconButton>
-        <p>Subs</p>
-      </MenuItem>
+      {unreadsubs > 0 && (
+        <MenuItem>
+          <IconButton aria-label="show 4 new subs" color="inherit" onClick={() => goToPage('/pfv4-admin/subs')}>
+            <Badge badgeContent={unreadsubs} classes={{ badge: classes.colorBadge }}>
+              <SubscriptionsIcon />
+            </Badge>
+          </IconButton>
+          <p>Subs</p>
+        </MenuItem>
+      )}
       {/* <MenuItem>
         <IconButton aria-label="show 11 new notifications" color="inherit">
           <Badge badgeContent={11} classes={{ badge: classes.colorBadge }}>
@@ -114,6 +116,7 @@ const Toolbar = ({
           aria-controls="primary-search-account-menu"
           aria-haspopup="true"
           color="inherit"
+          onClick={() => goToPage('/pfv4-admin/profile')}
         >
           <AccountCircle />
         </IconButton>
@@ -149,12 +152,12 @@ const Toolbar = ({
   }, [mails])
 
   /** sub unread get count - function */
-  // useEffect(() => {
-  //   setUnreadSubs(() => {
-  //     let unread = subs.filter(sub => sub.statusRead === 0)
-  //     return unread.length.toString()
-  //   })
-  // }, [subs])
+  useEffect(() => {
+    setUnreadSubs(() => {
+      let unread = subs.filter(sub => sub.statusRead === 0)
+      return unread.length.toString()
+    })
+  }, [subs])
 
   return (
     <>
@@ -170,17 +173,19 @@ const Toolbar = ({
       {logo('/pfv4-admin/dashboard')}
       <div className={classesGlobal.sectionDesktop}>
         {unreadmails > 0 && (
-          <IconButton aria-label="show 4 new mails" color="inherit">
+          <IconButton aria-label="show 4 new mails" color="inherit" onClick={() => goToPage('/pfv4-admin/messages')}>
             <Badge badgeContent={unreadmails} classes={{ badge: classes.colorBadge }}>
               <MailIcon />
             </Badge>
           </IconButton>
         )}
-        <IconButton aria-label="show 4 new subs" color="inherit">
-          <Badge badgeContent={unreadsubs} classes={{ badge: classes.colorBadge }}>
-            <SubscriptionsIcon />
-          </Badge>
-        </IconButton>
+        {unreadsubs > 0 && (
+          <IconButton aria-label="show 4 new subs" color="inherit" onClick={() => goToPage('/pfv4-admin/subs')}>
+            <Badge badgeContent={unreadsubs} classes={{ badge: classes.colorBadge }}>
+              <SubscriptionsIcon />
+            </Badge>
+          </IconButton>
+        )}
         {/* <IconButton aria-label="show 17 new notifications" color="inherit">
           <Badge badgeContent={17} classes={{ badge: classes.colorBadge }}>
             <NotificationsIcon />

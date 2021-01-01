@@ -5,6 +5,8 @@ import { isLogout, setLoading, isAuthenticated } from '../../contexts/Auth/AuthA
 import { UserState } from '../../contexts/User/Public/UserState'
 import { MailState } from '../../contexts/Mail/Private/MailState'
 import { SubscriptionState } from '../../contexts/Subscription/Private/SubscriptionState'
+import { SubscriptionState as SubscriptionStatePublic } from '../../contexts/Subscription/Public/SubscriptionState'
+import { setCookie } from '../../services/Cookie'
 import classNames from 'classnames'
 import { makeStyles, useTheme } from '@material-ui/core/styles'
 import {
@@ -91,7 +93,13 @@ const Navbar = ({ isDarkMode, setIsDarkMode, children }) => {
   // dark mode toggle (for toolbar)
   const darkModeToggle = (
     <ListItem>
-      <IconButton color="inherit" size="small" onClick={() => setIsDarkMode(!isDarkMode)}>
+      <IconButton color="inherit" size="small" 
+        onClick={() => {
+          setIsDarkMode(!isDarkMode)
+          let mode = !isDarkMode === true ? 'dark' : 'light'
+          setCookie('themeMode', mode, { path: '/' })
+        }}
+      >
         {isDarkMode ? <BrightnessHighOutlinedIcon /> : <Brightness2OutlinedIcon />}
       </IconButton>
     </ListItem>
@@ -110,7 +118,11 @@ const Navbar = ({ isDarkMode, setIsDarkMode, children }) => {
           track: classes.switchTrack,
           checked: classes.switchChecked
         }}
-        onChange={() => setIsDarkMode(!isDarkMode)}
+        onChange={() => {
+          setIsDarkMode(!isDarkMode)
+          let mode = !isDarkMode === true ? 'dark' : 'light'
+          setCookie('themeMode', mode, { path: '/' })
+        }}
       />
       <ListItemText primary="Dark Mode" />
     </ListItem>
@@ -211,7 +223,9 @@ const Navbar = ({ isDarkMode, setIsDarkMode, children }) => {
           <>
             {children}
             <UserState>
-              <FooterPublic />
+              <SubscriptionStatePublic>
+                <FooterPublic />
+              </SubscriptionStatePublic>
             </UserState>
           </>
         )}

@@ -92,6 +92,10 @@ exports.getPrivateDashboard = async(req, res, next) => {
           projects: user[0].projects,
           skills: user[0].skills,
           socialMedias: user[0].socialMedias,
+          subscriptions: (() => {
+            let filtered = redisAllData.subscriptionsRedis.filter(sub => sub.subsTo === req.session.userId)
+            return filtered.length
+          })(),
           techs: userTechs.length
         },
         aboutsCount: redisAllData.aboutsRedis.length,
@@ -104,6 +108,7 @@ exports.getPrivateDashboard = async(req, res, next) => {
         projectsCount: redisAllData.projectsRedis.length,
         skillsCount: redisAllData.skillsRedis.length,
         socialMediasCount: redisAllData.socialMediasRedis.length,
+        subscriptionsCount: redisAllData.subscriptionsRedis.length,
         techsCount: redisAllData.techsRedis.length,
         usersCount: redisAllData.usersRedis.length
       }

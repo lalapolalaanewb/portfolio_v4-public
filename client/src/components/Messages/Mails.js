@@ -139,7 +139,7 @@ const Mails = () => {
               color: theme.palette.common.white
             },
             rowStyle: rowData => ({
-              backgroundColor: rowData.statusNoty === 1 && (() => theme.palette.type === 'light' ? theme.palette.grey[300] : theme.palette.lighten.main)()
+              backgroundColor: (rowData.statusNoty === 0 || rowData.statusRead === 0) && (() => theme.palette.type === 'light' ? theme.palette.grey[300] : theme.palette.lighten.main)()
             })
           }}
           columns={[

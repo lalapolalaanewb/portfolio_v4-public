@@ -24,7 +24,7 @@ export const getSubs = async (dispatch) => {
     
     dispatch({
       type: 'SET_SUBS',
-      payload: result.subs 
+      payload: result 
     })
   })
   .catch(async error => { 
@@ -150,7 +150,7 @@ export const updateSubReply = async (dispatch, subId, intention) => {
 export const deleteSub = async (dispatch, subId) => {
   setLoading(dispatch, true)
   
-  await axios.post(baseUrl + `/delete/${subId}`, configPrivate)
+  await axios.delete(baseUrl + `/delete/${subId}`, configPrivate)
   .then(async res => {
     const result = await res.data.data
 

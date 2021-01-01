@@ -36,7 +36,7 @@ const setAllSubscription = async(redisAllSubscription) => {
 exports.addPublicSubscription = async (req, res, next) => {
   let {
     subscriber
-  } = req.body
+  } = req.body; console.log(req.body)
 
   // get subscriptions & users data from redis
   let redisAllData = await getAllData()
@@ -46,9 +46,14 @@ exports.addPublicSubscription = async (req, res, next) => {
   
   // return message
   let clientResMsg = '', adminResMsg = ''
-
+  
   // get contact info (active user)
-  let creator = users.find(user => user._id === req.session.userId)
+  let creator = users.find(user => user.status === 1)
+  if(!creator) return res.status(400).json({
+    success: false,
+    error: `Something went wrong. Please refresh the page and try again later.`,
+    data: {}
+  }) 
   let contact = contacts.find(state => state.creator === creator._id)
 
   // send noty to client (from)
@@ -61,7 +66,7 @@ exports.addPublicSubscription = async (req, res, next) => {
       refreshToken: contact.refreshToken
     },
     {
-      email: subscriber.fromWho,
+      email: subscriber,
     }
   )
   // throw error if email noty sent unsuccessful
@@ -81,7 +86,7 @@ exports.addPublicSubscription = async (req, res, next) => {
       email: creator.credentials.emails.main
     },
     {
-      email: subscriber.fromWho,
+      email: subscriber,
     }
   )
   // throw error if email noty sent unsuccessful
@@ -89,7 +94,7 @@ exports.addPublicSubscription = async (req, res, next) => {
 
   // create new mail
   const newMail = new Subscription({
-    fromWho: subscriber.fromWho,
+    fromWho: subscriber,
     statusNoty: clientMailResponse === 'Unsuccessful!' ? 0 : 1,
     subsTo: creator
   })
@@ -105,10 +110,10 @@ exports.addPublicSubscription = async (req, res, next) => {
     return res.status(200).json({
       success: true,
       count: 1,
-      data: 'Successfully send the mail.' + clientResMsg + adminResMsg
+      data: 'Successfully subscribed to our newsletter. Thank you!' + clientResMsg + adminResMsg
     })
   })
-  .catch(err => { console.log(err)
+  .catch(err => { 
     return res.status(500).json({
       success: false,
       error: `Newsletter mail sending failed. Please try again later.`,
@@ -128,9 +133,9 @@ exports.getPrivateSubscriptions = async (req, res, next) => {
 
   // get populated subs with users
   subs.forEach(sub => {
-    let populatedSubsTo = []
+    let populatedSubsTo
     users.forEach(user => {
-      if(user._id === sub.subsTo) populatedSubsTo.push({...user}) 
+      if(user._id === sub.subsTo) populatedSubsTo = {...user} 
     })
     sub.subsTo = populatedSubsTo
   })
@@ -158,7 +163,7 @@ exports.updatePrivateSubscriptionNoty = async (req, res, next) => {
   let clientResMsg = '', adminResMsg = ''
 
   // get contact info (active user)
-  let creator = users.find(user => user._id === req.session.userId)
+  let creator = users.find(user => user.status === 1)
   let contact = contacts.find(state => state.creator === creator._id)
   
   // send noty to client (from)
@@ -226,7 +231,7 @@ exports.updatePrivateSubscriptionNoty = async (req, res, next) => {
       }
     })
   })
-  .catch(err => { console.log(err)
+  .catch(err => { 
     return res.status(500).json({
       success: false,
       error: `Failed to update sub status noty from Subscription Collection`,
@@ -271,7 +276,7 @@ exports.updatePrivateSubscriptionRead = async (req, res, next) => {
       data: sub
     })
   })
-  .catch(err => { console.log(err)
+  .catch(err => { 
     return res.status(500).json({
       success: false,
       error: `Failed to update sub status read from Subscription Collection`,
@@ -316,7 +321,7 @@ exports.updatePrivateSubscriptionReply = async (req, res, next) => {
       data: sub
     })
   })
-  .catch(err => { console.log(err)
+  .catch(err => { 
     return res.status(500).json({
       success: false,
       error: `Failed to update sub status reply from Subscription Collection`,
