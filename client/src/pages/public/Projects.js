@@ -11,7 +11,6 @@ import { AiFillCloseSquare } from 'react-icons/ai'
 import { MdRefresh } from 'react-icons/md'
 import { FaTimes } from 'react-icons/fa'
 import { ProjectList } from '../../components/Projects/Public/ProjectList'
-import { checkUserExist, saveNewUser } from '../../contexts/Auth/AuthAction'
 
 const Projects = () => {
   const [projectsState, projectsDispatch] = useProjects()
@@ -24,44 +23,12 @@ const Projects = () => {
   const [optionCreatedAt, setOptionCreatedAt] = useState('latest')
   const [filterToggle, setFilterToggle] = useState(false)
   const [techFilterList, setTechFilterList] = useState([])
-  const [guestId, setGuestId] = useState('')
-  const [isRegister, setIsRegister] = useState(false)
 
-  // handle checking user existance
-  const checkUserExistance = async() => {
-    let { statusRegister, uid, message } = await checkUserExist()
-
-    if(!statusRegister && message !== null) {
-      return setError(projectsDispatch, { status: true, message: message })
-    } else {
-      // console.log('Status:' + statusRegister)
-      // console.log('Uid:' + uid)
-      setIsRegister(statusRegister)
-      setGuestId(uid)
-    }
-  }
-
-  // handle creating new user
-  const createNewUser = async(userEmail, userName, statusOpt) => {
-    let { statusRegister, uid, message } = await saveNewUser(userEmail, userName, statusOpt)
-    
-    if(!statusRegister) {
-      return setError(projectsDispatch, { status: true, message: message })
-    } else {
-      // console.log('Status:' + statusRegister)
-      // console.log('Uid:' + uid)
-      setIsRegister(statusRegister)
-      setGuestId(uid)
-    }
-  }
-  
   // handle fetching projects
   useEffect(() => {
     (async() => {
       // fetch projects & techList
       await getProjects(projectsDispatch)
-      // check if user exists
-      // await checkUserExistance()
 
       setLoading(projectsDispatch, false)
     })();
@@ -189,9 +156,6 @@ const Projects = () => {
               optionCreatedAt={optionCreatedAt}
               techFilterList={techFilterList}
               setLoading={setLoading}
-              isRegister={isRegister}
-              guestId={guestId}
-              createNewUser={createNewUser}
             />
           </div>
         </div>

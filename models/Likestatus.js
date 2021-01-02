@@ -12,7 +12,7 @@ function ipv4Required() {
 /** Data Schema */
 const LikestatusSchema = new mongoose.Schema({
   // Liked by User? 
-  user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  // user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   // IP Address
   ipv4: { type: String, trim: true, required: ipv4Required },
   // Liked projects
@@ -20,22 +20,22 @@ const LikestatusSchema = new mongoose.Schema({
     // Project ID
     projectId: { type: mongoose.Schema.Types.ObjectId, ref: "Project" },
     // Like Status
-    status: { type: String, trim: true, required: true, default: false }
+    status: { type: Boolean, required: true, default: false }
   }],
   // Liked posts
   likedPosts: [{
     // Post ID
     postId: { type: mongoose.Schema.Types.ObjectId, ref: "Post" },
     // Like Status
-    status: { type: String, trim: true, required: true, default: false }
+    status: { type: Boolean, required: true, default: false }
   }],
-  // Liked comments
-  likedComments: [{
-    // Comment ID
-    commentId: { type: mongoose.Schema.Types.ObjectId, ref: "Comment" },
-    // Like Status
-    status: { type: String, trim: true, required: true, default: false }
-  }]
+  // // Liked comments
+  // likedComments: [{
+  //   // Comment ID
+  //   commentId: { type: mongoose.Schema.Types.ObjectId, ref: "Comment" },
+  //   // Like Status
+  //   status: { type: Boolean, required: true, default: false }
+  // }]
 }, { timestamps: true })
 
 /** Exports */

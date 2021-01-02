@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useProjects } from '../../../contexts/Projects/Public/ProjectsState'
 import { updateProjectLikeCount } from '../../../contexts/Projects/Public/ProjectsAction'
 import Paginate from '../../global/Paginate'
+import { checkGuestExist, updateGuestInfo } from '../../../Utils/likes/likes'
 import { numberFormatting } from '../../../Utils/formatting/numberFormatting'
 import ReactMarkDown from 'react-markdown'
 import Markdown from '../../global/Markdown'
@@ -37,9 +38,6 @@ export const ProjectList = ({
   optionCreatedAt, 
   techFilterList,
   setLoading,
-  isRegister,
-  guestId,
-  createNewUser
 }) => {
   const [projectsState, projectsDispatch] = useProjects()
   const { projects } = projectsState
@@ -56,10 +54,9 @@ export const ProjectList = ({
   const [projectsPerGroup, setProjectsPerGroup] = useState(9)
   const [pageNumber, setPageNumber] = useState(1)
   const [projectId, setProjectId] = useState('')
+  const [guestData, setGuestData] = useState({})
   const [isLikeProject, setIsLikeProject] = useState(false)
-  const [isLikeProjectOpt, setIsLikeProjectOpt] = useState('')
-  const [likeProjectCount, setLikeProjectCount] = useState(0)
-  const [likeProjects, setLikeProjects] = useState([])
+  const [likedProjects, setLikedProjects] = useState([])
   const [copyLinkSuccess, setCopyLinkSuccess] = useState('')
   const [link2Copy, setLink2Copy] = useState(null)
 
@@ -115,13 +112,22 @@ export const ProjectList = ({
 
   // set current data
   useEffect(() => {
-    (() => {
+    (async () => {
       if(projects) {
         setPageNumber(() => getPageNum(projects))
         setFilteredProjects(() => {
           let projectsFilter = search(projects, '')
           return sorting(projectsFilter, false, 'latest')
         })
+
+        // get guest data
+        let guest = await checkGuestExist()
+        setGuestData(guest)
+        
+        // update liked post status
+        let selectedProjects = []
+        guest.likes.projects.forEach(project => project.status === true && selectedProjects.push(project._id))
+        if(selectedProjects.length > 0) setLikedProjects(selectedProjects)
       }
     })()
   }, [projects, projectsPerPage])
@@ -135,15 +141,33 @@ export const ProjectList = ({
   useEffect(() => {
     (async() => {
       if(isLikeProject) {
-        if(!isRegister || guestId === '') {
-          await createNewUser('', 'guest', 'likePost')
+        /** update cookie */
+        let checker = false
+        // update current guest posts data
+        guestData.likes.projects.forEach(project => {
+          if(project._id === projectId) {
+            project.status = !project.status
+            // set to true if post successfully found and updated
+            checker = true
+          }
+        })
+        if(checker) {
+          await updateGuestInfo(guestData)
+          let selected = guestData.likes.projects.find(project => project._id === projectId)
+          /** update redis */
+          await updateProjectLikeCount(projectsDispatch, projectId, selected, guestData.user)
         }
-        await updateProjectLikeCount( projectsDispatch, projectId, likeProjectCount, isLikeProjectOpt)
+        else {
+          // push new project data
+          guestData.likes.projects.push({ _id: projectId, status: true })
+          await updateGuestInfo(guestData)
+
+          /** update redis */
+          await updateProjectLikeCount(projectsDispatch, { _id: projectId, status: true }, guestData.user)
+        }
 
         setLoading(projectsDispatch, false)
         setProjectId('')
-        setIsLikeProjectOpt('')
-        setLikeProjectCount(0)
         setIsLikeProject(false)
       }
     })();
@@ -226,32 +250,19 @@ export const ProjectList = ({
               </ul>
             </CardContent>
             <CardActions disableSpacing>
-              <Tooltip TransitionComponent={Zoom} title={`${numberFormatting(1100)} likes`} placement="top-start">
-                {likeProjects.includes(proj._id) ? (
-                  <IconButton aria-label="like" className={classes.iconCtaLike}
-                    onClick={() => {
-                      setLikeProjects(() => likeProjects.filter(like => like !== guestId))
-                      setProjectId(proj._id)
-                      setIsLikeProjectOpt('minus')
-                      setLikeProjectCount(proj.like)
-                      setIsLikeProject(true)
-                    }}
-                  >
-                    <FavoriteIcon />
-                  </IconButton>
-                ) : (
-                  <IconButton aria-label="like" 
-                    onClick={() => {
-                      setLikeProjects([...likeProjects, guestId])
-                      setProjectId(proj._id)
-                      setIsLikeProjectOpt('add')
-                      setLikeProjectCount(proj.like)
-                      setIsLikeProject(true)
-                    }}
-                  >
-                    <FavoriteIcon />
-                  </IconButton>
-                )}
+              {/* <Tooltip TransitionComponent={Zoom} title={`${numberFormatting(1100)} likes`} placement="top-start"> */}
+              <Tooltip TransitionComponent={Zoom} title={likedProjects.includes(proj._id) ? 'Liked!' : 'Please like :-)'} placement="top-start">
+                <IconButton aria-label="like" className={likedProjects.includes(proj._id) && classes.iconCtaLike}
+                  onClick={() => {
+                    setLikedProjects(() => {
+                      return likedProjects.includes(proj._id) ? likedProjects.filter(liked => liked !== proj._id) : [...likedProjects, proj._id]
+                    })
+                    setProjectId(proj._id)
+                    setIsLikeProject(true)
+                  }}
+                >
+                  <FavoriteIcon />
+                </IconButton>
               </Tooltip>
               {proj.liveUrls.code && (
                 <Tooltip TransitionComponent={Zoom} title="View Code" placement="top-start">

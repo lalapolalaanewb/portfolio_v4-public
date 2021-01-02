@@ -139,7 +139,7 @@ export const PostsList = ({ searchKey, checkByOld, checkByLatest, optionCreatedA
                 </Grid>
                 <Grid item xs container direction="row" className={classes.counts}>
                   <Typography variant="body2" className={classes.likesCount} >
-                    <span>{numberFormatting(1000)}</span> Likes
+                    <span>{numberFormatting(post.like)}</span> {post.like > 1 ? ' Likes' : 'Like'}
                   </Typography>
                   {/* <Typography variant="body2" color="secondary" className={classNames(classes.commentsCount, classes.cursorPointer)}>
                     <span>{numberFormatting(10)}</span> comments

@@ -17,11 +17,16 @@ const {
 const getAllData = async() => {
   const redisAllData = await getDefaultAllData()
   return {
+    likeStatuses: redisAllData.likeStatusesRedis,
     projects: redisAllData.projectsRedis,
     techs: redisAllData.techsRedis,
     users: redisAllData.usersRedis
   }
 }
+// set new likeStatuses redis data
+const setAllLikeStatus = async(redisAllLikeStatuses) => {
+  await setAsync(`pfv4_likeStatuses`, JSON.stringify(redisAllLikeStatuses))
+} 
 // set new projects redis data
 const setAllProject = async(redisAllProject) => {
   await setAsync(`pfv4_projects`, JSON.stringify(redisAllProject))
@@ -51,6 +56,15 @@ const handleGetTechIds = async (techs, techNames) => {
 
   return techIds
 }
+
+// continuous timer
+// let now = new Date()
+// let millisTill6 = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 16, 28, 0, 0) - now
+// console.log(millisTill6)
+// if (millisTill6 < 0) { // wait 24hours to trigger again
+//   millisTill6 += 86400000 // it's after 10am, try 10am tomorrow.
+// }
+// setTimeout(function(){console.log("It's 4.28pm!")}, millisTill6)
 
 /** Methods */
 // @desc    Portfolio V4 Projects
@@ -93,44 +107,81 @@ exports.getPublicProjects = async(req, res, next) => {
 // @route   POST /api/v1/projects/public/update
 // @access  Public (Only need Admin Public Access Key)
 exports.updatePublicProject = async(req, res, next) => {
-  let status
+  let {
+    project, user
+  } = req.body
+  // return console.log(req.body)
+  // get likeStatuses, projects, techs, users data from redis
+  let redisAllData = await getAllData()
+  let likeStatuses = redisAllData.likeStatuses
 
-  return await Likestatus.find({ ipv4: req.body.ipv4 })
-  .then(async data => {
-    data.likedProjects.map(proj => {
-      if(proj.projectId === req.body.projectId) status = proj.status 
+  // check if user likeStatus exist
+  let likeStatus = likeStatuses.find(state => state.ipv4 === user)
+  if(!likeStatus) likeStatuses.push({
+    ipv4: user,
+    likedProjects: [{ projectId: project._id, status: project.status }],
+    likedPosts: []
+  }) 
+  else {
+    likeStatuses.forEach(state => {
+      if(state.ipv4 === user) {
+        let isLikedExist = false
+        state.likedProjects.forEach(liked => {
+          if(liked.projectId === project._id) {
+            liked.status = project.status
+            isLikedExist = true
+          }
+        })
+        if(isLikedExist === false) state.likedProjects.push({ projectId: project._id, status: project.status })
+      }
     })
+  }
 
-    if(status) return await Project.findByIdAndUpdate(
-      { _id: req.body.projectId },
-      { $set: { like: +req.body.projectLikeCount - 1 } }
-    )
-    else return await Project.findByIdAndUpdate(
-      { _id: req.body.projectId },
-      { $set: { like: +req.body.projectLikeCount + 1 } }
-    )
+  // set new likeStatuses redis
+  await setAllLikeStatus(likeStatuses)
+
+  return res.status(200).json({
+    success: true,
+    count: 1,
+    data: {}
   })
-  .then(async data => {
-    return await Likestatus.updateOne(
-      { ipv4: req.body.ipv4 },
-      { $set: { "likedProjects.$[projectId].status": !status } },
-      { arrayFilters: [{ "projectId.projectId": req.body.projectId }] }
-    )
-  })
-  .then(data => {
-    return res.status(200).json({
-      success: true,
-      count: data.length,
-      data: data
-    })
-  })
-  .catch(err => {
-    return res.status(500).json({
-      success: false,
-      error: `Failed to update data from Projects & Likestatus Collection`,
-      data: err
-    })
-  })
+
+  // return await Likestatus.find({ ipv4: req.body.ipv4 })
+  // .then(async data => {
+  //   data.likedProjects.map(proj => {
+  //     if(proj.projectId === req.body.projectId) status = proj.status 
+  //   })
+
+  //   if(status) return await Project.findByIdAndUpdate(
+  //     { _id: req.body.projectId },
+  //     { $set: { like: +req.body.projectLikeCount - 1 } }
+  //   )
+  //   else return await Project.findByIdAndUpdate(
+  //     { _id: req.body.projectId },
+  //     { $set: { like: +req.body.projectLikeCount + 1 } }
+  //   )
+  // })
+  // .then(async data => {
+  //   return await Likestatus.updateOne(
+  //     { ipv4: req.body.ipv4 },
+  //     { $set: { "likedProjects.$[projectId].status": !status } },
+  //     { arrayFilters: [{ "projectId.projectId": req.body.projectId }] }
+  //   )
+  // })
+  // .then(data => {
+  //   return res.status(200).json({
+  //     success: true,
+  //     count: data.length,
+  //     data: data
+  //   })
+  // })
+  // .catch(err => {
+  //   return res.status(500).json({
+  //     success: false,
+  //     error: `Failed to update data from Projects & Likestatus Collection`,
+  //     data: err
+  //   })
+  // })
 }
 
 // @desc    Portfolio V4 Projects Dashboard (Get All Projects)

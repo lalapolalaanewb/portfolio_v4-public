@@ -62,6 +62,13 @@ async function setDefaultAllData() {
   const jobsRedisExist = await getAsync(`pfv4_jobs`)
   if(!jobsRedisExist) await setAsync(`pfv4_jobs`, JSON.stringify(jobsDB))
 
+  /** set likeStatus all redis */
+  // get all likeStatus
+  const likeStatusesDB = await Likestatus.find().select('-__v')
+  // check if likeStatus all redis exist
+  const likeStatusesRedisExist = await getAsync(`pfv4_likeStatuses`)
+  if(!likeStatusesRedisExist) await setAsync(`pfv4_likeStatuses`, JSON.stringify(likeStatusesDB))
+
   /** set mail all redis */
   // get all mail
   const mailsDB = await Mail.find().select('-__v')
@@ -159,6 +166,8 @@ async function getDefaultAllData() {
   const homesRedis = JSON.parse(await getAsync(`pfv4_homes`))
   // get jobs
   const jobsRedis = JSON.parse(await getAsync(`pfv4_jobs`))
+  // get likeStatus
+  const likeStatusesRedis = JSON.parse(await getAsync(`pfv4_likeStatuses`))
   // get mails
   const mailsRedis = JSON.parse(await getAsync(`pfv4_mails`))
   // get medias
@@ -190,6 +199,7 @@ async function getDefaultAllData() {
     educationsRedis,
     homesRedis,
     jobsRedis,
+    likeStatusesRedis,
     mailsRedis,
     mediasRedis,
     mediaSocialsRedis,
@@ -231,6 +241,11 @@ async function resetDefaultAllData() {
   // get all job
   const jobsDB = await Job.find().select('-__v')
   await setAsync(`pfv4_jobs`, JSON.stringify(jobsDB))
+
+  /** set likeStatus all redis */
+  // get all likeStatus
+  const likeStatusesDB = await Likestatus.find().select('-__v')
+  await setAsync(`pfv4_likeStatuses`, JSON.stringify(likeStatusesDB))
 
   /** set mail all redis */
   // get all mail

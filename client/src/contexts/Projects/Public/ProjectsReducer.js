@@ -13,7 +13,7 @@ export default (state, action) => {
     case 'SET_ERROR':
       return {
         ...state,
-        error: action.payload.status,
+        status: action.payload.status,
         message: action.payload.message
       }
     case 'SET_LOADING':

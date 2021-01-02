@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import { usePost } from '../../contexts/Post/Public/PostState'
 import { getPost, setLoading, setError, updatePostLikeCount } from '../../contexts/Post/Public/PostAction'
 import { checkUserExist, saveNewUser } from '../../contexts/Auth/AuthAction'
+import { checkGuestExist, updateGuestInfo } from '../../Utils/likes/likes'
 import { numberFormatting } from '../../Utils/formatting/numberFormatting'
 import { DisqusCommentSection } from '../../components/global/Disqus'
 import ReactMarkDown from 'react-markdown'
@@ -31,44 +32,57 @@ const Post = () => {
   const shareUrl = window.location.href
   const [guestId, setGuestId] = useState('')
   const [isRegister, setIsRegister] = useState(false)
+
+  const [guestData, setGuestData] = useState({})
   const [isLikePost, setIsLikePost] = useState(false)
+  const [isLikedPost, setIsLikedPost] = useState(false)
+
   const [isLikePostOpt, setIsLikePostOpt] = useState('')
   const [likePostCount, setLikePostCount] = useState(0)
   const [likePosts, setLikePosts] = useState([])
 
   // handle checking user existance
-  const checkUserExistance = async() => {
-    let { statusRegister, uid, message } = await checkUserExist()
+  // const checkUserExistance = async() => {
+  //   let { statusRegister, uid, message } = await checkUserExist()
 
-    if(!statusRegister && message !== null) {
-      return setError(postDispatch, { status: true, message: message })
-    } else {
-      console.log('Status:' + statusRegister)
-      console.log('Uid:' + uid)
-      setIsRegister(statusRegister)
-      setGuestId(uid)
-    }
-  }
+  //   if(!statusRegister && message !== null) {
+  //     return setError(postDispatch, { status: true, message: message })
+  //   } else {
+  //     console.log('Status:' + statusRegister)
+  //     console.log('Uid:' + uid)
+  //     setIsRegister(statusRegister)
+  //     setGuestId(uid)
+  //   }
+  // }
 
   // handle creating new user
-  const createNewUser = async(userEmail, userName, statusOpt) => {
-    let { statusRegister, uid, message } = await saveNewUser(userEmail, userName, statusOpt)
+  // const createNewUser = async(userEmail, userName, statusOpt) => {
+  //   let { statusRegister, uid, message } = await saveNewUser(userEmail, userName, statusOpt)
     
-    if(!statusRegister) {
-      return setError(postDispatch, { status: true, message: message })
-    } else {
-      console.log('Status:' + statusRegister)
-      console.log('Uid:' + uid)
-      setIsRegister(statusRegister)
-      setGuestId(uid)
-    }
-  }
+  //   if(!statusRegister) {
+  //     return setError(postDispatch, { status: true, message: message })
+  //   } else {
+  //     console.log('Status:' + statusRegister)
+  //     console.log('Uid:' + uid)
+  //     setIsRegister(statusRegister)
+  //     setGuestId(uid)
+  //   }
+  // }
 
   // fetch post
   useEffect(() => {
     (async() => {
       // fetch single post
       await getPost(postDispatch, id)
+
+      // get guest data
+      let guest = await checkGuestExist()
+      setGuestData(guest)
+      
+      // update liked post status
+      let selected = guest.likes.posts.find(post => post._id === id)
+      if(selected) setIsLikedPost(() => selected.status === true ? true : false)
+
       // check if user exists
       // await checkUserExistance()
 
@@ -80,14 +94,31 @@ const Post = () => {
   useEffect(() => {
     (async() => {
       if(isLikePost) {
-        if(!isRegister || guestId === '') {
-          await createNewUser('', 'guest', 'likePost')
+        // if(!isRegister || guestId === '') {
+        //   await createNewUser('', 'guest', 'likePost')
+        // }
+        // await updatePostLikeCount( postDispatch, id, likePostCount, isLikePostOpt)
+        
+        // checker to check if post exist
+        let checker = false
+        // update current guest posts data
+        guestData.likes.posts.forEach(post => {
+          if(post._id === id) {
+            post.status = !post.status
+            // set to true if post successfully found and updated
+            checker = true
+          }
+        })
+        if(checker) await updateGuestInfo(guestData)
+        else {
+          // push new post data
+          guestData.likes.posts.push({ _id: id, status: true })
+          await updateGuestInfo(guestData)
         }
-        await updatePostLikeCount( postDispatch, id, likePostCount, isLikePostOpt)
 
         setLoading(postDispatch, false)
-        setIsLikePostOpt('')
-        setLikePostCount(0)
+        // setIsLikePostOpt('')
+        // setLikePostCount(0)
         setIsLikePost(false)
       }
     })();
@@ -176,7 +207,7 @@ const Post = () => {
               </div>
               <div className={classes.likeAndShare}>
                 <p className={classes.likes}>
-                  {likePosts.includes(post._id) ? 
+                  {/* {likePosts.includes(post._id) ? 
                     <AiFillLike size={22} style={{cursor: 'pointer'}} 
                       onClick={() => {
                         setLikePosts(() => likePosts.filter(like => like !== guestId))
@@ -194,9 +225,28 @@ const Post = () => {
                         setIsLikePost(true)
                       }} 
                     />
+                  } */}
+                  {isLikedPost === true ? 
+                    <>
+                      <AiFillLike size={22} style={{cursor: 'pointer'}} 
+                        onClick={() => {
+                          setIsLikedPost(!isLikedPost)
+                          setIsLikePost(true)
+                        }} 
+                      /> {' Liked!'}
+                    </> 
+                    : 
+                    <>
+                      <AiOutlineLike size={22} style={{cursor: 'pointer'}}
+                        onClick={() => {
+                          setIsLikedPost(!isLikedPost)
+                          setIsLikePost(true)
+                        }} 
+                      /> {' Please like :-)'}
+                    </>
                   }
-                  {` `}
-                  <span>{numberFormatting(+post.like)}</span> {+post.like > 1 ? 'likes' : 'like'}
+                  {/* {` `}
+                  <span>{numberFormatting(+post.like)}</span> {+post.like > 1 ? 'likes' : 'like'} */}
                 </p>
                 <ul className={classes.share}>
                   <li>
