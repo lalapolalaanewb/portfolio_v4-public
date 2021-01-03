@@ -17,15 +17,15 @@ const {
 const getAllData = async() => {
   const redisAllData = await getDefaultAllData()
   return {
-    likeStatuses: redisAllData.likeStatusesRedis,
+    likeStatusesTemp: redisAllData.likeStatusesTempRedis,
     projects: redisAllData.projectsRedis,
     techs: redisAllData.techsRedis,
     users: redisAllData.usersRedis
   }
 }
-// set new likeStatuses redis data
-const setAllLikeStatus = async(redisAllLikeStatuses) => {
-  await setAsync(`pfv4_likeStatuses`, JSON.stringify(redisAllLikeStatuses))
+// set new likeStatusesTemp redis data
+const setAllLikeStatusTemp = async(redisAllLikeStatusesTemp) => {
+  await setAsync(`pfv4_likeStatusesTemp`, JSON.stringify(redisAllLikeStatusesTemp))
 } 
 // set new projects redis data
 const setAllProject = async(redisAllProject) => {
@@ -111,19 +111,19 @@ exports.updatePublicProject = async(req, res, next) => {
     project, user
   } = req.body
   // return console.log(req.body)
-  // get likeStatuses, projects, techs, users data from redis
+  // get likeStatusesTemp, projects, techs, users data from redis
   let redisAllData = await getAllData()
-  let likeStatuses = redisAllData.likeStatuses
+  let likeStatusesTemp = redisAllData.likeStatusesTemp
 
-  // check if user likeStatus exist
-  let likeStatus = likeStatuses.find(state => state.ipv4 === user)
-  if(!likeStatus) likeStatuses.push({
+  // check if user likeStatusesTemp exist
+  let likeStatus = likeStatusesTemp.find(state => state.ipv4 === user)
+  if(!likeStatus) likeStatusesTemp.push({
     ipv4: user,
     likedProjects: [{ projectId: project._id, status: project.status }],
     likedPosts: []
   }) 
   else {
-    likeStatuses.forEach(state => {
+    likeStatusesTemp.forEach(state => {
       if(state.ipv4 === user) {
         let isLikedExist = false
         state.likedProjects.forEach(liked => {
@@ -136,9 +136,9 @@ exports.updatePublicProject = async(req, res, next) => {
       }
     })
   }
-
-  // set new likeStatuses redis
-  await setAllLikeStatus(likeStatuses)
+  console.log(likeStatusesTemp)
+  // set new likeStatusesTemp redis
+  await setAllLikeStatusTemp(likeStatusesTemp)
 
   return res.status(200).json({
     success: true,

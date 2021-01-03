@@ -109,16 +109,22 @@ const Post = () => {
             checker = true
           }
         })
-        if(checker) await updateGuestInfo(guestData)
+        if(checker) { 
+          await updateGuestInfo(guestData)
+          let selected = guestData.likes.posts.find(post => post._id === id)
+          /** update redis */
+          await updatePostLikeCount(postDispatch, selected, guestData.user) 
+        }
         else {
           // push new post data
           guestData.likes.posts.push({ _id: id, status: true })
           await updateGuestInfo(guestData)
+
+          /** update redis */
+          await updatePostLikeCount(postDispatch, { _id: id, status: true }, guestData.user)
         }
 
         setLoading(postDispatch, false)
-        // setIsLikePostOpt('')
-        // setLikePostCount(0)
         setIsLikePost(false)
       }
     })();

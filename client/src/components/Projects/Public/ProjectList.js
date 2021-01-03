@@ -155,7 +155,7 @@ export const ProjectList = ({
           await updateGuestInfo(guestData)
           let selected = guestData.likes.projects.find(project => project._id === projectId)
           /** update redis */
-          await updateProjectLikeCount(projectsDispatch, projectId, selected, guestData.user)
+          await updateProjectLikeCount(projectsDispatch, selected, guestData.user)
         }
         else {
           // push new project data

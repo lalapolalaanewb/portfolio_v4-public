@@ -58,7 +58,7 @@ export const getProjects = async (dispatch) => {
 }
 
 // Update Post Likes
-export const updateProjectLikeCount = async( dispatch, project, user) => {
+export const updateProjectLikeCount = async(dispatch, project, user) => {
   setLoading(dispatch, true)
 
   // do fetch
@@ -74,29 +74,6 @@ export const updateProjectLikeCount = async( dispatch, project, user) => {
   .then(async res => {
     const result = await res.data.data
     console.log(result)
-    // dispatch({
-    //   type: 'SET_PROJECTS',
-    //   payload: result 
-    // })
-  
-    // // sort out filter list from projects
-    // let categoriesProject = []
-  
-    // result.forEach(project => {
-    //   project.techs.forEach(tech => {
-    //     // save the tech if categoriesProject array still empty
-    //     if(categoriesProject.length === 0) categoriesProject.push({ _id: tech._id, name: tech.name })
-    //     else {
-    //       // check if category already exist in the array, if not , then save
-    //       if(categoriesProject.map(cat => cat._id).indexOf(tech._id) === -1) categoriesProject.push({ _id: tech._id, name: tech.name })
-    //     }
-    //   })
-    // })
-  
-    // dispatch({
-    //   type: 'SET_TECHLIST',
-    //   payload: categoriesProject
-    // })
   })
   .catch(async error => {
     const result = await error.response.data

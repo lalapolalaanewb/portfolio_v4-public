@@ -18,11 +18,16 @@ const {
 const getAllData = async() => {
   const redisAllData = await getDefaultAllData()
   return {
+    likeStatusesTemp: redisAllData.likeStatusesTempRedis,
     posts: redisAllData.postsRedis,
     techs: redisAllData.techsRedis,
     users: redisAllData.usersRedis
   }
 }
+// set new likeStatusesTemp redis data
+const setAllLikeStatusTemp = async(redisAllLikeStatusesTemp) => {
+  await setAsync(`pfv4_likeStatusesTemp`, JSON.stringify(redisAllLikeStatusesTemp))
+} 
 // set new posts redis data
 const setAllPost = async(redisAllPost) => {
   await setAsync(`pfv4_posts`, JSON.stringify(redisAllPost))
@@ -103,44 +108,83 @@ exports.getPublicPost = async(req, res, next) => {
 // @route   POST /api/v1/posts/public/update
 // @access  Public (Only need Admin Public Access Key)
 exports.updatePublicPost = async(req, res, next) => {
-  let status
+  let {
+    post, user
+  } = req.body
+  // return console.log(req.body)
+  // get likeStatusesTemp, posts, techs, users data from redis
+  let redisAllData = await getAllData()
+  let likeStatusesTemp = redisAllData.likeStatusesTemp
 
-  return await Likestatus.find({ ipv4: req.body.ipv4 })
-  .then(async data => {
-    data.likedPosts.map(post => {
-      if(post.postId === req.body.postId) status = post.status 
+  // check if user likeStatusesTemp exist
+  let likeStatus = likeStatusesTemp.find(state => state.ipv4 === user)
+  if(!likeStatus) likeStatusesTemp.push({
+    ipv4: user,
+    likedProjects: [],
+    likedPosts: [{ postId: post._id, status: post.status }]
+  }) 
+  else {
+    likeStatusesTemp.forEach(state => {
+      if(state.ipv4 === user) {
+        let isLikedExist = false
+        state.likedPosts.forEach(liked => {
+          if(liked.postId === post._id) {
+            liked.status = post.status
+            isLikedExist = true
+          }
+        })
+        if(isLikedExist === false) state.likedPosts.push({ postId: post._id, status: post.status })
+      }
     })
+  }
+  console.log(likeStatusesTemp)
+  // set new likeStatusesTemp redis
+  await setAllLikeStatusTemp(likeStatusesTemp)
 
-    if(status) return await Post.findByIdAndUpdate(
-      { _id: req.body.postId },
-      { $set: { like: +req.body.postLikeCount - 1 } }
-    )
-    else return await Post.findByIdAndUpdate(
-      { _id: req.body.postId },
-      { $set: { like: +req.body.postLikeCount + 1 } }
-    )
+  return res.status(200).json({
+    success: true,
+    count: 1,
+    data: {}
   })
-  .then(async data => {
-    return await Likestatus.updateOne(
-      { ipv4: req.body.ipv4 },
-      { $set: { "likedPosts.$[postId].status": !status } },
-      { arrayFilters: [{ "postId.postId": req.body.postId }] }
-    )
-  })
-  .then(data => {
-    return res.status(200).json({
-      success: true,
-      count: data.length,
-      data: data
-    })
-  })
-  .catch(err => {
-    return res.status(500).json({
-      success: false,
-      error: `Failed to update data from Posts & Likestatus Collection`,
-      data: err
-    })
-  })
+
+  // let status
+
+  // return await Likestatus.find({ ipv4: req.body.ipv4 })
+  // .then(async data => {
+  //   data.likedPosts.map(post => {
+  //     if(post.postId === req.body.postId) status = post.status 
+  //   })
+
+  //   if(status) return await Post.findByIdAndUpdate(
+  //     { _id: req.body.postId },
+  //     { $set: { like: +req.body.postLikeCount - 1 } }
+  //   )
+  //   else return await Post.findByIdAndUpdate(
+  //     { _id: req.body.postId },
+  //     { $set: { like: +req.body.postLikeCount + 1 } }
+  //   )
+  // })
+  // .then(async data => {
+  //   return await Likestatus.updateOne(
+  //     { ipv4: req.body.ipv4 },
+  //     { $set: { "likedPosts.$[postId].status": !status } },
+  //     { arrayFilters: [{ "postId.postId": req.body.postId }] }
+  //   )
+  // })
+  // .then(data => {
+  //   return res.status(200).json({
+  //     success: true,
+  //     count: data.length,
+  //     data: data
+  //   })
+  // })
+  // .catch(err => {
+  //   return res.status(500).json({
+  //     success: false,
+  //     error: `Failed to update data from Posts & Likestatus Collection`,
+  //     data: err
+  //   })
+  // })
 }
 
 // @desc    Portfolio V4 Posts Dashboard (Get All Posts)

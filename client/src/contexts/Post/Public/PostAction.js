@@ -91,22 +91,36 @@ export const getPost = async(dispatch, postId) => {
 }
 
 // Update Post Likes
-export const updatePostLikeCount = async( dispatch, postId, postLikeCount, postOpt) => {
+export const updatePostLikeCount = async( dispatch, post, user) => {
   setLoading(dispatch, true)
 
-  // get current user: guest cookie
-  let guest = getCookie('guest')
+  // do fetch
+  await axios.post(
+    '/api/v1/posts/public/update', 
+    { 
+      key: process.env.REACT_APP_ADMIN_ACCESS_PUBLIC,
+      post: post,
+      user: user 
+    }, 
+    config
+  )
+  .then(async res => {
+    const result = await res.data.data
+    console.log(result)
+  })
+  .catch(async error => {
+    const result = await error.response.data
+    // console.log(result.success)
+    // console.log(result.error)
 
-  if(!guest) {
-    console.log('update like comment: xde cookie')
-    return dispatch({
+    dispatch({
       type: 'SET_ERROR',
       payload: {
-        status: true,
-        message: 'Having trouble updating liking a comment. Please try again later.'
+        status: !result.success,
+        message: result.error
       }
     })
-  }
+  })
 
   // do fecth call here
   // to Model - Likestatus: to check whether the user/guest already leave a like this postId

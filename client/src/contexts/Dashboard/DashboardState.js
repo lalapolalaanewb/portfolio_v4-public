@@ -22,6 +22,7 @@ export const DashboardState = ({ children }) => {
         projects: 0,
         skills: 0,
         socialMedias: 0,
+        subscriptions: 0,
         techs: 0
       },
       aboutsCount: 0,
@@ -34,6 +35,7 @@ export const DashboardState = ({ children }) => {
       projectsCount: 0,
       skillsCount: 0,
       socialMediasCount: 0,
+      subscriptionsCount: 0,
       techsCount: 0,
       usersCount: 0
     },
