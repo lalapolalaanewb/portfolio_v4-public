@@ -38,9 +38,9 @@ const handleNoneInput = input => {
 // @access  Private (Require sessionId & uid)
 exports.getPrivateMedias = async (req, res, next) => {
   // get medias & users data from redis
-  let redisAllContact = await getAllData()
-  let medias = redisAllContact.medias
-  let users = redisAllContact.users
+  let redisAllData = await getAllData()
+  let medias = redisAllData.medias
+  let users = redisAllData.users
   
   medias.forEach(media => {
     users.forEach(user => {
@@ -71,9 +71,9 @@ exports.addPrivateMedia = async (req, res, next) => {
     })
 
     // get medias & users data from redis
-    let redisAllContact = await getAllData()
-    let mediasRedis = redisAllContact.medias
-    let users = redisAllContact.users
+    let redisAllData = await getAllData()
+    let mediasRedis = redisAllData.medias
+    let users = redisAllData.users
 
     // create new media
     let images = []
@@ -83,32 +83,38 @@ exports.addPrivateMedia = async (req, res, next) => {
         imgAlt: file.originalname,
         dimension: 'dimension',
         size: file.size,
-        creator: '5f8fc26c6a103b243428bec1'
+        creator: req.session.userId
       })
     })
 
     // insert all medias
     let medias = await Media.insertMany(images)
-    
+    console.log('medias: before populated'); console.log(medias)
     /** update medias redis */
     // add new added data to medias redis
-    medias.forEach(media => mediasRedis.push({...media}))
+    medias.forEach(media => mediasRedis.push({...media._doc, _id: media._doc._id.toString(), creator: media._doc.creator.toString()}))
     // set new medias redis
     await setAllMedia(mediasRedis)
-
+    
     // get populated medias
+    let newlyAddedIds = []
     medias.forEach(media => {
+      newlyAddedIds.push(media._doc._id.toString())
+    })
+    
+    let selectedMedias = mediasRedis.filter(media => newlyAddedIds.includes(media._id))
+    selectedMedias.forEach(media => {
       users.forEach(user => {
         if(user._id === media.creator) media.creator = {...user}
       })
     })
-
+    
     return res.status(200).json({
       success: true,
-      count: medias.length,
-      data: medias
+      count: selectedMedias.length,
+      data: selectedMedias
     })
-  } catch (err) {
+  } catch (err) { console.log(err)
     if (err.code === 'LIMIT_UNEXPECTED_FILE') return res.status(400).json({
       success: false,
       error: `You can upload only 10 images at a time!`,

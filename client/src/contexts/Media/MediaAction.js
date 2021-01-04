@@ -66,7 +66,7 @@ export const addMedias = async (dispatch, { images }) => {
       message: (() => images.length > 0 ? 'Successfully added new medias.' : 'Successfully added new media.')()
     })
   })
-  .catch(async error => { 
+  .catch(async error => { console.log(error)
     const result = await error.response.data
 
     // update state

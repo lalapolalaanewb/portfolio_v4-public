@@ -85,16 +85,14 @@ C:\parentFolder\ProjectFolder\> npm run dev
 
 ## Important Notes
 
-Below are the list of API routes use in the project:-
+Below are some of the CRUD images available in the project (admin access only):-
 
-- '/' -> handles of API routes (Home route)
-  - '/test' -> render and handle all testing data to help Portfolio V3 working
-  - '/global' -> render and handle same data required by all pages available (nav menu & footer)
-  - '/auth' -> render & handle all data required to be display on _Login_ page
-  - '/about' -> render & handles all data required to be display on _About_ page
-  - '/projects' -> render & handles all data required to be display on _Projects_ page
-  - '/blog' -> render & handles all data required to be display on _Blog_ page
-  - '/contact' -> render & handles all data required to be display on _Contact_ page
+![dashboard_light](/images/readme_adminDemo_1.PNG#thumbnail_fw)
+![posts_light](/images/readme_adminDemo_2.PNG#thumbnail_fw)
+![medias_light](/images/readme_adminDemo_3.PNG#thumbnail_fw)
+![abouts_light](/images/readme_adminDemo_4.PNG#thumbnail_fw)
+![resumes_light](/images/readme_adminDemo_5.PNG#thumbnail_fw)
+![posts_dark](/images/readme_adminDemo_6.PNG#thumbnail_fw)
 
 ## Deployment
 
@@ -103,7 +101,8 @@ No additional support on how to deploy on live system for this project.
 ## Built With
 
 - React
-- Node.js
+- Express
+- Node
 - MongoDB
 
 ## Contributing

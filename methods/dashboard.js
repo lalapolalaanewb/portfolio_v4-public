@@ -106,7 +106,7 @@ exports.getPrivateDashboard = async(req, res, next) => {
             return filtered.mails.length
           })(),
           medias: (() => {
-            let filtered = redisAllData.mediasRedis.filter(state => state.creator === user[0]._id)
+            let filtered = redisAllData.mediasRedis.filter(state => state.creator === user[0]._id.toString())
             return filtered.length
           })(),
           posts: user[0].posts,
@@ -118,7 +118,7 @@ exports.getPrivateDashboard = async(req, res, next) => {
             return filtered.length
           })(),
           techs: (() => {
-            let filtered = redisAllData.techsRedis.filter(state => state.creator === user[0]._id)
+            let filtered = redisAllData.techsRedis.filter(state => state.creator === user[0]._id.toString())
             return filtered.length
           })()
         },
@@ -281,7 +281,7 @@ exports.updatePrivateDashboardRedisAllData = async(req, res, next) => {
             return filtered.mails.length
           })(),
           medias: (() => {
-            let filtered = redisAllData.mediasRedis.filter(state => state.creator === user[0]._id)
+            let filtered = redisAllData.mediasRedis.filter(state => state.creator === user[0]._id.toString())
             return filtered.length
           })(),
           posts: user[0].posts,
@@ -293,7 +293,7 @@ exports.updatePrivateDashboardRedisAllData = async(req, res, next) => {
             return filtered.length
           })(),
           techs: (() => {
-            let filtered = redisAllData.techsRedis.filter(state => state.creator === user[0]._id)
+            let filtered = redisAllData.techsRedis.filter(state => state.creator === user[0]._id.toString())
             return filtered.length
           })()
         },
