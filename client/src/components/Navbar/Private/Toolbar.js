@@ -129,23 +129,26 @@ const Toolbar = ({
   useEffect(() => {
     (async() => {
       await getMails(mailDispatch)
-
       setLoading(mailDispatch, false)
-    })()
-  }, [])
 
-  /** sub get all - function */
-  useEffect(() => {
-    (async() => {
       await getSubs(subDispatch)
-
       setLoadingSub(subDispatch, false)
     })()
   }, [])
 
+  /** sub get all - function */
+  // useEffect(() => {
+  //   (async() => {
+  //     await getSubs(subDispatch)
+
+  //     setLoadingSub(subDispatch, false)
+  //   })()
+  // }, [])
+
   /** mail unread get count - function */
   useEffect(() => {
     setUnreadMails(() => {
+      console.log('mails: '); console.log(mails)
       if(mails.length > 0) {
         let unread = mails.filter(mail => mail.statusRead === 0)
         return unread.length.toString()
