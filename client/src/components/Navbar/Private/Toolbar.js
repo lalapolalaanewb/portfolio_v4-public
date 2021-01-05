@@ -146,16 +146,20 @@ const Toolbar = ({
   /** mail unread get count - function */
   useEffect(() => {
     setUnreadMails(() => {
-      let unread = mails.filter(mail => mail.statusRead === 0)
-      return unread.length.toString()
+      if(mails.length > 0) {
+        let unread = mails.filter(mail => mail.statusRead === 0)
+        return unread.length.toString()
+      } else return 0
     })
   }, [mails])
 
   /** sub unread get count - function */
   useEffect(() => {
     setUnreadSubs(() => {
-      let unread = subs.filter(sub => sub.statusRead === 0)
-      return unread.length.toString()
+      if(subs.length > 0) {
+        let unread = subs.filter(sub => sub.statusRead === 0)
+        return unread.length.toString()
+      } else return 0
     })
   }, [subs])
 
