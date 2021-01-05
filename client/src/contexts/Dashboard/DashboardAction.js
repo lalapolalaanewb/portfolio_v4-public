@@ -27,14 +27,14 @@ export const getDashboard = async(dispatch) => {
   })
   .catch(async error => { 
     const result = await error.response
-    console.log(result)
+    
     // forced logout if user's server's session expired
     // if(error.response.status === 401) forcedLogout()
     
     // set error
     setError(dispatch, {
       status: true,
-      message: result.data.error
+      message: result.data ? result.data.error : result
     })
   })
 }
