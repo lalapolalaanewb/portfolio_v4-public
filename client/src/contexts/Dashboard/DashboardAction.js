@@ -18,7 +18,7 @@ export const getDashboard = async(dispatch) => {
   await axios.get('/api/v1/dashboard', configPrivate)
   .then(async res => {
     const result = await res.data.data
-    
+    console.log(result)
     // set states
     dispatch({
       type: 'SET_DASHBOARD',

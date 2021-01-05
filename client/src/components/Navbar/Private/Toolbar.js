@@ -136,15 +136,6 @@ const Toolbar = ({
     })()
   }, [])
 
-  /** sub get all - function */
-  // useEffect(() => {
-  //   (async() => {
-  //     await getSubs(subDispatch)
-
-  //     setLoadingSub(subDispatch, false)
-  //   })()
-  // }, [])
-
   /** mail unread get count - function */
   useEffect(() => {
     setUnreadMails(() => {
