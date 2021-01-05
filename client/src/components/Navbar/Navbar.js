@@ -176,11 +176,11 @@ const Navbar = ({ isDarkMode, setIsDarkMode, children }) => {
       >
         <Toolbar className={classes.toolBarSpacing}>
           {authenticated ? (
-            <MailState>
-              <SubscriptionState>
+            <SubscriptionState>
+              <MailState>
                 <ToolBarPrivate classesGlobal={classes} logo={logo} goToPage={goToPage} setLogout={setLogout} open={open} setOpen={setOpen} />
-              </SubscriptionState>
-            </MailState>
+              </MailState>
+            </SubscriptionState>
           ) : (
             <ToolbarPublic classesGlobal={classes} logo={logo} menuPublic={menuPublic} menuPublicListItem={menuPublicListItem} buttonResume={buttonResume} open={open} setOpen={setOpen} darkModeToggle={darkModeToggle} />
           )}
