@@ -80,7 +80,7 @@ async function setDefaultAllData() {
   // get all mail
   const mailsDB = await Mail.find().select('-__v')
   // check if mail all redis exist
-  const mailsRedisExist = await getAsync(`pfv4_mails`)
+  const mailsRedisExist = await getAsync(`pfv4_mails`); console.log(mailsRedisExist)
   if(!mailsRedisExist) await setAsync(`pfv4_mails`, JSON.stringify(mailsDB))
 
   /** set media all redis */
