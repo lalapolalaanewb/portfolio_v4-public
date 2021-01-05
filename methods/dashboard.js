@@ -137,7 +137,7 @@ exports.getPrivateDashboard = async(req, res, next) => {
         usersCount: redisAllData.usersRedis.length
       }
     })
-  } catch(err) { 
+  } catch(err) { console.log(err)
     return res.status(500).json({
       success: false,
       error: `Failed to get data from Database`,
