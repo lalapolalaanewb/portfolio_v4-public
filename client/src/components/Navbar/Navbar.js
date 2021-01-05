@@ -4,8 +4,8 @@ import { useAuth } from '../../contexts/Auth/AuthState';
 import { isLogout, setLoading, isAuthenticated } from '../../contexts/Auth/AuthAction'
 import { UserState } from '../../contexts/User/Public/UserState'
 import { MailState } from '../../contexts/Mail/Private/MailState'
-import { SubscriptionState } from '../../contexts/Subscription/Private/SubscriptionState'
-import { SubscriptionState as SubscriptionStatePublic } from '../../contexts/Subscription/Public/SubscriptionState'
+import SubscriptionPrivate from '../../contexts/Subscription/Private/SubscriptionState'
+import SubscriptionPublic from '../../contexts/Subscription/Public/SubscriptionState'
 import { setCookie } from '../../services/Cookie'
 import classNames from 'classnames'
 import { makeStyles, useTheme } from '@material-ui/core/styles'
@@ -176,11 +176,11 @@ const Navbar = ({ isDarkMode, setIsDarkMode, children }) => {
       >
         <Toolbar className={classes.toolBarSpacing}>
           {authenticated ? (
-            <SubscriptionState>
-              <MailState>
+            <MailState>
+              <SubscriptionPrivate.SubscriptionState>
                 <ToolBarPrivate classesGlobal={classes} logo={logo} goToPage={goToPage} setLogout={setLogout} open={open} setOpen={setOpen} />
-              </MailState>
-            </SubscriptionState>
+              </SubscriptionPrivate.SubscriptionState>
+            </MailState>
           ) : (
             <ToolbarPublic classesGlobal={classes} logo={logo} menuPublic={menuPublic} menuPublicListItem={menuPublicListItem} buttonResume={buttonResume} open={open} setOpen={setOpen} darkModeToggle={darkModeToggle} />
           )}
@@ -223,9 +223,9 @@ const Navbar = ({ isDarkMode, setIsDarkMode, children }) => {
           <>
             {children}
             <UserState>
-              <SubscriptionStatePublic>
+              <SubscriptionPublic.SubscriptionState>
                 <FooterPublic />
-              </SubscriptionStatePublic>
+              </SubscriptionPublic.SubscriptionState>
             </UserState>
           </>
         )}

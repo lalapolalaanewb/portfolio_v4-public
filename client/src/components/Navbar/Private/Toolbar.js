@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useMail } from '../../../contexts/Mail/Private/MailState'
 import { setLoading, getMails } from '../../../contexts/Mail/Private/MailAction'
 import { useSubscription } from '../../../contexts/Subscription/Private/SubscriptionState'
-import { setLoading as setLoadingSub, getSubs } from '../../../contexts/Subscription/Private/SubscriptionAction'
+import SubActions from '../../../contexts/Subscription/Private/SubscriptionAction'
 import classNames from 'classnames'
 import { makeStyles } from '@material-ui/core/styles'
 import {
@@ -137,9 +137,9 @@ const Toolbar = ({
   /** sub get all - function */
   useEffect(() => {
     (async() => {
-      await getSubs(subDispatch)
+      await SubActions.getSubs(subDispatch)
 
-      setLoadingSub(subDispatch, false)
+      SubActions.setLoading(subDispatch, false)
     })()
   }, [])
 
