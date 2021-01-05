@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useMail } from '../../../contexts/Mail/Private/MailState'
 import { setLoading, getMails } from '../../../contexts/Mail/Private/MailAction'
 import { useSubscription } from '../../../contexts/Subscription/Private/SubscriptionState'
-import SubActions from '../../../contexts/Subscription/Private/SubscriptionAction'
+import { setLoading as setLoadingSub, getSubs } from '../../../contexts/Subscription/Private/SubscriptionAction'
 import classNames from 'classnames'
 import { makeStyles } from '@material-ui/core/styles'
 import {
@@ -137,9 +137,9 @@ const Toolbar = ({
   /** sub get all - function */
   useEffect(() => {
     (async() => {
-      await SubActions.getSubs(subDispatch)
+      await getSubs(subDispatch)
 
-      SubActions.setLoading(subDispatch, false)
+      setLoadingSub(subDispatch, false)
     })()
   }, [])
 
@@ -154,14 +154,14 @@ const Toolbar = ({
   }, [mails])
 
   /** sub unread get count - function */
-  useEffect(() => {
-    setUnreadSubs(() => {
-      if(subs.length > 0) {
-        let unread = subs.filter(sub => sub.statusRead === 0)
-        return unread.length.toString()
-      } else return 0
-    })
-  }, [subs])
+  // useEffect(() => {
+  //   setUnreadSubs(() => {
+  //     if(subs.length > 0) {
+  //       let unread = subs.filter(sub => sub.statusRead === 0)
+  //       return unread.length.toString()
+  //     } else return 0
+  //   })
+  // }, [subs])
 
   return (
     <>
