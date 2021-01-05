@@ -154,14 +154,15 @@ const Toolbar = ({
   }, [mails])
 
   /** sub unread get count - function */
-  // useEffect(() => {
-  //   setUnreadSubs(() => {
-  //     if(subs.length > 0) {
-  //       let unread = subs.filter(sub => sub.statusRead === 0)
-  //       return unread.length.toString()
-  //     } else return 0
-  //   })
-  // }, [subs])
+  useEffect(() => {
+    setUnreadSubs(() => {
+      console.log('subs: '); console.log(subs)
+      if(subs.length > 0) {
+        let unread = subs.filter(sub => sub.statusRead === 0)
+        return unread.length.toString()
+      } else return 0
+    })
+  }, [subs])
 
   return (
     <>
