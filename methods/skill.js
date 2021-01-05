@@ -63,7 +63,7 @@ exports.getPublicSkills = async(req, res, next) => {
   let user = users.find(user => user.status === 1)
   if(!user) return res.status(400).json({
     success: false,
-    error: `No active user found from User Collection`,
+    error: `No active user found.`,
     data: {}
   })
 

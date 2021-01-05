@@ -51,6 +51,11 @@ exports.getPrivateUserHome = async(req, res, next) => {
   
   // get all user homes
   let userHomes = homes.filter(state => user.homes.includes(state._id))
+  if(!userHomes) return res.status(400).json({
+    success: false,
+    error: `Failed to get user's homes data from Home Collection`,
+    data: {}
+  })
 
   return res.status(200).json({
     success: true,

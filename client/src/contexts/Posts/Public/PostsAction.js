@@ -41,13 +41,13 @@ export const getPosts = async (dispatch) => {
     })
   })
   .catch(async error => {
-    const result = await error.response.data
+    const result = await error.response
 
     dispatch({
       type: 'SET_ERROR',
       payload: {
         status: true,
-        message: result.error
+        message: result
       }
     })
   })

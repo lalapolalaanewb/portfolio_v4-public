@@ -65,7 +65,7 @@ exports.getPublicUserFooterPublic = async(req, res, next) => {
   let user = users.find(user => user.status === 1)
   if(!user) return res.status(400).json({
     success: false,
-    error: `No active user found from User Collection`,
+    error: `No active user found. Please refresh the page or try again later.`,
     data: {}
   })
 
@@ -108,7 +108,7 @@ exports.getPublicUserHome = async(req, res, next) => {
   let user = users.find(user => user.status === 1)
   if(!user) return res.status(400).json({
     success: false,
-    error: `No active user found from User Collection`,
+    error: `No active user found. Please refresh the page or try again later.`,
     data: {}
   })
 
@@ -147,7 +147,7 @@ exports.getPublicUserAbout = async(req, res, next) => {
   let user = users.find(user => user.status === 1)
   if(!user) return res.status(400).json({
     success: false,
-    error: `No active user found from User Collection`,
+    error: `No active user found. Please refresh the page or try again later.`,
     data: {}
   })
 
@@ -219,7 +219,7 @@ exports.getPublicUserResume = async(req, res, next) => {
   let user = users.find(user => user.status === 1)
   if(!user) return res.status(400).json({
     success: false,
-    error: `No active user found from User Collection`,
+    error: `No active user found. Please refresh the page or try again later.`,
     data: {}
   })
 

@@ -51,7 +51,12 @@ exports.getPrivateUserAbout = async(req, res, next) => {
   
   // get all user abouts
   let userAbouts = abouts.filter(state => user.abouts.includes(state._id))
-
+  if(!userAbouts) return res.status(400).json({
+    success: false,
+    error: `Failed to get user's abouts data from About Collection`,
+    data: {}
+  })
+  
   return res.status(200).json({
     success: true,
     count: userAbouts.length,

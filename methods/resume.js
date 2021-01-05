@@ -74,6 +74,11 @@ exports.getPrivateUserResume = async(req, res, next) => {
 
   // get active user
   let user = users.find(user => user.status === 1)
+  if(!user) return res.status(400).json({
+    success: false,
+    error: `Failed to get active user's resumes data from Resume Collection`,
+    data: {}
+  })
 
   // get populated user (educations)
   let edusPopulated = []

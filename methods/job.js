@@ -49,6 +49,11 @@ exports.getPrivateUserJob = async(req, res, next) => {
   
   // get all user jobs
   let userJobs = jobs.filter(state => user.jobs.includes(state._id))
+  if(!userJobs) return res.status(400).json({
+    success: false,
+    error: `Failed to get user's jobs data from Job Collection`,
+    data: {}
+  })
 
   return res.status(200).json({
     success: true,

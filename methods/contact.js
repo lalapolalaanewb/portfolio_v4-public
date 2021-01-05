@@ -31,6 +31,12 @@ exports.getPrivateContact = async (req, res, next) => {
   let redisAllContact = await getAllContact()
   
   let userContact = redisAllContact.find(contact => contact.creator === req.session.userId)
+  if(!userContact) return res.status(400).json({
+    success: false,
+    error: `Failed to get contact data from Contact Collection`,
+    data: {}
+  })
+  
   return res.status(200).json({
     success: true,
     count: 1,

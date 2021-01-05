@@ -48,6 +48,11 @@ exports.getPublicContactStatus = async (req, res, next) => {
   
   // get active contact info
   let contact = contacts.find(state => state.creator === user._id)
+  if(!contact) return res.status(400).json({
+    success: false,
+    error: `Failed to get active user contact status data.`,
+    data: {}
+  })
 
   return res.status(200).json({
     success: true,
@@ -180,6 +185,11 @@ exports.getPrivateMails = async (req, res, next) => {
 
   // get user contact info
   let contact = contacts.find(state => state.creator === req.session.userId)
+  if(!contact) return res.status(400).json({
+    success: false,
+    error: `Failed to get active user contact data from Contact Collection`,
+    data: {}
+  })
 
   // get populated contact with mails
   let populatedMails = []

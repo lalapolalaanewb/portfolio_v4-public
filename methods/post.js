@@ -88,6 +88,11 @@ exports.getPublicPost = async(req, res, next) => {
 
   // get selected post info
   let post = posts.find(post => post._id === req.body.postId)
+  if(!post) return res.status(400).json({
+    success: false,
+    error: `Failed to get post data. Please refresh the page or try again later.`,
+    data: {}
+  })
   // get populated post (with creator)
   users.forEach(user => {
     if(user._id === post.creator) post.creator = {...user}

@@ -43,15 +43,15 @@ export const getProjects = async (dispatch) => {
     })
   })
   .catch(async error => {
-    const result = await error.response.data
+    const result = await error.response
     // console.log(result.success)
     // console.log(result.error)
 
     dispatch({
       type: 'SET_ERROR',
       payload: {
-        status: !result.success,
-        message: result.error
+        status: true,
+        message: result
       }
     })
   })
@@ -76,15 +76,15 @@ export const updateProjectLikeCount = async(dispatch, project, user) => {
     console.log(result)
   })
   .catch(async error => {
-    const result = await error.response.data
+    const result = await error.response
     // console.log(result.success)
     // console.log(result.error)
 
     dispatch({
       type: 'SET_ERROR',
       payload: {
-        status: !result.success,
-        message: result.error
+        status: true,
+        message: result
       }
     })
   })

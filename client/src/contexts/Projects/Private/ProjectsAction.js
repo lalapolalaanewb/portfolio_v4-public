@@ -55,7 +55,7 @@ export const getProjects = async (dispatch) => {
     // set error
     setError(dispatch, {
       status: true,
-      message: result.data.error
+      message: result
     })
   })
 }

@@ -49,6 +49,11 @@ exports.getPrivateUserEducation = async(req, res, next) => {
   
   // get all user edus
   let userEdus = edus.filter(edu => user.educations.includes(edu._id))
+  if(!userEdus) return res.status(400).json({
+    success: false,
+    error: `Failed to get user's edus data from Education Collection`,
+    data: {}
+  })
 
   return res.status(200).json({
     success: true,

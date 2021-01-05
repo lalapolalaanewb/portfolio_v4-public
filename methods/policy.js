@@ -41,7 +41,12 @@ exports.getPublicPolicyComment = async(req, res, next) => {
 
   // get active policy info
   let policy = policies.find(policy => policy.status === 1)
-  
+  if(!policy) return res.status(400).json({
+    success: false,
+    error: `Failed to get active comment policy data.`,
+    data: {}
+  })
+
   return res.status(200).json({
     success: true,
     count: 1,

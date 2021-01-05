@@ -109,15 +109,15 @@ export const updatePostLikeCount = async( dispatch, post, user) => {
     console.log(result)
   })
   .catch(async error => {
-    const result = await error.response.data
+    const result = await error.response
     // console.log(result.success)
     // console.log(result.error)
 
     dispatch({
       type: 'SET_ERROR',
       payload: {
-        status: !result.success,
-        message: result.error
+        status: true,
+        message: result
       }
     })
   })

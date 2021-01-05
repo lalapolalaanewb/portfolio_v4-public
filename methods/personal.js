@@ -45,7 +45,12 @@ exports.getPrivateUserPersonal = async(req, res, next) => {
 
   // get active user info
   let user = users.find(user => user.status === 1)
-  
+  if(!user) return res.status(400).json({
+    success: false,
+    error: `Failed to get active user data from User Collection`,
+    data: {}
+  })
+
   // get all user jobs
   return res.status(200).json({
     success: true,
