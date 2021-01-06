@@ -22,7 +22,10 @@ export const getDashboard = async(dispatch) => {
     // set states
     dispatch({
       type: 'SET_DASHBOARD',
-      payload: result
+      payload: {
+        ...result,
+        user: { ...result.user }
+      }
     })
   })
   .catch(async error => { 

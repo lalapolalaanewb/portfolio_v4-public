@@ -5,6 +5,7 @@ export default (state, action) => {
         ...state,
         dashboard: {
           ...state.dashboard,
+          ...action.payload,
           user: action.payload.user
         }
       }
