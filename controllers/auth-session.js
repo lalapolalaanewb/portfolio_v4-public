@@ -4,7 +4,7 @@ const { SESS_NAME, SESS_ABSOULTE_TIMEOUT } = require('./session')
 
 /** Auth Session Functions Handler */
 // Assign session to login user
-exports.logIn = (req, userId) => {
+exports.logIn = async(req, userId) => {
   // create userId session
   req.session.userId = userId
   // session createdAt
