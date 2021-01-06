@@ -19,7 +19,7 @@ export const getMails = async (dispatch) => {
   setLoading(dispatch, true)
 
   // do fetch
-  await axios.post(baseUrl + '/get', {}, configPrivate)
+  await axios.post(baseUrl + '/get', configPrivate)
   .then(async res => {
     const result = await res.data.data
     

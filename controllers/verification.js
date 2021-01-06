@@ -1,6 +1,6 @@
 /** Verification Functions Handler */
 // Verify not loggeed-in user
-exports.redirect2Login = async(req, res, next) => {
+exports.redirect2Login = async(req, res, next) => { console.log(req.session)
   if(!req.session.userId) {
     console.log('xde session server')
     return res.status(401).json({
