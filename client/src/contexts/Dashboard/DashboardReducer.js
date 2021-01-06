@@ -3,7 +3,10 @@ export default (state, action) => {
     case 'SET_DASHBOARD':
       return {
         ...state,
-        dashboard: action.payload
+        dashboard: {
+          ...state.dashboard,
+          user: action.payload.user
+        }
       }
     case 'SET_SUCCESS':
       return {
