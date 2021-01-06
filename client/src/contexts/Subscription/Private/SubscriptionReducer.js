@@ -3,7 +3,7 @@ export default (state, action) => {
     case 'SET_SUBS':
       return {
         ...state,
-        subs: action.payload
+        subs: [ ...state.subs, ...action.payload ]
       }
     case 'ADD_SUB':
       return {
