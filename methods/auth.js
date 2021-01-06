@@ -44,7 +44,7 @@ exports.userLogin = async(req, res, next) => {
   })
   
   // assign new session data for user
-  await logIn(req, userExist._id)
+  logIn(req, userExist._id)
 
   // set all available data to redis
   await setDefaultAllData()
