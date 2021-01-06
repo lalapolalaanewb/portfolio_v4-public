@@ -32,10 +32,11 @@ export const getDashboard = async(dispatch) => {
     // if(error.response.status === 401) forcedLogout()
     
     // set error
-    // setError(dispatch, {
-    //   status: true,
-    //   message: result.status === 400 || result.status === 401 ? result.data.error : result
-    // })
+    setError(dispatch, {
+      status: true,
+      // message: result.status === 400 || result.status === 401 ? result.data.error : result
+      message: result
+    })
   })
 }
 
