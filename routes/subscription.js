@@ -25,7 +25,7 @@ router.route('/public/add')
 // @route   POST /api/v1/subscriptions/private/get
 // @access  Private (Require sessionId & uid)
 router.route('/private/get')
-  .get(redirect2Login, getPrivateSubscriptions)
+  .post(redirect2Login, getPrivateSubscriptions)
   // .get(getPrivateSubscriptions)
 
 // @desc    Portfolio V4 Subscription Dashboard (Update A Subscription Status Noty)
