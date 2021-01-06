@@ -15,18 +15,14 @@ export const setSuccess = (dispatch, success) => dispatch({ type: 'SET_SUCCESS',
 export const getDashboard = async(dispatch) => {
   setLoading(dispatch, true)
   
-  await axios.get('/api/v1/dashboard', configPrivate)
-  .then(res => res.json())
-  .then(async data => {
-    const result = await data.data.data
+  await axios.post('/api/v1/dashboard', configPrivate)
+  .then(async res => {
+    const result = await res.data.data
     console.log(result)
     // set states
     dispatch({
       type: 'SET_DASHBOARD',
-      payload: {
-        ...result,
-        user: { ...result.user }
-      }
+      payload: result
     })
   })
   .catch(async error => { 

@@ -24,7 +24,7 @@ export const getSubs = async (dispatch) => {
     
     dispatch({
       type: 'SET_SUBS',
-      payload: [ ...result ] 
+      payload: result 
     })
   })
   .catch(async error => { 
