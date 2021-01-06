@@ -90,7 +90,7 @@ exports.getPrivateDashboard = async(req, res, next) => {
       error: `Failed to get active user data from User Collection`,
       data: {}
     })
-    
+    console.log(user[0])
     return res.status(200).json({
       success: true,
       count: user.length,
