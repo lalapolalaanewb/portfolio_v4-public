@@ -14,8 +14,8 @@ export const setSuccess = (dispatch, success) => dispatch({ type: 'SET_SUCCESS',
 // Get All Dashboard
 export const getDashboard = async(dispatch) => {
   setLoading(dispatch, true)
-  
-  await axios.post('/api/v1/dashboard', configPrivate)
+  console.log(configPrivate)
+  await axios.post('/api/v1/dashboard', {}, configPrivate)
   .then(async res => {
     const result = await res.data.data
     console.log(result)
@@ -34,8 +34,7 @@ export const getDashboard = async(dispatch) => {
     // set error
     setError(dispatch, {
       status: true,
-      // message: result.status === 400 || result.status === 401 ? result.data.error : result
-      message: result
+      message: result.status === 400 || result.status === 401 ? result.data.error : result
     })
   })
 }

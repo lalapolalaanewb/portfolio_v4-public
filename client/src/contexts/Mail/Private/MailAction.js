@@ -19,7 +19,7 @@ export const getMails = async (dispatch) => {
   setLoading(dispatch, true)
 
   // do fetch
-  await axios.post(baseUrl + '/get', configPrivate)
+  await axios.post(baseUrl + '/get', {}, configPrivate)
   .then(async res => {
     const result = await res.data.data
     
@@ -42,8 +42,7 @@ export const getMails = async (dispatch) => {
     // set error
     setError(dispatch, {
       status: true,
-      // message: result.status === 400 || result.status === 401 ? result.data.error : result
-      message: result
+      message: result.status === 400 || result.status === 401 ? result.data.error : result
     })
   })
 }
