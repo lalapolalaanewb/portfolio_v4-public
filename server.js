@@ -36,6 +36,7 @@ app.use(session({
   store: new RedisStore({ client: redisClient }),
   ...SESS_OPTIONS
 }))
+app.disable('etag');
 
 /** Conditional Global Middlewares */
 // Morgan Console/Server Status
