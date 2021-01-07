@@ -17,43 +17,13 @@ export const getDashboard = async(dispatch) => {
   console.log(configPrivate)
   await axios.get('/api/v1/dashboard', configPrivate)
   .then(async res => {
-    const result = await res
+    const result = await res.data.data
     console.log(result)
-    // set states 
-    let pp = {
-      user: {
-        _id: '',
-        abouts: 0,
-        edus: 0,
-        homes: 0,
-        jobs: 0,
-        mails: 0,
-        medias: 0,
-        posts: 0,
-        projects: 0,
-        skills: 0,
-        socialMedias: 0,
-        subscriptions: 0,
-        techs: 0
-      },
-      aboutsCount: 0,
-      edusCount: 0,
-      homesCount: 0,
-      jobsCount: 0,
-      mailsCount: 0,
-      mediasCount: 0,
-      postsCount: 0,
-      projectsCount: 0,
-      skillsCount: 0,
-      socialMediasCount: 0,
-      subscriptionsCount: 0,
-      techsCount: 0,
-      usersCount: 0
-    }
-    dispatch({
-      type: 'SET_DASHBOARD',
-      payload: result.status !== 304 ? result.data.data : pp
-    })
+    // set states
+    // dispatch({
+    //   type: 'SET_DASHBOARD',
+    //   payload: result
+    // })
   })
   .catch(async error => { 
     const result = await error.response
