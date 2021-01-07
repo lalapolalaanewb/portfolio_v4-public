@@ -34,7 +34,8 @@ export const getDashboard = async(dispatch) => {
     // set error
     setError(dispatch, {
       status: true,
-      message: result.status === 400 || result.status === 401 ? result.data.error : result
+      // message: result.status === 400 || result.status === 401 ? result.data.error : result
+      message: result
     })
   })
 }
