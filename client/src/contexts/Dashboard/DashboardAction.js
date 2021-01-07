@@ -17,12 +17,12 @@ export const getDashboard = async(dispatch) => {
   console.log(configPrivate)
   await axios.get('/api/v1/dashboard', configPrivate)
   .then(async res => {
-    const result = await res.data.data
+    const result = await res
     console.log(result)
     // set states
-    dispatch({
+    if(result.status !== 304) dispatch({
       type: 'SET_DASHBOARD',
-      payload: result
+      payload: result.data.data
     })
   })
   .catch(async error => { 

@@ -91,7 +91,6 @@ exports.getPrivateDashboard = async(req, res, next) => {
       data: {}
     })
     
-    // res.setHeader('Last-Modified', (new Date()).toUTCString());
     return res.status(200).json({
       success: true,
       count: user.length,
