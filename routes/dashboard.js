@@ -17,7 +17,7 @@ const {
 // @route   POST /api/v1/dashboard
 // @access  Private (Require sessionId & uid)
 router.route('/')
-  .get(redirect2Login, getPrivateDashboard)
+  .post(redirect2Login, getPrivateDashboard)
   // .get(getPrivateDashboard)
 
 // @desc    Portfolio V4 Dashboard (Reset All Redis Data)

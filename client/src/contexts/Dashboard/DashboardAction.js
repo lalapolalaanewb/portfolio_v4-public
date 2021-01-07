@@ -15,7 +15,7 @@ export const setSuccess = (dispatch, success) => dispatch({ type: 'SET_SUCCESS',
 export const getDashboard = async(dispatch) => {
   setLoading(dispatch, true)
   console.log(configPrivate)
-  await axios.get('/api/v1/dashboard', configPrivate)
+  await axios.post('/api/v1/dashboard', {}, configPrivate)
   .then(async res => {
     const result = await res.data.data
     console.log(result)
