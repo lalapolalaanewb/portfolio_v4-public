@@ -122,19 +122,21 @@ exports.getPrivateDashboard = async(req, res, next) => {
             return filtered.length
           })()
         },
-        aboutsCount: redisAllData.aboutsRedis.length,
-        edusCount: redisAllData.educationsRedis.length,
-        homesCount: redisAllData.homesRedis.length,
-        jobsCount: redisAllData.jobsRedis.length,
-        mailsCount: redisAllData.mailsRedis.length,
-        mediasCount: redisAllData.mediasRedis.length,
-        postsCount: redisAllData.postsRedis.length,
-        projectsCount: redisAllData.projectsRedis.length,
-        skillsCount: redisAllData.skillsRedis.length,
-        socialMediasCount: redisAllData.socialMediasRedis.length,
-        subscriptionsCount: redisAllData.subscriptionsRedis.length,
-        techsCount: redisAllData.techsRedis.length,
-        usersCount: redisAllData.usersRedis.length
+        total: {
+          aboutsCount: redisAllData.aboutsRedis.length,
+          edusCount: redisAllData.educationsRedis.length,
+          homesCount: redisAllData.homesRedis.length,
+          jobsCount: redisAllData.jobsRedis.length,
+          mailsCount: redisAllData.mailsRedis.length,
+          mediasCount: redisAllData.mediasRedis.length,
+          postsCount: redisAllData.postsRedis.length,
+          projectsCount: redisAllData.projectsRedis.length,
+          skillsCount: redisAllData.skillsRedis.length,
+          socialMediasCount: redisAllData.socialMediasRedis.length,
+          subscriptionsCount: redisAllData.subscriptionsRedis.length,
+          techsCount: redisAllData.techsRedis.length,
+          usersCount: redisAllData.usersRedis.length
+        }
       }
     })
   } catch(err) { console.log(err)

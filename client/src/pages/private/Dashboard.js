@@ -14,6 +14,7 @@ import { BsFilePost } from 'react-icons/bs'
 import { GoMailRead } from 'react-icons/go'
 import { HiBriefcase, HiHome, HiUser } from 'react-icons/hi'
 import { MdPhotoAlbum, MdSchool, MdSubscriptions } from 'react-icons/md'
+import { getCookie } from '../../services/Cookie'
 
 const Dashboard = () => {
   const [dashboardState, dashboardDispatch] = useDashboard()
@@ -28,9 +29,34 @@ const Dashboard = () => {
   /** dashboard get - function */
   useEffect(() => {
     (async() => {
-      await getDashboard(dashboardDispatch)
+      // await getDashboard(dashboardDispatch)
 
-      setLoading(dashboardDispatch, false) 
+      setLoading(dashboardDispatch, false)
+      
+      await fetch('/api/v1/dashboard', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: (() => {
+            let uid = getCookie('uid')
+            return `Bearer ${uid}`
+          })()
+        }
+      })
+      .then(async res => {
+        const result = await res.json()
+        console.log(result)
+        dashboardDispatch({
+          type: 'SET_DASHBOARD',
+          payload: {
+            total: result.data.total,
+            user: result.data.user
+          }
+        })
+      })
+      .catch(err => console.log(err.response))
+      console.log(dashboard)
+      setLoading(dashboardDispatch, false)
     })()
   }, [])
 
@@ -77,7 +103,7 @@ const Dashboard = () => {
             </div>
             <div>
               <Typography variant="h5" className={classes.title}>About</Typography>
-              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.aboutsCount}</Typography>
+              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.total.aboutsCount}</Typography>
             </div>
           </div>
           <div className={classes.card}>
@@ -86,7 +112,7 @@ const Dashboard = () => {
             </div>
             <div>
               <Typography variant="h5" className={classes.title}>Education</Typography>
-              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.edusCount}</Typography>
+              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.total.edusCount}</Typography>
             </div>
           </div>
           <div className={classes.card}>
@@ -95,7 +121,7 @@ const Dashboard = () => {
             </div>
             <div>
               <Typography variant="h5" className={classes.title}>Home</Typography>
-              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.homesCount}</Typography>
+              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.total.homesCount}</Typography>
             </div>
           </div>
           <div className={classes.card}>
@@ -104,7 +130,7 @@ const Dashboard = () => {
             </div>
             <div>
               <Typography variant="h5" className={classes.title}>Job</Typography>
-              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.jobsCount}</Typography>
+              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.total.jobsCount}</Typography>
             </div>
           </div>
           <div className={classes.card}>
@@ -113,7 +139,7 @@ const Dashboard = () => {
             </div>
             <div>
               <Typography variant="h5" className={classes.title}>Mails</Typography>
-              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.mailsCount}</Typography>
+              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.total.mailsCount}</Typography>
             </div>
           </div>
           <div className={classes.card}>
@@ -122,7 +148,7 @@ const Dashboard = () => {
             </div>
             <div>
               <Typography variant="h5" className={classes.title}>Medias</Typography>
-              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.mediasCount}</Typography>
+              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.total.mediasCount}</Typography>
             </div>
           </div>
           <div className={classes.card}>
@@ -131,7 +157,7 @@ const Dashboard = () => {
             </div>
             <div>
               <Typography variant="h5" className={classes.title}>Newsletter Sub</Typography>
-              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.subscriptionsCount}</Typography>
+              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.total.subscriptionsCount}</Typography>
             </div>
           </div>
           <div className={classes.card}>
@@ -140,7 +166,7 @@ const Dashboard = () => {
             </div>
             <div>
               <Typography variant="h5" className={classes.title}>Posts</Typography>
-              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.postsCount}</Typography>
+              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.total.postsCount}</Typography>
             </div>
           </div>
           <div className={classes.card}>
@@ -149,7 +175,7 @@ const Dashboard = () => {
             </div>
             <div>
               <Typography variant="h5" className={classes.title}>Projects</Typography>
-              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.projectsCount}</Typography>
+              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.total.projectsCount}</Typography>
             </div>
           </div>
           <div className={classes.card}>
@@ -158,7 +184,7 @@ const Dashboard = () => {
             </div>
             <div>
               <Typography variant="h5" className={classes.title}>Skill</Typography>
-              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.skillsCount}</Typography>
+              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.total.skillsCount}</Typography>
             </div>
           </div>
           <div className={classes.card}>
@@ -167,7 +193,7 @@ const Dashboard = () => {
             </div>
             <div>
               <Typography variant="h5" className={classes.title}>Social Media</Typography>
-              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.socialMediasCount}</Typography>
+              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.total.socialMediasCount}</Typography>
             </div>
           </div>
           <div className={classes.card}>
@@ -176,7 +202,7 @@ const Dashboard = () => {
             </div>
             <div>
               <Typography variant="h5" className={classes.title}>Tech</Typography>
-              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.techsCount}</Typography>
+              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.total.techsCount}</Typography>
             </div>
           </div>
           <div className={classes.card}>
@@ -185,7 +211,7 @@ const Dashboard = () => {
             </div>
             <div>
               <Typography variant="h5" className={classes.title}>User</Typography>
-              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.usersCount}</Typography>
+              <Typography variant="body1" color="secondary" style={{ fontWeight: 500 }}>{dashboard.total.usersCount}</Typography>
             </div>
           </div>
         </div>
