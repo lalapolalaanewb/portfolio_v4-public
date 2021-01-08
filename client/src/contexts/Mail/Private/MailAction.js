@@ -43,7 +43,7 @@ export const getMails = async (dispatch) => {
     setError(dispatch, {
       status: true,
       // message: result.status === 400 || result.status === 401 ? result.data.error : result
-      message: result.data.error
+      message: result
     })
   })
 }
