@@ -14,20 +14,20 @@ export const setSuccess = (dispatch, success) => dispatch({ type: 'SET_SUCCESS',
 // Get All Dashboard
 export const getDashboard = async(dispatch) => {
   setLoading(dispatch, true)
-  console.log(configPrivate)
+  // console.log(configPrivate)
   await axios.get('/api/v1/dashboard', configPrivate)
   .then(async res => {
     const result = await res.data.data
-    console.log(result)
+    // console.log(result)
     // set states
-    // dispatch({
-    //   type: 'SET_DASHBOARD',
-    //   payload: result
-    // })
+    dispatch({
+      type: 'SET_DASHBOARD',
+      payload: result
+    })
   })
   .catch(async error => { 
     const result = await error.response
-    console.log(result)
+    // console.log(result)
     // forced logout if user's server's session expired
     // if(error.response.status === 401) forcedLogout()
     
@@ -35,7 +35,7 @@ export const getDashboard = async(dispatch) => {
     setError(dispatch, {
       status: true,
       // message: result.status === 400 || result.status === 401 ? result.data.error : result
-      message: result
+      message: result.data.error
     })
   })
 }

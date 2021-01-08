@@ -39,8 +39,7 @@ app.use(session({
 
 /** Conditional Global Middlewares */
 // Morgan Console/Server Status
-// if(process.env.NODE_ENV === 'development') { app.use(morgan('dev')) }
-app.use(morgan('dev'))
+if(process.env.NODE_ENV === 'development') { app.use(morgan('dev')) }
 // Static Folder
 if(process.env.NODE_ENV === 'production') {
   // set static folder
