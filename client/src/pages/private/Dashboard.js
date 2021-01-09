@@ -35,19 +35,22 @@ const Dashboard = () => {
 
       setLoading(dashboardDispatch, false)
       
-      let uid = getCookie('uid')
-      let autho = `Bearer ${uid}`
       await fetch('/api/v1/dashboard', {
-        method: 'GET',
+        method: 'POST',
+        body: JSON.stringify({}),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': autho
+          'Authorization': (() => {
+            let uid = getCookie('uid')
+            return `Bearer ${uid}`
+          })()
         }
       })
       .then(res => res.json())
       .then(data => {
         // const result = await res.json()
         console.log(data)
+        if(data.status === 304) console.log('Yup! same.')
         dashboardDispatch({
           type: 'SET_DASHBOARD',
           payload: {
