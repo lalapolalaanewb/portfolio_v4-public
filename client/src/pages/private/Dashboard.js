@@ -4,6 +4,8 @@ import { setLoading, setError, setSuccess, getDashboard, resetAllRedisData } fro
 import AlertMessage from '../../components/global/Alert'
 import Headline from '../../components/global/Headline'
 import { DividerBlank } from '../../components/global/Divider'
+import Total from '../../components/Dashboard/Total'
+import Personal from '../../components/Dashboard/Personal'
 import { makeStyles } from '@material-ui/core/styles'
 import { Button, Typography } from '@material-ui/core'
 import ResetIcon from '@material-ui/icons/RotateLeft'
@@ -95,7 +97,8 @@ const Dashboard = () => {
         />
       )}
       <Headline headline="Total" subHeadline="Representation" />
-      <div>
+      <Total globalClasses={classes} />
+      {/* <div>
         <div className={classes.cards}>
           <div className={classes.card}>
             <div className={classes.iconContainer}>
@@ -215,10 +218,11 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
       <DividerBlank />
       <Headline headline="Personal" subHeadline="Representation" />
-      <div>
+      <Personal globalClasses={classes} />
+      {/* <div>
         <div className={classes.cards}>
           <div className={classes.card}>
             <div className={classes.iconContainer}>
@@ -329,7 +333,7 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
       <DividerBlank />
       <Headline headline="Reset" subHeadline="Redis Data" />
       <div className={classes.buttonReset}>
