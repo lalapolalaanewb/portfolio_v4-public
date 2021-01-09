@@ -37,7 +37,7 @@ const Dashboard = () => {
       
       await fetch('/api/v1/dashboard', {
         method: 'POST',
-        body: JSON.stringify({}),
+        body: JSON.stringify({ pp : 'pp' }),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': (() => {
