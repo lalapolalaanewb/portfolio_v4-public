@@ -45,14 +45,15 @@ const Dashboard = () => {
           })()
         }
       })
-      .then(async res => {
-        const result = await res.json()
-        console.log(result)
+      .then(res => res.json())
+      .then(data => {
+        // const result = await res.json()
+        console.log(data)
         dashboardDispatch({
           type: 'SET_DASHBOARD',
           payload: {
-            total: result.data.total,
-            user: result.data.user
+            total: data.data.total,
+            user: data.data.user
           }
         })
       })
