@@ -35,14 +35,13 @@ const Dashboard = () => {
 
       setLoading(dashboardDispatch, false)
       
+      let uid = getCookie('uid')
+      let autho = `Bearer ${uid}`
       await fetch('/api/v1/dashboard', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: (() => {
-            let uid = getCookie('uid')
-            return `Bearer ${uid}`
-          })()
+          'Authorization': autho
         }
       })
       .then(res => res.json())
