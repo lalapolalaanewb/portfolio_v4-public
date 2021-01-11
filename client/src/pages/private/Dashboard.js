@@ -49,8 +49,42 @@ const Dashboard = () => {
       .then(data => {
         // const result = await res.json()
         console.log(data)
-        if(data.status === 304) console.log('Yup! same.')
-        dashboardDispatch({
+        if(data === undefined) dashboardDispatch({
+          type: 'SET_DASHBOARD',
+          payload: {
+            total: {
+              aboutsCount: 1,
+              edusCount: 1,
+              homesCount: 1,
+              jobsCount: 1,
+              mailsCount: 1,
+              mediasCount: 1,
+              postsCount: 1,
+              projectsCount: 1,
+              skillsCount: 1,
+              socialMediasCount: 1,
+              subscriptionsCount: 1,
+              techsCount: 1,
+              usersCount: 1
+            },
+            user: {
+              _id: 'cache',
+              abouts: 1,
+              edus: 1,
+              homes: 1,
+              jobs: 1,
+              mails: 1,
+              medias: 1,
+              posts: 1,
+              projects: 1,
+              skills: 1,
+              socialMedias: 1,
+              subscriptions: 1,
+              techs: 1
+            }
+          }
+        })
+        else dashboardDispatch({
           type: 'SET_DASHBOARD',
           payload: {
             total: data.data.total,
@@ -99,8 +133,8 @@ const Dashboard = () => {
         />
       )}
       <Headline headline="Total" subHeadline="Representation" />
-      <Total globalClasses={classes} />
-      {/* <div>
+      {/* <Total globalClasses={classes} /> */}
+      <div>
         <div className={classes.cards}>
           <div className={classes.card}>
             <div className={classes.iconContainer}>
@@ -220,11 +254,11 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-      </div> */}
+      </div>
       <DividerBlank />
       <Headline headline="Personal" subHeadline="Representation" />
-      <Personal globalClasses={classes} />
-      {/* <div>
+      {/* <Personal globalClasses={classes} /> */}
+      <div>
         <div className={classes.cards}>
           <div className={classes.card}>
             <div className={classes.iconContainer}>
@@ -335,7 +369,7 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-      </div> */}
+      </div>
       <DividerBlank />
       <Headline headline="Reset" subHeadline="Redis Data" />
       <div className={classes.buttonReset}>
