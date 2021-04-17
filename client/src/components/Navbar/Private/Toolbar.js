@@ -82,7 +82,7 @@ const Toolbar = ({
       open={isMobileMenuNotyOpen}
       onClose={() => setMobileMenuNotyEl(null)}
     >
-      {/* {unreadmails > 0 && (
+      {unreadmails > 0 && (
         <MenuItem>
           <IconButton aria-label="show 4 new mails" color="inherit" onClick={() => goToPage('/pfv4-admin/messages')}>
             <Badge badgeContent={unreadmails} classes={{ badge: classes.colorBadge }}>
@@ -101,7 +101,7 @@ const Toolbar = ({
           </IconButton>
           <p>Subs</p>
         </MenuItem>
-      )} */}
+      )}
       {/* <MenuItem>
         <IconButton aria-label="show 11 new notifications" color="inherit">
           <Badge badgeContent={11} classes={{ badge: classes.colorBadge }}>
@@ -137,26 +137,26 @@ const Toolbar = ({
   }, [])
 
   /** mail unread get count - function */
-  // useEffect(() => {
-  //   setUnreadMails(() => {
-  //     console.log('mails: '); console.log(mails)
-  //     if(mails.length > 0) {
-  //       let unread = mails.filter(mail => mail.statusRead === 0)
-  //       return unread.length.toString()
-  //     } else return 0
-  //   })
-  // }, [mails])
+  useEffect(() => {
+    setUnreadMails(() => {
+      console.log('mails: '); console.log(mails)
+      if(mails.length > 0) {
+        let unread = mails.filter(mail => mail.statusRead === 0)
+        return unread.length.toString()
+      } else return 0
+    })
+  }, [mails])
 
   /** sub unread get count - function */
-  // useEffect(() => {
-  //   setUnreadSubs(() => {
-  //     console.log('subs: '); console.log(subs)
-  //     if(subs.length > 0) {
-  //       let unread = subs.filter(sub => sub.statusRead === 0)
-  //       return unread.length.toString()
-  //     } else return 0
-  //   })
-  // }, [subs])
+  useEffect(() => {
+    setUnreadSubs(() => {
+      console.log('subs: '); console.log(subs)
+      if(subs.length > 0) {
+        let unread = subs.filter(sub => sub.statusRead === 0)
+        return unread.length.toString()
+      } else return 0
+    })
+  }, [subs])
 
   return (
     <>
@@ -171,7 +171,7 @@ const Toolbar = ({
       </IconButton>
       {logo('/pfv4-admin/dashboard')}
       <div className={classesGlobal.sectionDesktop}>
-        {/* {unreadmails > 0 && (
+        {unreadmails > 0 && (
           <IconButton aria-label="show 4 new mails" color="inherit" onClick={() => goToPage('/pfv4-admin/messages')}>
             <Badge badgeContent={unreadmails} classes={{ badge: classes.colorBadge }}>
               <MailIcon />
@@ -184,7 +184,7 @@ const Toolbar = ({
               <SubscriptionsIcon />
             </Badge>
           </IconButton>
-        )} */}
+        )}
         {/* <IconButton aria-label="show 17 new notifications" color="inherit">
           <Badge badgeContent={17} classes={{ badge: classes.colorBadge }}>
             <NotificationsIcon />
