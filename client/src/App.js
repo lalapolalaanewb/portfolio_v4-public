@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import './App.css'
-import { AuthState } from './contexts/Auth/AuthState'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import Navbar from './components/Navbar/Navbar'
 import { About, Contact, Home, Login, PolicyComment, Post, Posts, Projects, Resume } from './pages/public'
-import { Dashboard, Medias, MediaSocials, Messages, Policies, PostsPrivate, Profile, ProjectsPrivate, SkillsPrivate, Subscriptions, TechsPrivate, Users } from './pages/private'
 import {
   UnprotectedRouteParentAbout,
   UnprotectedRouteParentHome,
@@ -15,21 +13,6 @@ import {
   UnprotectedRouteParentProjects,
   UnprotectedRouteParentResume,
 } from './components/route/unprotected'
-import {
-  ProtectedRouteParentContact,
-  ProtectedRouteParentDashboard,
-  ProtectedRouteParentLogin,
-  ProtectedRouteParentMedias,
-  ProtectedRouteParentMediaSocials,
-  ProtectedRouteParentPolicies,
-  ProtectedRouteParentPosts,
-  ProtectedRouteParentProfile,
-  ProtectedRouteParentProjects,
-  ProtectedRouteParentSkills,
-  ProtectedRouteParentSubscription,
-  ProtectedRouteParentTechs,
-  ProtectedRouteParentUsers
-} from './components/route/protected'
 import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import Colors from './components/global/Colors'
 import { getCookie, setCookie } from './services/Cookie'
@@ -100,38 +83,23 @@ function App() {
   }, [])
 
   return (
-    <AuthState>
-      <Router>
-        <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
-          <Navbar isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode}>
-            <Switch>
-              <UnprotectedRouteParentHome exact path="/" component={Home} />
-              <UnprotectedRouteParentAbout path="/about" component={About} />
-              <UnprotectedRouteParentPosts exact path="/blog" component={Posts} />
-              <UnprotectedRouteParentPost path="/blog/:id" component={Post} />
-              <UnprotectedRouteParentMail path="/contact" component={Contact} />
-              <UnprotectedRouteParentPolicy path="/policy/comment" component={PolicyComment} />
-              <UnprotectedRouteParentProjects exact path="/projects" component={Projects} />
-              <UnprotectedRouteParentResume path="/resume" component={Resume} />
-              <ProtectedRouteParentLogin exact path="/pfv4-admin" component={Login} />
-              <ProtectedRouteParentMediaSocials exact path="/pfv4-admin/create/mediasocials" component={MediaSocials} />
-              <ProtectedRouteParentPolicies exact path="/pfv4-admin/create/policies" component={Policies} />
-              <ProtectedRouteParentSkills exact path="/pfv4-admin/create/skills" component={SkillsPrivate} />
-              <ProtectedRouteParentTechs exact path="/pfv4-admin/create/techs" component={TechsPrivate} />
-              <ProtectedRouteParentUsers exact path="/pfv4-admin/create/users" component={Users} />
-              <ProtectedRouteParentDashboard exact path="/pfv4-admin/dashboard" component={Dashboard} />
-              <ProtectedRouteParentMedias exact path="/pfv4-admin/medias" component={Medias} />
-              <ProtectedRouteParentContact exact path="/pfv4-admin/messages" component={Messages} />
-              <ProtectedRouteParentPosts exact path="/pfv4-admin/posts" component={PostsPrivate} />
-              <ProtectedRouteParentProfile exact path="/pfv4-admin/profile" component={Profile} />
-              <ProtectedRouteParentProjects exact path="/pfv4-admin/projects" component={ProjectsPrivate} />
-              <ProtectedRouteParentSubscription exact path="/pfv4-admin/subs" component={Subscriptions} />
-              <Route path="*" component={() => "404 Not Found"} />
-            </Switch>
-          </Navbar>
-        </ThemeProvider>
-      </Router>
-    </AuthState>
+    <Router>
+      <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
+        <Navbar isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode}>
+          <Switch>
+            <UnprotectedRouteParentHome exact path="/" component={Home} />
+            <UnprotectedRouteParentAbout path="/about" component={About} />
+            <UnprotectedRouteParentPosts exact path="/blog" component={Posts} />
+            <UnprotectedRouteParentPost path="/blog/:id" component={Post} />
+            <UnprotectedRouteParentMail path="/contact" component={Contact} />
+            <UnprotectedRouteParentPolicy path="/policy/comment" component={PolicyComment} />
+            <UnprotectedRouteParentProjects exact path="/projects" component={Projects} />
+            <UnprotectedRouteParentResume path="/resume" component={Resume} />
+            <Route path="*" component={() => "404 Not Found"} />
+          </Switch>
+        </Navbar>
+      </ThemeProvider>
+    </Router>
   );
 }
 

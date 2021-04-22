@@ -1,10 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useHistory, NavLink } from 'react-router-dom'
-import { useAuth } from '../../contexts/Auth/AuthState';
-import { isLogout, setLoading, isAuthenticated } from '../../contexts/Auth/AuthAction'
 import { UserState } from '../../contexts/User/Public/UserState'
-import { MailState } from '../../contexts/Mail/Private/MailState'
-import { SubscriptionState } from '../../contexts/Subscription/Private/SubscriptionState'
 import { SubscriptionState as SubscriptionStatePublic } from '../../contexts/Subscription/Public/SubscriptionState'
 import { setCookie } from '../../services/Cookie'
 import classNames from 'classnames'
@@ -33,23 +29,15 @@ import GetAppIcon from '@material-ui/icons/GetApp'
 import BrightnessHighOutlinedIcon from '@material-ui/icons/BrightnessHighOutlined'
 import Brightness2OutlinedIcon from '@material-ui/icons/Brightness2Outlined'
 import ToolbarPublic from './Public/Toolbar'
-import ToolBarPrivate from './Private/Toolbar'
 import DrawerPublic from './Public/Drawer'
-import DrawerPrivate from './Private/Drawer'
-import ContentPrivateContainer from './Private/Content'
 import FooterPublic from '../Footer/Public/Footer'
-import FooterPrivate from '../Footer/Private/Footer'
 
 const Navbar = ({ isDarkMode, setIsDarkMode, children }) => {
-  const [authState, authDispatch] = useAuth()
-  const { authenticated } = authState
-
   const classes = useStyles()
   const theme = useTheme()
   const [open, setOpen] = useState(false)
 
   const history = useHistory()
-  const [logout, setLogout] = useState(false)
 
   // logo
   const logo = (url) => {
@@ -145,27 +133,6 @@ const Navbar = ({ isDarkMode, setIsDarkMode, children }) => {
   const goToPage = (pathUrl) => {
     history.push(pathUrl)
   }
-
-  // check user auth
-  useEffect(() => {
-    (async() => {
-      await isAuthenticated(authDispatch)
-      
-      setLoading(authDispatch, false)
-    })()
-  }, [])
-
-  // handle logout
-  useEffect(() => {
-    (async() => {
-      if(logout) { console.log('logout')
-        await isLogout(authDispatch)
-
-        setLoading(authDispatch, false)
-        setLogout(false)
-      }
-    })();
-  }, [logout])
   
   return (
     <div className={classes.root}>
@@ -175,15 +142,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode, children }) => {
         className={classNames(classes.appBar, {[classes.appBarShift]: open})}
       >
         <Toolbar className={classes.toolBarSpacing}>
-          {authenticated ? (
-            <MailState>
-              <SubscriptionState>
-                <ToolBarPrivate classesGlobal={classes} logo={logo} goToPage={goToPage} setLogout={setLogout} open={open} setOpen={setOpen} />
-              </SubscriptionState>
-            </MailState>
-          ) : (
-            <ToolbarPublic classesGlobal={classes} logo={logo} menuPublic={menuPublic} menuPublicListItem={menuPublicListItem} buttonResume={buttonResume} open={open} setOpen={setOpen} darkModeToggle={darkModeToggle} />
-          )}
+          <ToolbarPublic classesGlobal={classes} logo={logo} menuPublic={menuPublic} menuPublicListItem={menuPublicListItem} buttonResume={buttonResume} open={open} setOpen={setOpen} darkModeToggle={darkModeToggle} />
         </Toolbar>
       </AppBar>
       <Drawer
@@ -200,11 +159,7 @@ const Navbar = ({ isDarkMode, setIsDarkMode, children }) => {
             {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           </IconButton>
         </div>
-        {authenticated ? (
-          <DrawerPrivate classesGlobal={classes} darkModeSwitch={darkModeSwitch} />
-        ) : (
-          <DrawerPublic classesGlobal={classes} menuPublic={menuPublic} menuPublicListItem={menuPublicListItem} buttonResume={buttonResume} darkModeSwitch={darkModeSwitch} />
-        )}
+        <DrawerPublic classesGlobal={classes} menuPublic={menuPublic} menuPublicListItem={menuPublicListItem} buttonResume={buttonResume} darkModeSwitch={darkModeSwitch} />
       </Drawer>
       <Paper
         className={classNames(classes.content, { [classes.contentShift]: open })}>
@@ -212,23 +167,12 @@ const Navbar = ({ isDarkMode, setIsDarkMode, children }) => {
         {/* <Typography variant="h4" classes={{root: classes.contentHeader}}>
           Where is this?
         </Typography> */}
-        {authenticated ? (
-          <>
-            <ContentPrivateContainer>
-              {children}
-            </ContentPrivateContainer>
-            <FooterPrivate open={open} />
-          </>
-        ) : (
-          <>
-            {children}
-            <UserState>
-              <SubscriptionStatePublic>
-                <FooterPublic />
-              </SubscriptionStatePublic>
-            </UserState>
-          </>
-        )}
+        {children}
+        <UserState>
+          <SubscriptionStatePublic>
+            <FooterPublic />
+          </SubscriptionStatePublic>
+        </UserState>
       </Paper>
     </div>
   )
