@@ -2,7 +2,7 @@
 // Controllers
 const {
   // Redis Data
-  getDefaultAllData
+  getDefaultAllData, setDefaultAllData,
 } = require('../controllers')
 
 /** Page Specific Functions */
@@ -76,6 +76,9 @@ exports.getPublicUserFooterPublic = async(req, res, next) => {
 // @route   POST /api/v1/users/gethome
 // @access  Public (Only need Admin Public Access Key)
 exports.getPublicUserHome = async(req, res, next) => {
+  // set all available data to redis
+  await setDefaultAllData()
+  
   // get homes & users data from redis
   let redisAllData = await getAllData()
   let homes = redisAllData.homes
