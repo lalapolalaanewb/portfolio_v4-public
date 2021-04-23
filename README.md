@@ -87,12 +87,12 @@ C:\parentFolder\ProjectFolder\> npm run dev
 
 Below are some of the CRUD images available in the project (admin access only):-
 
-![dashboard_light](/images/readme_adminDemo_1.PNG#thumbnail_fw)
-![posts_light](/images/readme_adminDemo_2.PNG#thumbnail_fw)
-![medias_light](/images/readme_adminDemo_3.PNG#thumbnail_fw)
-![abouts_light](/images/readme_adminDemo_4.PNG#thumbnail_fw)
-![resumes_light](/images/readme_adminDemo_5.PNG#thumbnail_fw)
-![posts_dark](/images/readme_adminDemo_6.PNG#thumbnail_fw)
+![dashboard_light](https://lalapolalaanewb.com/images/readme_adminDemo_1.PNG#thumbnail_fw)
+![posts_light](https://lalapolalaanewb.com/images/readme_adminDemo_2.PNG#thumbnail_fw)
+![medias_light](https://lalapolalaanewb.com/images/readme_adminDemo_3.PNG#thumbnail_fw)
+![abouts_light](https://lalapolalaanewb.com/images/readme_adminDemo_4.PNG#thumbnail_fw)
+![resumes_light](https://lalapolalaanewb.com/images/readme_adminDemo_5.PNG#thumbnail_fw)
+![posts_dark](https://lalapolalaanewb.com/images/readme_adminDemo_6.PNG#thumbnail_fw)
 
 ## Deployment
 
